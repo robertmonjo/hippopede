@@ -26,8 +26,8 @@ CC_E = CC_H / H0_CC
 CC_E_ERR = CC_ERR / H0_CC
 
 Q0_POINTS = [
-    {"q": -0.364, "err": 0.032, "marker": "D", "color": "#6a3d9a", "label": r"Obs. $q_0$: CC+Pantheon+SH0ES+BAO (2025)"},
-    {"q": -0.50, "err": 0.20, "marker": "s", "color": "#1b9e77", "label": r"Obs. $q_0$: FRB+SNe cosmography (2024)"},
+    {"q": -0.364, "err": 0.032, "marker": "D", "color": "#6a3d9a", "label": r"Observed $q_0$ (CC+Pantheon+SH0ES+BAO; Myrzakulov et al. 2025)"},
+    {"q": -0.50, "err": 0.20, "marker": "s", "color": "#1b9e77", "label": r"Observed $q_0$ (FRB+SNe cosmography; Gao et al. 2024)"},
 ]
 ZT_POINTS = [
     {"z": 0.597, "err": 0.214, "marker": "o", "color": "#f16913", "label": r"Obs. $z_t$: CC+Pantheon+SH0ES+BAO (2025)"},
@@ -236,10 +236,10 @@ def reconstruct_gapp_cc_pantheon(zmin=-0.5, zmax=2.36, nstar=320):
     return {"z": z, "e": e, "e_sigma": e_sigma, "q": q, "q_sigma": q_sigma, "theta": np.asarray(theta)}
 
 
-def style_panel(ax, face="#fbfbfb"):
+def style_panel(ax, face="#fefefe"):
     ax.set_facecolor(face)
-    ax.grid(True, which="major", color="#eeeeee", lw=0.60, alpha=0.55)
-    ax.grid(True, which="minor", color="#f7f7f7", lw=0.40, alpha=0.52)
+    ax.grid(True, which="major", color="#f6f6f6", lw=0.58, alpha=0.50)
+    ax.grid(True, which="minor", color="#fbfbfb", lw=0.38, alpha=0.48)
     ax.minorticks_on()
 
 
@@ -306,7 +306,7 @@ def add_common_bottom(ax, z_model, z_tan, zmin, zmax, gapp, right_side=False):
     ax.errorbar(CC_Z, CC_E, yerr=CC_E_ERR, fmt="o", ms=5.8, mfc="#2b8cbe", mec="white", mew=0.8, ecolor="#2b8cbe", elinewidth=1.2, capsize=3, alpha=0.96, label=r"Cosmic chronometers $H(z)$ data", zorder=6)
     for item in Q0_POINTS:
         y, y_lo, y_hi = tangent_band(z_tan, item["q"], item["err"])
-        ax.plot(z_tan, y, color=item["color"], lw=1.8, ls=(0, (5, 3)), label=rf"Tangent from {item['label'].replace('Obs. ', '')}")
+        ax.plot(z_tan, y, color=item["color"], lw=1.8, ls=(0, (5, 3)), label=rf"Tangent from {item['label'].replace('Observed ', '')}")
         ax.fill_between(z_tan, y_lo, y_hi, color=item["color"], alpha=0.14, linewidth=0.0)
     style_panel(ax)
     ax.set_xlim(zmin, zmax)
@@ -351,12 +351,12 @@ def make_legends(fig):
     ]
     data_labels = [
         r"Cosmic chronometers $H(z)$ data",
-        r"Obs. $q_0$: CC+Pantheon+SH0ES+BAO (2025)",
-        r"Obs. $q_0$: FRB+SNe cosmography (2024)",
+        r"Observed $q_0$ (CC+Pantheon+SH0ES+BAO; Myrzakulov et al. 2025)",
+        r"Observed $q_0$ (FRB+SNe cosmography; Gao et al. 2024)",
         r"Obs. $z_t$: CC+Pantheon+SH0ES+BAO (2025)",
         r"Obs. $z_t$: latest $H(z)$ meta-analysis (2025)",
-        r"Tangent from $q_0$ (CC+Pantheon+SH0ES+BAO)",
-        r"Tangent from $q_0$ (FRB+SNe)",
+        r"Tangent from $q_0$ (Myrzakulov et al. 2025)",
+        r"Tangent from $q_0$ (Gao et al. 2024)",
     ]
 
     gapp_handles = [
@@ -368,11 +368,11 @@ def make_legends(fig):
     ]
     gapp_labels = [r"GaPP median", r"GaPP $1\sigma$", r"GaPP $2\sigma$", r"GaPP $3\sigma$", r"GaPP extrapolation"]
 
-    leg1 = fig.legend(model_handles, model_labels, loc="lower left", bbox_to_anchor=(0.16, 0.01), title=r"$\bf{Models}$", frameon=False, handlelength=2.8, handletextpad=0.8, ncol=1)
+    leg1 = fig.legend(model_handles, model_labels, loc="lower left", bbox_to_anchor=(0.15, 0.01), title=r"$\bf{Models}$", frameon=False, handlelength=2.8, handletextpad=0.8, ncol=1)
     fig.add_artist(leg1)
-    leg2 = fig.legend(data_handles, data_labels, loc="lower center", bbox_to_anchor=(0.545, 0.01), title=r"$\bf{Data}$", frameon=False, handlelength=2.0, handletextpad=0.8, ncol=1)
+    leg2 = fig.legend(data_handles, data_labels, loc="lower center", bbox_to_anchor=(0.555, 0.01), title=r"$\bf{Data}$", frameon=False, handlelength=2.0, handletextpad=0.8, ncol=1)
     fig.add_artist(leg2)
-    fig.legend(gapp_handles, gapp_labels, loc="lower right", bbox_to_anchor=(0.82, 0.01), title=r"$\bf{GaPP\ CC{+}Pantheon{+}}$", frameon=False, handlelength=2.0, handletextpad=0.8, ncol=1)
+    fig.legend(gapp_handles, gapp_labels, loc="lower right", bbox_to_anchor=(0.84, 0.01), title=r"$\bf{GaPP\ CC{+}Pantheon{+}}$", frameon=False, handlelength=2.0, handletextpad=0.8, ncol=1)
 
 
 def main():
