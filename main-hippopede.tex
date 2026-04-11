@@ -16,9 +16,12 @@
 \title{Hippopede Universe as a toy model of late-linear expansion}
 \author[1,2]{Robert Monjo}
 \author[3]{Manel Romero}
+\author[4]{Ardra E. Sasi}
 \affil[1]{Department of Mathematics, CUNEF University, Calle Almansa 101, Madrid 28040, Spain}
 \affil[2]{Centro de Estudios Cosmologicos ``Prof. Jaime Roessler Bonzi'', Facultad de Ciencias, Universidad de Chile, Las Palmeras 3425, \~Nunoa, Santiago 7750000, Chile}
 \affil[3]{Area of Chemistry, University of Barcelona, Campus Diagonal: Av. Joan XXIII, 27-31, 08028 Barcelona, Spain}
+\affil[4]{School of Pure and Applied Physics
+Mahatma Gandhi University, Priyadarsini Hills P.O. Athirampuzha, Kottayam, Kerala 686560, India}
 \date{}
 
 \begin{document}
@@ -27,7 +30,7 @@
 
 \begin{abstract}
 
-The hippopede, defined by the set of points $(x,y)\in \mathbb{R}^2$ that satisfy $k x^2+y^2 = (x^2+y^2)^2$ with $k>0$, is a classical quartic curve with a long history in geometry, yet it also offers a suggestive reinterpretation in modern embedding approaches. In this note we show that its defining relation can be recast as a null quadratic constraint in an auxiliary pseudo-Euclidean space, thereby placing the extended hippopede hypersurface in direct analogy with the ambient-space constructions commonly used for de Sitter and anti de Sitter geometries. We then apply the same quartic structure to a four-dimensional toy universe whose large-$t$ limit consists of two tangent $3$-spheres, so that the model becomes a simple laboratory for asking whether a hyperconical late-time coasting law can emerge together with a distinct early-time acceleration.
+The hippopede is a classical quartic curve with a long history in geometry, yet it also offers a suggestive reinterpretation in modern embedding approaches. In this work we show that its defining relation can be recast as a null quadratic constraint in an auxiliary pseudo-Euclidean space, thereby placing the extended hippopede hypersurface in direct analogy with the ambient-space constructions commonly used for de Sitter and anti de Sitter geometries. We then apply the same quartic structure to a four-dimensional toy universe whose large-$t$ limit consists of two tangent $3$-spheres, so that the model becomes a simple laboratory for asking whether a hyperconical late-time coasting law can emerge together with a distinct early-time acceleration.
 
 \end{abstract}
 
@@ -65,9 +68,41 @@ What these constructions share is the quadratic embedding language, and this is 
 
 The logic of the paper is therefore fourfold: first, we identify the correct high--dimensional extension of the quartic relation; second, we extract its large-$t$ limit as two tangent hyperspheres, with the intention of a hyperconical toy universe; third, we compute the corresponding directional Hubble and acceleration functions; and fourth, we relate the resulting quartic toy model to the ambient-space construction used for dS/AdS geometries.
 
-\section{The coasting hippopede universe}
 
-\subsection{Late-epoch linear expansion}
+\section{Data and Methods}
+
+\subsection{Data used}
+
+This study used observed estimates of deceleration parameter colected from: i) the present deceleration estimate $q_0=-0.364\pm0.032$ together with the transition redshift estimate $z_t=0.597\pm0.214$ from the combined Pantheon analysis \cite{myrzakulov2025q0} and cosmic-chronometer (CC, Table \ref{tab:cc_data_figures}); ii) the cosmographic estimate $q_0=-0.50\pm0.20$ obtained from fast radio bursts combined with supernovae in \cite{gao2024frb}; iii) the screened meta-analytic transition estimate $z_t=0.64\pm0.16$ from the latest $H(z)$ compilation analysis of \cite{hu2025transition}. Moreover, observed estimates of normalized Hubble factor $E_{\mathrm{obs}}(z)=H(z)/H_0$ were computed from the XX measurements, with $H_0=70~\mathrm{km\,s^{-1}\,Mpc^{-1}}$.
+
+\begin{table}[h]
+\label{tab:cc_data_figures}
+\centering
+\small
+
+\caption{Observed values of the Hubble parameter according to the cosmic chronometers considered.}
+
+\begin{tabular}{lll}
+\hline
+$z$ & $H(z)$ [km s$^{-1}$ Mpc$^{-1}$] & Source \\
+\hline
+0.07, 0.12, 0.20, 0.28 & 69.0$\pm$19.6,\;68.6$\pm$26.2,\;72.9$\pm$29.6,\;88.8$\pm$36.6 & Zhang et al. \cite{zhang2014hubble} \\
+0.40, 0.48 & 95.0$\pm$17.0,\;97.0$\pm$62.0 & Stern et al. \cite{stern2010chronometers} \\
+0.75 & 105.0$\pm$7.9(stat)$\pm$7.3(sys) & Jimenez et al. \cite{jimenez2023photometry} \\
+0.80 & 113.1$\pm$15.1(stat)$^{+29.1}_{-11.3}$(sys) & Jiao et al. \cite{jiao2023legac} \\
+1.26 & 135.0$\pm$35.0 & Tomasetti et al. \cite{tomasetti2023vandels} \\
+\hline
+\end{tabular}
+
+
+\end{table}
+
+
+
+
+\subsection{The coasting hippopede universe}
+
+\subsubsection{Model definition}
 
 Let $(t, \vec \rho) = (t,x,y,z,u)\in\mathbb{R}^{1,4}$, and consider the hypersurface
 \begin{equation}
@@ -111,40 +146,17 @@ Indeed, each sphere of radius $t$ centered at $u=\pm t$ satisfies $\rho=2t|\cos\
 \label{fig:hippopede_growth_3d}
 \end{figure}
 
-\subsection{Anisotropic acceleration}
-\red{This subsection is useful as the analytic origin-based reference model, but it is no longer the main results section once the centered prescription is adopted for the final figures. After consolidation, it could be shortened and explicitly presented only as a contrast with the centered-scale results of Section~4.}
 
-If one now reads $t$ as a cosmic parameter and keeps the angular sector $\chi$ fixed, the directional scale factor of this toy model is
+\subsubsection{Origin prescription} 
+
+
+The description of the hyppopede universe produces an anisotropic acceleration. If one now reads $t$ as a cosmic parameter and keeps the angular sector $\chi$ fixed, the directional scale factor of this toy model is
 \begin{equation}
 a_\chi(t):=\rho(t,\chi)=\sqrt{\sin^2\chi+4t^2\cos^2\chi}.
 \end{equation}
-Its directional Hubble, acceleration and deceleration functions are then
-\begin{equation}
-H_\chi(t)=\frac{\dot a_\chi}{a_\chi}=\frac{4t\cos^2\chi}{\sin^2\chi+4t^2\cos^2\chi},
-\end{equation}
-\begin{equation}
-\ddot a_\chi(t)=\frac{4\cos^2\chi\,\sin^2\chi}{\left(\sin^2\chi+4t^2\cos^2\chi\right)^{3/2}},
-\end{equation}
-\begin{equation}
-q_\chi(t):=-\frac{a_\chi\ddot a_\chi}{\dot a_\chi^2}=-\frac{\tan^2\chi}{4t^2}.
-\end{equation}
-Therefore the model is mildly accelerated for every oblique direction $0<|\chi|<\pi/2$, but the acceleration decays rapidly and
-\begin{equation}
-H_\chi(t)=\frac{1}{t}+O(t^{-3}),\qquad \ddot a_\chi(t)=\frac{\sin^2\chi}{2|{\cos\chi}|\,t^3}+O(t^{-5}),\qquad q_\chi(t)\to0^-.
-\end{equation}
-This is the precise sense in which the hippopede universe approaches linear expansion at late times: the asymptotic law is coasting, $a_\chi(t)\sim 2|{\cos\chi}|\,t$, even though the early epoch can display a nonzero positive acceleration. The limiting cases are also transparent: $\chi=0$ gives $a_0(t)=2t$ and hence exact linear expansion for all $t$, while $\chi=\pi/2$ gives $a_{\pi/2}(t)=1$, i.e. no expansion in the purely transverse direction. Numerically, for $\chi=\pi/4$ one finds $q_{\pi/4}(1)=-0.25$, $q_{\pi/4}(2)=-0.0625$, and $q_{\pi/4}(10)=-0.0025$, so the deviation from the linear regime dies off quickly.
+Its directional Hubble $H_\chi(t)= \dot a_\chi / a_\chi$ and acceleration $\ddot a_\chi(t)$ determine its deceleration function as $q_\chi(t):= - a_\chi\ddot a_\chi / \dot a_\chi^2 = - a_\chi a_\chi\ddot / H_\chi(t)^2$. 
+Therefore the model is mildly accelerated for every oblique direction $0<|\chi|<\pi/2$, but the acceleration decays rapidly (see Appendix). 
 
-\subsection{Early-epoch accelerated universe}
-\red{As in the previous subsection, this origin-based early-epoch discussion may be better kept as an analytic reference or moved to an appendix after the centered results are consolidated, since the final numerical comparison figures are built from $a_{c,\chi}(t)$ rather than from $a_{\chi}(t)=\rho(t,\chi)$.}
-
-The opposite limit is also informative. For any fixed oblique direction with $\sin\chi\neq0$,
-\begin{equation}
-a_\chi(0)=|\sin\chi|,\qquad \dot a_\chi(0)=0,\qquad \ddot a_\chi(0)=\frac{4\cos^2\chi}{|\sin\chi|}.
-\end{equation}
-Since $q_\chi(t)=-\tan^2\chi/(4t^2)$, the deceleration parameter is not merely large near $t=0$; it diverges to $-\infty$ for every fixed oblique direction with $\chi\neq0$. Numerically, for $\chi=\pi/6$ one finds $q_\chi(1)=-0.0833$, $q_\chi(0.5)=-0.333$, and $q_\chi(0.1)=-8.33$, while for $\chi=\pi/4$ the corresponding values are $-0.25$, $-1$, and $-25$. Thus the model becomes extremely accelerated at early times unless one approaches the privileged axis $\chi=0$. If one wishes to compare the toy model with observationally inferred $q(z)$, the next step would be to introduce an effective isotropized scale factor $a_{\mathrm{eff}}(t)$ and then use $1+z=a_{\mathrm{eff}}(t_0)/a_{\mathrm{eff}}(t)$ to map the directional dynamics into redshift space. A dedicated fit is therefore possible, but it requires an additional averaging prescription and should probably be presented separately as a numerical extension rather than as part of the conceptual derivation given here.
-Hence the toy universe does not shrink to a point uniformly as $t\to0$: most angular sectors retain a finite initial radius and start with vanishing expansion rate but positive acceleration. The axis $\chi=0$ is singular in this limit, since $a_0(t)=2t$ collapses linearly to zero while the oblique sectors remain finite. This nonuniform behaviour is another sign that the model should be read as a biaxial toy geometry rather than as a realistic isotropic cosmology.
-
-\section{\blue{Methods: simulations and observational comparison}}
 
 \subsection{\blue{Centered prescription}}
 
@@ -229,35 +241,9 @@ q^{\mathrm{proj}}_\chi(z)=-1+(1+z)\frac{d\ln E^{\mathrm{proj}}_\chi(z)}{dz}.
 \end{equation}
 \blue{This projected figure should therefore be read as a common Monjo-type redshift remapping of the same centered hippopede simulations, not as a second independent dynamical model. Because the future continuation of the projected map is more delicate than in the unprojected case, the final projected figure is shown only for $z\geq -0.5$, whereas the unprojected one extends further into the formal future branch.}
 
-\blue{The numerical implementation of both figures was carried out in Python from the exact scripts cited in the Data Availability statement. For the centered histories, derivatives were evaluated numerically on dense $t$-grids and the branch after the first minimum of $a_{c,\chi}(t)$ was retained whenever needed to avoid multivalued redshift histories. For the projected case, the Monjo-type redshift map was implemented numerically from the preferred $\mathrm{inv.ll}$ prescription and then used as a common remapping of the centered simulations. This should be kept in mind when interpreting the projected curves: they are numerically stable over the displayed interval, but they still depend on the chosen projection prescription and on the numerical differentiation/interpolation strategy.}
+\blue{The numerical implementation was carried out in Python (see scripts in the Data Availability statement). For the centered histories, derivatives were evaluated numerically on dense $t$-grids and the branch after the first minimum of $a_{c,\chi}(t)$ was retained whenever needed to avoid multivalued redshift histories. For the projected case, the Monjo-type redshift map was implemented numerically from the preferred $\mathrm{inv.ll}$ prescription and then used as a common remapping of the centered simulations. This should be kept in mind when interpreting the projected curves: they are numerically stable over the displayed interval, but they still depend on the chosen projection prescription and on the numerical differentiation/interpolation strategy.} To compare our model, $\Lambda$CDM$+$radiation background is used in the study with $\Omega_r=9\times10^{-5}$, $\Omega_m=0.3$, and $\Omega_\Lambda=0.69991$. 
 
-\subsection{Observed data used}
 
-\blue{The standard comparison curve in both figures is the flat $\Lambda$CDM$+$radiation background used in the study, with $\Omega_r=9\times10^{-5}$, $\Omega_m=0.3$, and $\Omega_\Lambda=0.69991$. The observed points used in this study are: i) the present deceleration estimate $q_0=-0.364\pm0.032$ together with the transition redshift estimate $z_t=0.597\pm0.214$ from the combined CC$+$Pantheon$+$SH0ES$+$BAO analysis of \cite{myrzakulov2025q0}; ii) the cosmographic estimate $q_0=-0.50\pm0.20$ obtained from fast radio bursts combined with supernovae in \cite{gao2024frb}; iii) the screened meta-analytic transition estimate $z_t=0.64\pm0.16$ from the latest $H(z)$ compilation analysis of \cite{hu2025transition}.} [Please include citation for the other value, $z_t=0.597\pm0.214$]
-
-\blue{The lower-panel $E(z)$ points come from the following cosmic-chronometer measurements, normalized in the scripts as $E_{\mathrm{obs}}(z)=H(z)/H_0$ with $H_0=70~\mathrm{km\,s^{-1}\,Mpc^{-1}}$:}
-
-\begin{table}[t]
-\centering
-\small
-\blue{
-\begin{tabular}{lll}
-\hline
-$z$ & $H(z)$ [km s$^{-1}$ Mpc$^{-1}$] & Source \\
-\hline
-0.07, 0.12, 0.20, 0.28 & 69.0$\pm$19.6,\;68.6$\pm$26.2,\;72.9$\pm$29.6,\;88.8$\pm$36.6 & Zhang et al. \cite{zhang2014hubble} \\
-0.40, 0.48 & 95.0$\pm$17.0,\;97.0$\pm$62.0 & Stern et al. \cite{stern2010chronometers} \\
-0.75 & 105.0$\pm$7.9(stat)$\pm$7.3(sys) & Jimenez et al. \cite{jimenez2023photometry} \\
-0.80 & 113.1$\pm$15.1(stat)$^{+29.1}_{-11.3}$(sys) & Jiao et al. \cite{jiao2023legac} \\
-1.26 & 135.0$\pm$35.0 & Tomasetti et al. \cite{tomasetti2023vandels} \\
-\hline
-\end{tabular}
-}
-\caption{\blue{Observed inputs used in the lower panels of the definitive unprojected and projected centered-scale figures.}}
-\label{tab:cc_data_figures}
-\end{table}
-
-\blue{In addition, the lower panel contains two local tangent constraints derived from the observed deceleration values at $z=0$. Since $q(z)=-1+(1+z)\,E'(z)/E(z)$, one has $E'(0)=1+q_0$ and therefore the two dashed tangents are represented as $E(z)\approx1+(1+q_0)z$, with the shaded band obtained from the quoted uncertainty of each $q_0$ estimate.}
 
 \begin{figure}[t]
 \centering
@@ -283,7 +269,7 @@ Numerical examples computed from $a_{\mathrm{origin},\chi}(t)=\rho(t,\chi)$ are 
 
 \subsection{\blue{Unprojected and projected expansion}}
 
-The centered reference of the hippopede generates expansion histories that can be inspected on the same observational plane as the chronometer data and the two local tangent constraints derived from observed $q_0$ values.  The most immediate result is that they spans a broad range of behaviors between the hyperconical-like branch at $\chi=0^\circ$ and the strongly oblique sectors. The unprojected $q(z)$ curves show that the different angular sectors can interpolate between near-coasting behaviour and more strongly accelerated histories, while still remaining comparable with the observationally inferred present values and transition redshifts showed in the same panel (Fig.~\ref{fig:qz_final}). On the other hand, the common stereographic projection reparametrized the same centered histories, mapping the redshift dependence of both $q(z)$ and $E(z)$ and tends to bring the accelerating curves closer to the observations.
+The centered reference of the hippopede generates expansion histories that can be inspected on the same observational plane as the chronometer data and the two local tangent constraints derived from observed $q_0$ values.  The most immediate result is that they spans a broad range of behaviors between the hyperconical-like branch at $\chi=0^\circ$ and the strongly oblique sectors. The unprojected $q(z)$ curves show that the different angular sectors can interpolate between near-coasting behaviour and more strongly accelerated histories, while still remaining comparable with the observationally inferred present values and transition redshifts showed in the same panel (Fig.~\ref{fig:qz_final}). On the other hand, the common stereographic projection reparametrized the same centered histories, mapping the redshift dependence of both $q(z)$ and $E(z)$ and tends to bring the accelerating curves closer to the observations. In addition, two local tangent constraints derived from the observed deceleration values at $z=0$ was included in the comparison. Since $q(z)=-1+(1+z)\,E'(z)/E(z)$, one has $E'(0)=1+q_0$ and therefore the two dashed tangents are represented as $E(z)\approx1+(1+q_0)z$, with the shaded band obtained from the quoted uncertainty of each $q_0$ estimate.
 
 At the same time, one should not overstate the analytical control of the projected model. The second-order analytic expansion used in the hyperconical literature is only a local approximation around $z=0$. In practice, the analytic approximation is useful only in a limited neighborhood of the present epoch; for the full displayed interval shown in the figure, the numerical prescription is the relevant one.
 
@@ -313,5 +299,42 @@ In this sense, the dS/AdS hyperboloids, their degenerate null-cone limits, and t
 
 \bibliographystyle{unsrt}
 \bibliography{main-hippopede}
+
+
+\section*{Appendix}
+
+\subsubsection*{Late-epoch linear expansion} 
+
+The description of the hyppopede universe produces an anisotropic acceleration. If one now reads $t$ as a cosmic parameter for the origin-prescription approach and keeps the angular sector $\chi$ fixed, the directional scale factor of this toy model is
+\begin{equation}
+a_\chi(t):=\rho(t,\chi)=\sqrt{\sin^2\chi+4t^2\cos^2\chi}.
+\end{equation}
+In this origin-prescription focus, its directional Hubble, acceleration and deceleration functions are then
+\begin{equation}
+H_\chi(t)=\frac{\dot a_\chi}{a_\chi}=\frac{4t\cos^2\chi}{\sin^2\chi+4t^2\cos^2\chi},
+\end{equation}
+\begin{equation}
+\ddot a_\chi(t)=\frac{4\cos^2\chi\,\sin^2\chi}{\left(\sin^2\chi+4t^2\cos^2\chi\right)^{3/2}},
+\end{equation}
+\begin{equation}
+q_\chi(t):=-\frac{a_\chi\ddot a_\chi}{\dot a_\chi^2}=-\frac{\tan^2\chi}{4t^2}.
+\end{equation}
+Therefore the model is mildly accelerated for every oblique direction $0<|\chi|<\pi/2$, but the acceleration decays rapidly and
+\begin{equation}
+H_\chi(t)=\frac{1}{t}+O(t^{-3}),\qquad \ddot a_\chi(t)=\frac{\sin^2\chi}{2|{\cos\chi}|\,t^3}+O(t^{-5}),\qquad q_\chi(t)\to0^-.
+\end{equation}
+This is the precise sense in which the hippopede universe approaches linear expansion at late times: the asymptotic law is coasting, $a_\chi(t)\sim 2|{\cos\chi}|\,t$, even though the early epoch can display a nonzero positive acceleration. The limiting cases are also transparent: $\chi=0$ gives $a_0(t)=2t$ and hence exact linear expansion for all $t$, while $\chi=\pi/2$ gives $a_{\pi/2}(t)=1$, i.e. no expansion in the purely transverse direction. Numerically, for $\chi=\pi/4$ one finds $q_{\pi/4}(1)=-0.25$, $q_{\pi/4}(2)=-0.0625$, and $q_{\pi/4}(10)=-0.0025$, so the deviation from the linear regime dies off quickly.
+
+\subsubsection*{Early-epoch accelerated universe}
+
+
+
+The opposite limit is also informative. For any fixed oblique direction with $\sin\chi\neq0$,
+\begin{equation}
+a_\chi(0)=|\sin\chi|,\qquad \dot a_\chi(0)=0,\qquad \ddot a_\chi(0)=\frac{4\cos^2\chi}{|\sin\chi|}.
+\end{equation}
+Since $q_\chi(t)=-\tan^2\chi/(4t^2)$, the deceleration parameter is not merely large near $t=0$; it diverges to $-\infty$ for every fixed oblique direction with $\chi\neq0$. Numerically, for $\chi=\pi/6$ one finds $q_\chi(1)=-0.0833$, $q_\chi(0.5)=-0.333$, and $q_\chi(0.1)=-8.33$, while for $\chi=\pi/4$ the corresponding values are $-0.25$, $-1$, and $-25$. Thus the model becomes extremely accelerated at early times unless one approaches the privileged axis $\chi=0$. If one wishes to compare the toy model with observationally inferred $q(z)$, the next step would be to introduce an effective isotropized scale factor $a_{\mathrm{eff}}(t)$ and then use $1+z=a_{\mathrm{eff}}(t_0)/a_{\mathrm{eff}}(t)$ to map the directional dynamics into redshift space. A dedicated fit is therefore possible, but it requires an additional averaging prescription and should probably be presented separately as a numerical extension rather than as part of the conceptual derivation given here.
+Hence the toy universe does not shrink to a point uniformly as $t\to0$: most angular sectors retain a finite initial radius and start with vanishing expansion rate but positive acceleration. The axis $\chi=0$ is singular in this limit, since $a_0(t)=2t$ collapses linearly to zero while the oblique sectors remain finite. This nonuniform behaviour is another sign that the model should be read as a biaxial toy geometry rather than as a realistic isotropic cosmology.
+
 
 \end{document}
