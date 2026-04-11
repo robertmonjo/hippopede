@@ -38,6 +38,8 @@ The hippopede is a classical quartic curve with a long history in geometry, yet 
 
 \subsection{Motivation}
 
+Model dependent (BAO, CMB) and model-independent (CC, SNe Ia) [please complete and explain acronyms] produce different resulys in the estimation of the Hubble parameter, especially at the local scale (Hubble tension) but also at high-z distances (e.g. cite references). For the local expansion ($z < 0.005$?), it is obtained two very different values, the XXX from Ries et al. (year) and the XXX from YYY, with a tension up to X$\sigma$... Local void is a hypothesis, but geometrical perspectives in ambient-space constructions could help to understand the tension between model-dependent (intrinsic viewpoint) and model-independent (extrinsic viewpoint).... Acceleration and curvature are not Lorentzian invariants in cosmology, instead Ricci scalar should be used. For instance, Monjo and Campoamor-Stursberg (2023) found that ... In fact linear expansion can mimetise fictitius acceleration from coordinate transformations.
+
 A natural starting point for the present work is the long-standing interest in coasting cosmologies, namely models for which the late-time scale factor behaves approximately as $a(t)\propto t$. Such scenarios were studied early on by John et al. \cite{john2000coasting, John2019} as viable alternatives to standard decelerating or accelerated backgrounds, and more recently they have reappeared in hyperconical modified-gravity constructions where the linear law is tied to an ambient-space geometric constraint \cite{monjo2017hyperconical, Monjo_2024, Monjo_2025}. Within that framework, recent astrophysical tests indicate that the model can remain phenomenologically competitive beyond galactic rotation curves: hydrostatic-equilibrium analyses of X-COP clusters show good agreement in hot-gas-dominated regions beyond $\sim1\,\mathrm{Mpc}$, while galaxy--galaxy weak-lensing reconstructions yield flat circular velocities on megaparsec scales that compare favorably with MOND in the same regime \cite{monjo2025clusters, monjo2025lensing}.
 
 The main cosmological motivation for relaxing exact coasting at all epochs comes from primordial nucleosynthesis. In a strictly linear expansion, $H(t)=1/t$, the Universe remains older at a fixed temperature than in the standard radiation-dominated scenario, so weak interactions stay effective for longer and the neutron-to-proton ratio freezes out under different conditions. This alters the synthesis window for light nuclei: in particular, it tends to overproduce helium and strongly affects deuterium survival unless additional assumptions are introduced \cite{sethi1999coasting, dev2002coasting}. For that reason, even if a late coasting regime is phenomenologically attractive, one is naturally led to explore toy geometries in which the large-$t$ behaviour remains asymptotically linear while the early-time acceleration differs from zero. The hippopede universe proposed below is meant precisely in that spirit: it is not offered as a realistic cosmology, but as a controllable biaxial toy model interpolating between a regular quartic geometry and a hyperconical-like late regime.
@@ -71,9 +73,9 @@ The logic of the paper is therefore fourfold: first, we identify the correct hig
 
 \section{Data and Methods}
 
-\subsection{Data used}
+\subsection{Data}
 
-This study used observed estimates of deceleration parameter colected from: i) the present deceleration estimate $q_0=-0.364\pm0.032$ together with the transition redshift estimate $z_t=0.597\pm0.214$ from the combined Pantheon analysis \cite{myrzakulov2025q0} and cosmic-chronometer (CC, Table \ref{tab:cc_data_figures}); ii) the cosmographic estimate $q_0=-0.50\pm0.20$ obtained from fast radio bursts combined with supernovae in \cite{gao2024frb}; iii) the screened meta-analytic transition estimate $z_t=0.64\pm0.16$ from the latest $H(z)$ compilation analysis of \cite{hu2025transition}. Moreover, observed estimates of normalized Hubble factor $E_{\mathrm{obs}}(z)=H(z)/H_0$ were computed from the XX measurements, with $H_0=70~\mathrm{km\,s^{-1}\,Mpc^{-1}}$.
+We used observed estimates of the deceleration parameter collected from: i) the present deceleration estimates $q_0=-0.364\pm0.032$ together with the transition redshift estimate $z_t=0.597\pm0.214$ from the combined CC+Pantheon+SH0ES+BAO analysis \cite{myrzakulov2025q0}; ii) the cosmographic estimate $q_0=-0.50\pm0.20$ obtained from fast radio bursts (FRB) combined with supernovae (SNe) in \cite{gao2024frb}; iii) the screened meta-analytic transition estimate $z_t=0.64\pm0.16$ from the latest $H(z)$ compilation analysis of \cite{hu2025transition}. Moreover, observed estimates of normalized Hubble factor $E_{\mathrm{obs}}(z)=H(z)/H_0$ were computed from the CC measurements, with $H_0=70~\mathrm{km\,s^{-1}\,Mpc^{-1}}$ (Table \ref{tab:cc_data_figures}).
 
 \begin{table}[h]
 \label{tab:cc_data_figures}
@@ -97,12 +99,13 @@ $z$ & $H(z)$ [km s$^{-1}$ Mpc$^{-1}$] & Source \\
 
 \end{table}
 
+Finally, Gaussian ... (GaPP) approach was considered for...
 
 
 
-\subsection{The coasting hippopede universe}
+\subsection{Model}
 
-\subsubsection{Model definition}
+\subsubsection{The coasting hippopede universe}
 
 Let $(t, \vec \rho) = (t,x,y,z,u)\in\mathbb{R}^{1,4}$, and consider the hypersurface
 \begin{equation}
@@ -137,7 +140,11 @@ x^2+y^2+z^2+(u-t)^2=t^2,\qquad x^2+y^2+z^2+(u+t)^2=t^2.
 \end{equation}
 Indeed, each sphere of radius $t$ centered at $u=\pm t$ satisfies $\rho=2t|\cos\chi|$. In this sense the quartic hypersurface interpolates between a smooth finite-$t$ geometry and a double-sphere large-$t$ limit, which is the natural place to import the hyperconical-universe intuition into the hippopede setting.
 
-\blue{At the purely geometric level, the most immediate ``origin-based'' reading of the quartic hypersurface is simply $a_{\mathrm{origin},\chi}(t):=\rho(t,\chi)$. We keep that prescription below because it yields closed analytic expressions and provides a useful first contrast with the hyperconical case. However, the numerical results eventually adopted for the two definitive comparison figures are based instead on a centered effective scale factor measured with respect to the center of curvature of one asymptotic tangent branch.}
+At the purely geometric level, the most immediate ``origin-based'' reading of the quartic hypersurface is simply $a_{\chi}(t):=\rho(t,\chi)$.  If one now reads $t$ as a cosmic parameter and keeps the angular sector $\chi$ fixed, the directional scale factor of this toy model is
+\begin{equation}
+a_\chi(t):=\rho(t,\chi)=\sqrt{\sin^2\chi+4t^2\cos^2\chi}.
+\end{equation}
+Its directional Hubble $H_\chi(t)= \dot a_\chi / a_\chi$ and acceleration $\ddot a_\chi(t)$ determine its deceleration function as $q_\chi(t):= - a_\chi\ddot a_\chi / \dot a_\chi^2 = - a_\chi a_\chi\ddot / H_\chi(t)^2$. We remark on that prescription because it yields closed analytic expressions and provides a useful first contrast with the hyperconical case with pure linear expansion (see Appendix). However, the numerical results eventually adopted for the two definitive comparison figures are based instead on a centered effective scale factor measured with respect to the center of curvature of one asymptotic tangent branch.
 
 \begin{figure}[t]
 \centering
@@ -145,17 +152,6 @@ Indeed, each sphere of radius $t$ centered at $u=\pm t$ satisfies $\rho=2t|\cos\
 \caption{Three-dimensional visualization of the nested hippopede hypersurfaces associated with increasing values (0.5, 1, 2 and 3.0) of the parameter $t$. The distinguished axis is $u$, while the orthogonal directions are represented through $(\sqrt{x^2+y^2},z)$. As $t$ grows, the quartic hypersurface approaches the large-time limit formed by two tangent 3-spheres centered at $u=\pm t$, making explicit the emergence of an asymptotically hyperconical coasting regime.}
 \label{fig:hippopede_growth_3d}
 \end{figure}
-
-
-\subsubsection{Origin prescription} 
-
-
-The description of the hyppopede universe produces an anisotropic acceleration. If one now reads $t$ as a cosmic parameter and keeps the angular sector $\chi$ fixed, the directional scale factor of this toy model is
-\begin{equation}
-a_\chi(t):=\rho(t,\chi)=\sqrt{\sin^2\chi+4t^2\cos^2\chi}.
-\end{equation}
-Its directional Hubble $H_\chi(t)= \dot a_\chi / a_\chi$ and acceleration $\ddot a_\chi(t)$ determine its deceleration function as $q_\chi(t):= - a_\chi\ddot a_\chi / \dot a_\chi^2 = - a_\chi a_\chi\ddot / H_\chi(t)^2$. 
-Therefore the model is mildly accelerated for every oblique direction $0<|\chi|<\pi/2$, but the acceleration decays rapidly (see Appendix). 
 
 
 \subsection{\blue{Centered prescription}}
@@ -245,11 +241,19 @@ q^{\mathrm{proj}}_\chi(z)=-1+(1+z)\frac{d\ln E^{\mathrm{proj}}_\chi(z)}{dz}.
 
 
 
-\begin{figure}[t]
+
+
+\section{Results}
+
+\subsection{Unprojected and projected expansion}
+
+The centered prescription (at $u=\pm t$) naturally preserves the intended geometric reading of the late-time double-sphere limit. This reference generates expansion histories that can be inspected on the same observational plane as the chronometer data and the two local tangent constraints derived from observed $q_0$ values.  The most immediate result is that they spans a broad range of behaviors between the hyperconical-like branch at $\chi=0^\circ$ and the strongly oblique sectors. The unprojected $q(z)$ curves show that the different angular sectors can interpolate between near-coasting behaviour and more strongly accelerated histories, while still remaining comparable with the observationally inferred present values and transition redshifts showed in the same panel (Fig.~\ref{fig:qz_final}). On the other hand, the common stereographic projection reparametrized the same centered histories, mapping the redshift dependence of both $q(z)$ and $E(z)$ and tends to bring the accelerating curves closer to the observations. In addition, two local tangent constraints derived from the observed deceleration values at $z=0$ was included in the comparison. Since $q(z)=-1+(1+z)\,E'(z)/E(z)$, one has $E'(0)=1+q_0$ and therefore the two dashed tangents are represented as $E(z)\approx1+(1+q_0)z$, with the shaded band obtained from the quoted uncertainty of each $q_0$ estimate.
+
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{figures/hippopede_qz_centered_t0_3p0_double_panel_with_gapp.pdf}
 \caption{
-Comparison of the deceleration parameter $q(z)$ (top panels) and normalized expansion rate $E(z)=H(z)/H_0$ (bottom panels) according to the centered-scale hippopede simulations (a) and the same simulations but with stereographic projection (Eq. \ref{eq:projection_map}, $\alpha \simeq 0.283$, $\gamma_0 = \pi/3$) at fixed present time $t_0=3$ (b), both for several angles ($\chi=0^\circ$). Observational constraints shown in the upper subpanels include two present-day estimates $q_0$ from CC+Pantheon+SH0ES+BAO and FRB+SNe cosmography [Please include citation], together with two determinations of the transition redshift [Please include citation]. The shading area corresponds to [please complete very briefly, with references to methods that should be described in this manuscript.].}
+Comparison of the deceleration parameter $q(z)$ (top panels) and normalized expansion rate $E(z)=H(z)/H_0$ (bottom panels) according to the centered-scale hippopede simulations (a) and the same simulations but with stereographic projection (Eq. \ref{eq:projection_map}, $\alpha \simeq 0.283$, $\gamma_0 = \pi/3$) at fixed present time $t_0=3$ (b), both for several angles ($\chi=0^\circ$). Observational constraints shown in the upper subpanels include two present-day estimates $q_0$ from CC+Pantheon+SH0ES+BAO and FRB+SNe cosmography [Please include citation], together with two determinations of the transition redshift [Please include citation]. The shading area corresponds to GaPP of (model-independent) CC+Pantheon+ data [please complete very briefly, with references to methods that should be described in this manuscript.].}
 \label{fig:qz_final}
 \end{figure}
 
@@ -259,17 +263,6 @@ Comparison of the deceleration parameter $q(z)$ (top panels) and normalized expa
 
 %The limit $\chi=0^\circ$ coincides with the hyperconical reference. The thick light-brown curve shows the standard flat $\Lambda$CDM background with radiation, while the dotted horizontal line marks the de Sitter reference $q=-1$.
 
-\section{Results}
-
-\subsection{Scale factor centered in the tangent 3-spheres}
-
-The origin-based prescription $a_{\mathrm{origin},\chi}(t)=\rho(t,\chi)$ remains useful because it leads to the compact analytic formulae of Sections~2.2 and~2.3. However, the final numerical comparison with $q(z)$ and $E(z)$ was built from the centered scale factor already defined in the methodological Section~3.1, because it is more directly adapted to the asymptotic picture of two tangent 3-spheres centered at $u=\pm t$. In that sense, the centered prescription is the one that better preserves the intended geometric reading of the late-time double-sphere limit.
-
-Numerical examples computed from $a_{\mathrm{origin},\chi}(t)=\rho(t,\chi)$ are still informative as an order-of-magnitude guide. For instance, the values $q_{\pi/4}(1)=-0.25$, $q_{\pi/4}(2)=-0.0625$, and $q_{\pi/4}(10)=-0.0025$ already showed how quickly the quartic toy model tends to a coasting regime when the origin-based scale factor is used. The centered results preserve the same qualitative message than the centered geometry (i.e., with $a_{\mathrm{centered},\chi}$  ) adopted in the figures.
-
-\subsection{\blue{Unprojected and projected expansion}}
-
-The centered reference of the hippopede generates expansion histories that can be inspected on the same observational plane as the chronometer data and the two local tangent constraints derived from observed $q_0$ values.  The most immediate result is that they spans a broad range of behaviors between the hyperconical-like branch at $\chi=0^\circ$ and the strongly oblique sectors. The unprojected $q(z)$ curves show that the different angular sectors can interpolate between near-coasting behaviour and more strongly accelerated histories, while still remaining comparable with the observationally inferred present values and transition redshifts showed in the same panel (Fig.~\ref{fig:qz_final}). On the other hand, the common stereographic projection reparametrized the same centered histories, mapping the redshift dependence of both $q(z)$ and $E(z)$ and tends to bring the accelerating curves closer to the observations. In addition, two local tangent constraints derived from the observed deceleration values at $z=0$ was included in the comparison. Since $q(z)=-1+(1+z)\,E'(z)/E(z)$, one has $E'(0)=1+q_0$ and therefore the two dashed tangents are represented as $E(z)\approx1+(1+q_0)z$, with the shaded band obtained from the quoted uncertainty of each $q_0$ estimate.
 
 At the same time, one should not overstate the analytical control of the projected model. The second-order analytic expansion used in the hyperconical literature is only a local approximation around $z=0$. In practice, the analytic approximation is useful only in a limited neighborhood of the present epoch; for the full displayed interval shown in the figure, the numerical prescription is the relevant one.
 
@@ -295,7 +288,7 @@ In this sense, the dS/AdS hyperboloids, their degenerate null-cone limits, and t
 
 \section*{\blue{Data Availability}}
 
-\blue{The numerical scripts used to generate the three figures currently included in the manuscript are the Python files \texttt{plot\_hippopede\_growth\_3d.py} (Fig.~\ref{fig:hippopede_growth_3d}), \texttt{plot\_hippopede\_qz\_centered\_t0\_3\_unprojected.py} (Fig.~\ref{fig:qz_unprojected_final}), and \texttt{plot\_hippopede\_qz\_centered\_t0\_3\_projected.py} (Fig.~\ref{fig:qz_projected_final}). The scripts and the corresponding PNG outputs were the exact files used to produce the figures discussed in this version of the manuscript and are available from the authors upon reasonable request.}
+\blue{The numerical scripts used to generate the three figures currently included in the manuscript are the Python files \texttt{plot\_hippopede\_growth\_3d.py} (Fig.~\ref{fig:hippopede_growth_3d}) and  \texttt{plot\_hippopede\_qz\_double\_panel\_with\_gapp.py} (Fig.~\ref{fig:qz_final}). The scripts and the corresponding PNG outputs were the exact files used to produce the figures discussed in this version of the manuscript and are available from the authors upon reasonable request.}
 
 \bibliographystyle{unsrt}
 \bibliography{main-hippopede}
