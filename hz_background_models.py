@@ -11,13 +11,9 @@ from matplotlib.lines import Line2D
 from matplotlib.ticker import FixedLocator, FixedFormatter
 
 FACTOR_SIZE = 1.25
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parent
 DEFAULT_DATA = PROJECT_ROOT / "data" / "hz_background" / "hz_curated_chronometers.csv"
 DEFAULT_BAO_DATA = PROJECT_ROOT / "data" / "hz_background" / "hz_curated_bao.csv"
-if not DEFAULT_DATA.exists():
-    DEFAULT_DATA = Path(r"C:\Users\rober\OneDrive\Documents\Codex_Portatil\cosmic_acceleration\data\hz_background\hz_curated_chronometers.csv")
-if not DEFAULT_BAO_DATA.exists():
-    DEFAULT_BAO_DATA = Path(r"C:\Users\rober\OneDrive\Documents\Codex_Portatil\cosmic_acceleration\data\hz_background\hz_curated_bao.csv")
 DEFAULT_PNG = PROJECT_ROOT / "figures" / "fig_hz_background_models.png"
 DEFAULT_SVG = PROJECT_ROOT / "figures" / "fig_hz_background_models.svg"
 DEFAULT_PDF = PROJECT_ROOT / "figures" / "fig_hz_background_models.pdf"

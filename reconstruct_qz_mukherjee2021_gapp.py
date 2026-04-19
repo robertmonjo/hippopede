@@ -11,7 +11,8 @@ import numpy as np
 
 import hz_background_models as hz
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parent
+DATA_ROOT = PROJECT_ROOT / "data"
 GAPP_ROOT = Path(__file__).resolve().parent / "vendor_gapp"
 GAPP_COV_ROOT = GAPP_ROOT / "covfunctions"
 for extra in (str(GAPP_ROOT), str(GAPP_COV_ROOT)):
@@ -23,8 +24,8 @@ import covariance  # type: ignore  # noqa: E402
 
 DEFAULT_PNG = PROJECT_ROOT / "figures" / "fig_qz_mukherjee2021_gapp.png"
 DEFAULT_PDF = PROJECT_ROOT / "figures" / "fig_qz_mukherjee2021_gapp.pdf"
-DEFAULT_CSV = PROJECT_ROOT / "data" / "hz_background" / "qz_mukherjee2021_gapp_summary.csv"
-PANTHEON_PLUS_PATH = Path(r"C:\Users\rober\OneDrive\Documents\Codex_Portatil\tmp\PantheonPlus_DataRelease\Pantheon+_Data\4_DISTANCES_AND_COVAR\Pantheon+SH0ES.dat")
+DEFAULT_CSV = DATA_ROOT / "hz_background" / "qz_mukherjee2021_gapp_summary.csv"
+PANTHEON_PLUS_BINNED_PATH = DATA_ROOT / "gapp" / "pantheon_plus_binned_50.csv"
 C_KM_S = 299792.458
 H0_LOCAL = 73.2
 
@@ -65,41 +66,17 @@ def load_dataset(kind: str) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
 
 
 def load_pantheon_plus_binned(nbins: int = 50) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    raw = np.genfromtxt(PANTHEON_PLUS_PATH, names=True, dtype=None, encoding="utf-8")
-    z = np.asarray(raw["zHD"], dtype=float)
-    mu = np.asarray(raw["MU_SH0ES"], dtype=float)
-    mu_err = np.asarray(raw["MU_SH0ES_ERR_DIAG"], dtype=float)
-    valid = np.isfinite(z) & np.isfinite(mu) & np.isfinite(mu_err) & (z > 0.0) & (mu_err > 0.0)
-    z = z[valid]
-    mu = mu[valid]
-    mu_err = mu_err[valid]
-
-    d_l_mpc = 10.0 ** ((mu - 25.0) / 5.0)
-    d_proxy = (H0_LOCAL / C_KM_S) * d_l_mpc / (1.0 + z)
-    sigma_d = d_proxy * (np.log(10.0) / 5.0) * mu_err
-
-    order = np.argsort(z)
-    z = z[order]
-    d_proxy = d_proxy[order]
-    sigma_d = sigma_d[order]
-
-    bins = np.array_split(np.arange(len(z)), nbins)
-    z_bin = []
-    d_bin = []
-    s_bin = []
-    for idx in bins:
-        if len(idx) == 0:
-            continue
-        w = 1.0 / np.maximum(sigma_d[idx], 1.0e-12) ** 2
-        z_mean = float(np.average(z[idx], weights=w))
-        d_mean = float(np.average(d_proxy[idx], weights=w))
-        stat = float(np.sqrt(1.0 / np.sum(w)))
-        scatter = float(np.sqrt(np.average((d_proxy[idx] - d_mean) ** 2, weights=w)))
-        sigma = max(stat, scatter / np.sqrt(len(idx)))
-        z_bin.append(z_mean)
-        d_bin.append(d_mean)
-        s_bin.append(sigma)
-    return np.asarray(z_bin), np.asarray(d_bin), np.asarray(s_bin)
+    if not PANTHEON_PLUS_BINNED_PATH.exists():
+        raise FileNotFoundError(
+            f"Missing local Pantheon+ binned dataset: {PANTHEON_PLUS_BINNED_PATH}. "
+            "This project expects the pre-binned CSV to live under data/gapp/."
+        )
+    raw = np.genfromtxt(PANTHEON_PLUS_BINNED_PATH, names=True, dtype=None, encoding="utf-8", delimiter=",")
+    return (
+        np.asarray(raw["z"], dtype=float),
+        np.asarray(raw["d_proxy"], dtype=float),
+        np.asarray(raw["sigma_d"], dtype=float),
+    )
 
 
 def transition_redshift(z: np.ndarray, q: np.ndarray) -> float | None:

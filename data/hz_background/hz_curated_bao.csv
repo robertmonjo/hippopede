@@ -1,0 +1,12 @@
+z,h_km_s_mpc,sigma_plus,sigma_minus,label,reference_key,source_kind,note
+0.24,79.69,2.65,2.65,Gaztanaga+09 a,Gaztanaga2009,bao,Radial BAO point from SDSS LRG clustering
+0.35,82.7,8.4,8.4,Xu+13,Xu2013,bao,Anisotropic BAO measurement from SDSS DR7 LRGs
+0.43,86.45,3.68,3.68,Gaztanaga+09 b,Gaztanaga2009,bao,Radial BAO point from SDSS LRG clustering
+0.44,82.6,7.8,7.8,Blake+12 a,Blake2012,bao,WiggleZ BAO point
+0.60,87.9,6.1,6.1,Blake+12 b,Blake2012,bao,WiggleZ BAO point
+0.73,97.3,7.0,7.0,Blake+12 c,Blake2012,bao,WiggleZ BAO point
+0.510,97.132,2.827,2.827,DESI+24 LRG z0,Adame2025a,bao,DESI DR1 BAO converted from DH_over_rs at z=0.510 using r_d=147.09 Mpc
+0.706,101.508,3.010,3.010,DESI+24 LRG z1,Adame2025a,bao,DESI DR1 BAO converted from DH_over_rs at z=0.706 using r_d=147.09 Mpc
+0.930,114.016,2.209,2.209,DESI+24 LRG+ELG,Adame2025a,bao,DESI DR1 BAO converted from DH_over_rs at z=0.930 using r_d=147.09 Mpc
+1.317,147.439,4.503,4.503,DESI+24 ELG,Adame2025a,bao,DESI DR1 BAO converted from DH_over_rs at z=1.317 using r_d=147.09 Mpc
+2.330,239.148,4.794,4.794,DESI+24 LyA,Adame2025b,bao,DESI DR1 BAO converted from DH_over_rs at z=2.330 using r_d=147.09 Mpc

@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 
-OUTDIR = Path(r"C:\Users\rober\Downloads")
+OUTDIR = Path(__file__).resolve().parent / "figures"
 SHOW_TITLE = False
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -30,8 +30,8 @@ Q0_POINTS = [
     {"q": -0.50, "err": 0.20, "marker": "s", "color": "#1b9e77", "label": r"Observed $q_0$ (FRB+SNe cosmography; Gao et al. 2024)"},
 ]
 ZT_POINTS = [
-    {"z": 0.597, "err": 0.214, "marker": "o", "color": "#f16913", "label": r"Obs. $z_t$: CC+Pantheon+SH0ES+BAO (2025)"},
-    {"z": 0.64, "err": 0.16, "marker": "^", "color": "#fd8d3c", "label": r"Obs. $z_t$: latest $H(z)$ meta-analysis (2025)"},
+    {"z": 0.597, "err": 0.214, "marker": "o", "color": "#f16913", "label": r"Observed $z_t$ (CC+Pantheon+SH0ES+BAO; Myrzakulov et al. 2025)"},
+    {"z": 0.64, "err": 0.16, "marker": "^", "color": "#fd8d3c", "label": r"Observed $z_t$ ($H(z)$ meta-analysis; Hu et al. 2025)"},
 ]
 
 
@@ -350,11 +350,11 @@ def make_legends(fig):
         Line2D([0], [0], color="#1b9e77", lw=1.8, ls=(0, (5, 3))),
     ]
     data_labels = [
-        r"Cosmic chronometers $H(z)$ data",
+        r"Cosmic chronometers $H(z)$ data (Table 1)",
         r"Observed $q_0$ (CC+Pantheon+SH0ES+BAO; Myrzakulov et al. 2025)",
         r"Observed $q_0$ (FRB+SNe cosmography; Gao et al. 2024)",
-        r"Obs. $z_t$: CC+Pantheon+SH0ES+BAO (2025)",
-        r"Obs. $z_t$: latest $H(z)$ meta-analysis (2025)",
+        r"Observed $z_t$ (CC+Pantheon+SH0ES+BAO; Myrzakulov et al. 2025)",
+        r"Observed $z_t$ ($H(z)$ meta-analysis; Hu et al. 2025)",
         r"Tangent from $q_0$ (Myrzakulov et al. 2025)",
         r"Tangent from $q_0$ (Gao et al. 2024)",
     ]
@@ -368,14 +368,15 @@ def make_legends(fig):
     ]
     gapp_labels = [r"GaPP median", r"GaPP $1\sigma$", r"GaPP $2\sigma$", r"GaPP $3\sigma$", r"GaPP extrapolation"]
 
-    leg1 = fig.legend(model_handles, model_labels, loc="lower left", bbox_to_anchor=(0.15, 0.01), title=r"$\bf{Models}$", frameon=False, handlelength=2.8, handletextpad=0.8, ncol=1)
+    leg1 = fig.legend(model_handles, model_labels, loc="lower left", bbox_to_anchor=(0.13, 0.01), title=r"$\bf{Models}$", frameon=False, handlelength=2.8, handletextpad=0.8, ncol=1)
     fig.add_artist(leg1)
-    leg2 = fig.legend(data_handles, data_labels, loc="lower center", bbox_to_anchor=(0.555, 0.01), title=r"$\bf{Data}$", frameon=False, handlelength=2.0, handletextpad=0.8, ncol=1)
+    leg2 = fig.legend(data_handles, data_labels, loc="lower center", bbox_to_anchor=(0.57, 0.01), title=r"$\bf{Data}$", frameon=False, handlelength=2.0, handletextpad=0.8, ncol=1)
     fig.add_artist(leg2)
-    fig.legend(gapp_handles, gapp_labels, loc="lower right", bbox_to_anchor=(0.84, 0.01), title=r"$\bf{GaPP\ CC{+}Pantheon{+}}$", frameon=False, handlelength=2.0, handletextpad=0.8, ncol=1)
+    fig.legend(gapp_handles, gapp_labels, loc="lower right", bbox_to_anchor=(0.90, 0.01), title=r"$\bf{GaPP\ CC{+}Pantheon{+}}$", frameon=False, handlelength=2.0, handletextpad=0.8, ncol=1)
 
 
 def main():
+    OUTDIR.mkdir(parents=True, exist_ok=True)
     t0 = 3.0
     z_unproj = np.linspace(-0.5, 2.0, 1800)
     z_unproj_model = np.linspace(-0.5, 2.0, 1200)
