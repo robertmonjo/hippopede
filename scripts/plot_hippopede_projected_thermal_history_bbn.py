@@ -38,6 +38,7 @@ DELTA_NEFF_95 = 0.30
 T_MIN_MEV = 0.03
 T_MAX_MEV = 3.0
 N_T = 600
+SMOOTH_WINDOW = 15
 
 
 def alpha_logistic(z: np.ndarray, zc: float = ZC, delta: float = DELTA):
@@ -77,6 +78,17 @@ def neff_to_scale(delta_neff: np.ndarray | float):
     return np.sqrt(1.0 + (7.0 / 43.0) * delta_neff)
 
 
+def smooth_positive_series(y: np.ndarray, window: int = SMOOTH_WINDOW):
+    y = np.asarray(y, dtype=float)
+    if window <= 1 or len(y) < window:
+        return y.copy()
+    pad = window // 2
+    logy = np.log(y)
+    padded = np.pad(logy, pad_width=pad, mode="edge")
+    kernel = np.ones(window, dtype=float) / float(window)
+    return np.exp(np.convolve(padded, kernel, mode="valid"))
+
+
 def main():
     temperatures = np.geomspace(T_MIN_MEV, T_MAX_MEV, N_T)
     z = z_of_temperature_mev(temperatures)
@@ -94,6 +106,7 @@ def main():
     h_low = H0_SI * np.interp(z, z_eval, e_low)
     h_half = H0_SI * np.interp(z, z_eval, e_half)
     h_run = H0_SI * np.interp(z, z_eval, e_run)
+    h_run = smooth_positive_series(h_run, window=SMOOTH_WINDOW)
 
     ratio_low = h_low / h_std
     ratio_half = h_half / h_std
