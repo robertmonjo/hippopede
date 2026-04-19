@@ -1,0 +1,236 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+import sys
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPT_ROOT = Path(__file__).resolve().parent
+FIGURES = ROOT / "figures"
+FIGURES.mkdir(exist_ok=True)
+
+for extra in (str(SCRIPT_ROOT), str(ROOT / "vendor_gapp"), str(ROOT / "vendor_gapp" / "covfunctions")):
+    if extra not in sys.path:
+        sys.path.insert(0, extra)
+
+from analyze_hippopede_dipole_bbn import (  # noqa: E402
+    ExtendedProjectedHyperconical,
+    H0_SI,
+    T0_EV,
+    standard_radiation_hubble,
+)
+
+
+ALPHA_LOW = 0.283
+ALPHA_HIGH = 0.5
+ZC = 1.0e7
+DELTA = 11.0
+
+# Conservative BBN-equivalent observational corridor written as an allowed
+# excess/deficit in relativistic energy density.
+NEFF_SM = 3.046
+DELTA_NEFF_CENTER = 0.0
+DELTA_NEFF_95 = 0.30
+
+T_MIN_MEV = 0.03
+T_MAX_MEV = 3.0
+N_T = 600
+
+
+def alpha_logistic(z: np.ndarray, zc: float = ZC, delta: float = DELTA):
+    z = np.asarray(z, dtype=float)
+    return ALPHA_LOW + 0.5 * (ALPHA_HIGH - ALPHA_LOW) * (
+        1.0 + np.tanh((np.log1p(z) - np.log1p(zc)) / delta)
+    )
+
+
+def z_of_temperature_mev(T_mev: np.ndarray):
+    return np.asarray(T_mev, dtype=float) * 1.0e6 / T0_EV - 1.0
+
+
+def e_constant_alpha(model: ExtendedProjectedHyperconical, z: np.ndarray):
+    h_raw = model.projected_hubble_unnormalized(z)
+    h0 = model.projected_hubble_unnormalized(np.array([0.0]))[0]
+    return h_raw / h0
+
+
+def e_variable_alpha(model: ExtendedProjectedHyperconical, z: np.ndarray, zc: float = ZC, delta: float = DELTA):
+    z = np.asarray(z, dtype=float)
+    x = model.x_from_lz(np.log1p(z))
+    u = np.sqrt(np.maximum(1.0 / model.k - x**2, 1.0e-14))
+    y = np.arctan2(x, u)
+    a = alpha_logistic(z, zc=zc, delta=delta)
+    g = np.maximum(1.0 - y / model.y0, 1.0e-12)
+    t = (y / 2.0) / (g**a)
+    rhat = 2.0 * np.arctan(t)
+    dr_dz = np.gradient(rhat, z, edge_order=2)
+    h_raw = 1.0 / dr_dz
+    h0 = np.interp(0.0, z, h_raw)
+    return h_raw / h0
+
+
+def neff_to_scale(delta_neff: np.ndarray | float):
+    delta_neff = np.asarray(delta_neff, dtype=float)
+    return np.sqrt(1.0 + (7.0 / 43.0) * delta_neff)
+
+
+def main():
+    temperatures = np.geomspace(T_MIN_MEV, T_MAX_MEV, N_T)
+    z = z_of_temperature_mev(temperatures)
+
+    model_low = ExtendedProjectedHyperconical(alpha=ALPHA_LOW)
+    model_half = ExtendedProjectedHyperconical(alpha=ALPHA_HIGH)
+
+    e_low = e_constant_alpha(model_low, z)
+    e_half = e_constant_alpha(model_half, z)
+    e_run = e_variable_alpha(model_low, z, zc=ZC, delta=DELTA)
+
+    h_std = standard_radiation_hubble(temperatures)
+    h_low = H0_SI * e_low
+    h_half = H0_SI * e_half
+    h_run = H0_SI * e_run
+
+    ratio_low = h_low / h_std
+    ratio_half = h_half / h_std
+    ratio_run = h_run / h_std
+
+    scale_center = neff_to_scale(DELTA_NEFF_CENTER)
+    scale_lo_95 = neff_to_scale(DELTA_NEFF_CENTER - DELTA_NEFF_95)
+    scale_hi_95 = neff_to_scale(DELTA_NEFF_CENTER + DELTA_NEFF_95)
+    h_bbn_center = scale_center * h_std
+    h_bbn_lo_95 = scale_lo_95 * h_std
+    h_bbn_hi_95 = scale_hi_95 * h_std
+
+    fig, (ax1, ax2) = plt.subplots(
+        2,
+        1,
+        figsize=(8.4, 8.8),
+        sharex=True,
+        gridspec_kw={"height_ratios": [1.15, 0.95], "hspace": 0.10},
+    )
+
+    ax1.fill_between(
+        temperatures,
+        h_bbn_lo_95,
+        h_bbn_hi_95,
+        color="#d7c4a3",
+        alpha=0.34,
+        linewidth=0.0,
+        label=r"BBN-equivalent allowed band ($|\Delta N_{\mathrm{eff}}|\lesssim 0.3$, 95\%)",
+        zorder=1,
+    )
+    ax1.plot(
+        temperatures,
+        h_bbn_center,
+        color="#b08a53",
+        lw=1.6,
+        ls="--",
+        alpha=0.9,
+        label=r"BBN-equivalent central expansion ($\Delta N_{\mathrm{eff}}=0$)",
+        zorder=2,
+    )
+    ax1.plot(
+        temperatures,
+        h_std,
+        color="#2d2d2d",
+        lw=2.6,
+        label=r"Standard radiation era ($g_*=10.75$)",
+        zorder=3,
+    )
+    ax1.plot(
+        temperatures,
+        h_run,
+        color="#1f78b4",
+        lw=2.8,
+        label=rf"Projected hippopede with running $\alpha(z)$ ($z_c={ZC:.0e}$, $\Delta={DELTA:.0f}$)",
+        zorder=4,
+    )
+    ax1.plot(
+        temperatures,
+        h_low,
+        color="#6a3d9a",
+        lw=1.9,
+        alpha=0.9,
+        label=rf"Projected branch with constant $\alpha={ALPHA_LOW:.3f}$",
+        zorder=3.5,
+    )
+    ax1.plot(
+        temperatures,
+        h_half,
+        color="#e31a1c",
+        lw=1.9,
+        alpha=0.9,
+        label=rf"Projected branch with constant $\alpha={ALPHA_HIGH:.1f}$",
+        zorder=3.6,
+    )
+
+    ax2.fill_between(
+        temperatures,
+        np.full_like(temperatures, scale_lo_95),
+        np.full_like(temperatures, scale_hi_95),
+        color="#d7c4a3",
+        alpha=0.34,
+        linewidth=0.0,
+        zorder=1,
+    )
+    ax2.axhline(1.0, color="#2d2d2d", lw=1.5, ls="--", alpha=0.75, zorder=2)
+    ax2.plot(temperatures, ratio_run, color="#1f78b4", lw=2.8, zorder=4)
+    ax2.plot(temperatures, ratio_low, color="#6a3d9a", lw=1.9, alpha=0.9, zorder=3)
+    ax2.plot(temperatures, ratio_half, color="#e31a1c", lw=1.9, alpha=0.9, zorder=3)
+
+    for ax in (ax1, ax2):
+        ax.set_xscale("log")
+        ax.grid(True, which="major", color="#ebebeb", linewidth=0.6)
+        ax.grid(True, which="minor", color="#f4f4f4", linewidth=0.45)
+        ax.minorticks_on()
+
+    ax1.set_yscale("log")
+    ax1.set_ylabel(r"Expansion rate $H(T)\ [{\rm s}^{-1}]$")
+    ax1.set_title(r"Projected thermal history of the hippopede model vs. standard and BBN-equivalent expansion")
+    ax1.legend(loc="upper left", fontsize=9, frameon=False)
+
+    ax2.set_ylabel(r"$H(T)/H_{\rm rad}(T)$")
+    ax2.set_xlabel(r"Perceived temperature $T\ [{\rm MeV}]$")
+    ax2.set_ylim(1.0e-3, 2.0e1)
+    ax2.set_yscale("log")
+
+    sample_temperatures = np.array([0.07, 0.10, 0.20, 0.50, 1.00])
+    sample_z = z_of_temperature_mev(sample_temperatures)
+    sample_alpha = alpha_logistic(sample_z)
+    sample_ratio_run = np.interp(sample_temperatures, temperatures, ratio_run)
+
+    summary = {
+        "alpha_low": ALPHA_LOW,
+        "alpha_high": ALPHA_HIGH,
+        "z_c": ZC,
+        "delta": DELTA,
+        "delta_neff_center": DELTA_NEFF_CENTER,
+        "delta_neff_95": DELTA_NEFF_95,
+        "temperature_mev_samples": sample_temperatures.tolist(),
+        "alpha_at_temperature_samples": sample_alpha.tolist(),
+        "running_ratio_samples": sample_ratio_run.tolist(),
+        "constant_alpha_0.283_ratio_samples": np.interp(sample_temperatures, temperatures, ratio_low).tolist(),
+        "constant_alpha_0.5_ratio_samples": np.interp(sample_temperatures, temperatures, ratio_half).tolist(),
+        "bbn_band_ratio_95": [float(scale_lo_95), float(scale_hi_95)],
+    }
+
+    png_path = FIGURES / "hippopede_projected_thermal_history_bbn.png"
+    pdf_path = FIGURES / "hippopede_projected_thermal_history_bbn.pdf"
+    json_path = FIGURES / "hippopede_projected_thermal_history_bbn.json"
+
+    fig.savefig(png_path, dpi=220, bbox_inches="tight")
+    fig.savefig(pdf_path, bbox_inches="tight")
+    plt.close(fig)
+
+    json_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+
+    print(f"Saved PNG:  {png_path}")
+    print(f"Saved PDF:  {pdf_path}")
+    print(f"Saved JSON: {json_path}")
+
+
+if __name__ == "__main__":
+    main()
