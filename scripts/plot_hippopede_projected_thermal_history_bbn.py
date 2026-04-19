@@ -72,6 +72,29 @@ def e_variable_alpha(model: ExtendedProjectedHyperconical, z: np.ndarray, zc: fl
     return h_raw / h0
 
 
+def asymptotic_constant_coeff(alpha: float, z_fit_min: float = 1.0e3, z_fit_max: float = 1.0e6):
+    model = ExtendedProjectedHyperconical(alpha=alpha)
+    z_fit = np.logspace(np.log10(z_fit_min), np.log10(z_fit_max), 250)
+    h_raw = model.projected_hubble_unnormalized(z_fit)
+    exponent = 1.0 + 2.0 * alpha
+    coeff = np.nanmedian(h_raw / ((1.0 + z_fit) ** exponent))
+    return float(coeff), exponent
+
+
+def asymptotic_running_coeff(
+    zc: float = ZC,
+    delta: float = DELTA,
+    z_fit_min: float = 1.0e3,
+    z_fit_max: float = 1.0e6,
+):
+    model = ExtendedProjectedHyperconical(alpha=ALPHA_LOW)
+    z_fit = np.logspace(np.log10(z_fit_min), np.log10(z_fit_max), 250)
+    e_fit = e_variable_alpha(model, z_fit, zc=zc, delta=delta)
+    alpha_fit = alpha_logistic(z_fit, zc=zc, delta=delta)
+    coeff = np.nanmedian(e_fit / ((1.0 + z_fit) ** (1.0 + 2.0 * alpha_fit)))
+    return float(coeff)
+
+
 def neff_to_scale(delta_neff: np.ndarray | float):
     delta_neff = np.asarray(delta_neff, dtype=float)
     return np.sqrt(1.0 + (7.0 / 43.0) * delta_neff)
@@ -81,17 +104,16 @@ def main():
     temperatures = np.geomspace(T_MIN_MEV, T_MAX_MEV, N_T)
     z = z_of_temperature_mev(temperatures)
 
-    model_low = ExtendedProjectedHyperconical(alpha=ALPHA_LOW)
-    model_half = ExtendedProjectedHyperconical(alpha=ALPHA_HIGH)
-
-    e_low = e_constant_alpha(model_low, z)
-    e_half = e_constant_alpha(model_half, z)
-    e_run = e_variable_alpha(model_low, z, zc=ZC, delta=DELTA)
-
     h_std = standard_radiation_hubble(temperatures)
-    h_low = H0_SI * e_low
-    h_half = H0_SI * e_half
-    h_run = H0_SI * e_run
+
+    coeff_low, exponent_low = asymptotic_constant_coeff(ALPHA_LOW)
+    coeff_half, exponent_half = asymptotic_constant_coeff(ALPHA_HIGH)
+    coeff_run = asymptotic_running_coeff(zc=ZC, delta=DELTA)
+    alpha_run = alpha_logistic(z, zc=ZC, delta=DELTA)
+
+    h_low = H0_SI * coeff_low * ((temperatures * 1.0e6) / T0_EV) ** exponent_low
+    h_half = H0_SI * coeff_half * ((temperatures * 1.0e6) / T0_EV) ** exponent_half
+    h_run = H0_SI * coeff_run * ((temperatures * 1.0e6) / T0_EV) ** (1.0 + 2.0 * alpha_run)
 
     ratio_low = h_low / h_std
     ratio_half = h_half / h_std
@@ -207,6 +229,9 @@ def main():
         "alpha_high": ALPHA_HIGH,
         "z_c": ZC,
         "delta": DELTA,
+        "constant_alpha_prefactor_0.283": coeff_low,
+        "constant_alpha_prefactor_0.5": coeff_half,
+        "running_alpha_prefactor": coeff_run,
         "delta_neff_center": DELTA_NEFF_CENTER,
         "delta_neff_95": DELTA_NEFF_95,
         "temperature_mev_samples": sample_temperatures.tolist(),
