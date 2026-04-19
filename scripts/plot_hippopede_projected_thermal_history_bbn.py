@@ -26,8 +26,8 @@ from analyze_hippopede_dipole_bbn import (  # noqa: E402
 
 ALPHA_LOW = 0.283
 ALPHA_HIGH = 0.5
-ZC = 2.056e4
-DELTA = 1.95
+ZC = 1.604e4
+DELTA = 2.0
 
 # Conservative BBN-equivalent observational corridor written as an allowed
 # excess/deficit in relativistic energy density.
