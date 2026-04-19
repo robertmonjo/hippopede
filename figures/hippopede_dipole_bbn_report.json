@@ -1,0 +1,177 @@
+{
+  "dipole_like_test": {
+    "angles_deg": [
+      0.0,
+      5.0,
+      10.0,
+      15.0,
+      20.0,
+      25.0,
+      30.0,
+      35.0,
+      40.0,
+      45.0,
+      50.0,
+      55.0,
+      60.0,
+      65.0,
+      70.0,
+      75.0,
+      80.0,
+      85.0
+    ],
+    "z_eval": [
+      0.1,
+      0.3,
+      0.5,
+      1.0,
+      2.0
+    ],
+    "unprojected": [
+      {
+        "dipole_constant": 1.0877769767747059,
+        "dipole_linear": 0.012390268443550716,
+        "dipole_ratio_c1_over_c0": 0.01139044924474157,
+        "dipole_r2": 0.9830826008805141,
+        "dipole_plus_quadrupole_r2": 0.9936648340352674,
+        "z": 0.1,
+        "fractional_span": 0.01146551970167059,
+        "min_value": 1.0874332300177523,
+        "max_value": 1.0999994858664626
+      },
+      {
+        "dipole_constant": 1.250755707242625,
+        "dipole_linear": 0.05006804306775362,
+        "dipole_ratio_c1_over_c0": 0.040030233544272195,
+        "dipole_r2": 0.98464614844979,
+        "dipole_plus_quadrupole_r2": 0.995632102802871,
+        "z": 0.3,
+        "fractional_span": 0.03894232070312738,
+        "min_value": 1.2499974307282533,
+        "max_value": 1.2999993923876692
+      },
+      {
+        "dipole_constant": 1.3930629340347347,
+        "dipole_linear": 0.10901622362302901,
+        "dipole_ratio_c1_over_c0": 0.07825649578320544,
+        "dipole_r2": 0.9861458280173684,
+        "dipole_plus_quadrupole_r2": 0.9971654026074046,
+        "z": 0.5,
+        "fractional_span": 0.07313081280346219,
+        "min_value": 1.3928298226692535,
+        "max_value": 1.4999992989087916
+      },
+      {
+        "dipole_constant": 1.6200992841406487,
+        "dipole_linear": 0.3896449669231175,
+        "dipole_ratio_c1_over_c0": 0.24050684469612452,
+        "dipole_r2": 0.9886257910659122,
+        "dipole_plus_quadrupole_r2": 0.9990430320749116,
+        "z": 1.0,
+        "fractional_span": 0.19649940421028045,
+        "min_value": 1.6308118571905195,
+        "max_value": 1.9999990652117423
+      },
+      {
+        "dipole_constant": 0.8524028402039869,
+        "dipole_linear": 2.2520677178062463,
+        "dipole_ratio_c1_over_c0": 2.6420227756013905,
+        "dipole_r2": 0.9781998683211299,
+        "dipole_plus_quadrupole_r2": 0.9980725902363548,
+        "z": 2.0,
+        "fractional_span": 0.885085801734372,
+        "min_value": 0.9220285485877667,
+        "max_value": 2.9999985978176014
+      }
+    ],
+    "projected": [
+      {
+        "dipole_constant": 1.047270835860108,
+        "dipole_linear": 0.006129219595463519,
+        "dipole_ratio_c1_over_c0": 0.005852564003111652,
+        "dipole_r2": 0.9827292533951087,
+        "dipole_plus_quadrupole_r2": 0.993153723357208,
+        "z": 0.1,
+        "fractional_span": 0.005933145843863291,
+        "min_value": 1.0470838246740004,
+        "max_value": 1.0533215817720534
+      },
+      {
+        "dipole_constant": 1.1704422596742323,
+        "dipole_linear": 0.028634517384744613,
+        "dipole_ratio_c1_over_c0": 0.0244646988333405,
+        "dipole_r2": 0.9838476533033349,
+        "dipole_plus_quadrupole_r2": 0.9946843182489256,
+        "z": 0.3,
+        "fractional_span": 0.024232840501657856,
+        "min_value": 1.1698225645286027,
+        "max_value": 1.1986464473445664
+      },
+      {
+        "dipole_constant": 1.3142320705956883,
+        "dipole_linear": 0.0722856878559713,
+        "dipole_ratio_c1_over_c0": 0.055002224853033084,
+        "dipole_r2": 0.985304831650646,
+        "dipole_plus_quadrupole_r2": 0.996341849612151,
+        "z": 0.5,
+        "fractional_span": 0.05263902245177635,
+        "min_value": 1.313538391782852,
+        "max_value": 1.3852448103093815
+      },
+      {
+        "dipole_constant": 1.615152050978777,
+        "dipole_linear": 0.37247434268195234,
+        "dipole_ratio_c1_over_c0": 0.23061255592390456,
+        "dipole_r2": 0.9885682387136377,
+        "dipole_plus_quadrupole_r2": 0.9990136945221626,
+        "z": 1.0,
+        "fractional_span": 0.18976897318643152,
+        "min_value": 1.6249663135662002,
+        "max_value": 1.9784058243238585
+      },
+      {
+        "dipole_constant": -0.1466635311012141,
+        "dipole_linear": 3.74768762219586,
+        "dipole_ratio_c1_over_c0": -25.55296189895728,
+        "dipole_r2": 0.9535168231046182,
+        "dipole_plus_quadrupole_r2": 0.9969659181808664,
+        "z": 2.0,
+        "fractional_span": 0.8594792651175568,
+        "min_value": 1.048553860164852,
+        "max_value": 3.4740942531181274
+      }
+    ]
+  },
+  "bbn_alpha_half_test": {
+    "alpha": 0.5,
+    "z_fit_window": [
+      1000.0,
+      1000000.0
+    ],
+    "n_eff_median": 1.9999994114696449,
+    "prefactor_median": 0.167910115196276,
+    "t0_kelvin": 2.7255,
+    "h0_km_s_mpc": 70.0,
+    "bbn_temperatures_mev": [
+      0.07,
+      0.1,
+      1.0
+    ],
+    "projected_hubble_s^-1": [
+      0.03383625457369189,
+      0.0690535807626365,
+      6.905358076263652
+    ],
+    "standard_radiation_hubble_s^-1": [
+      0.0033186854886688476,
+      0.006772827527895607,
+      0.6772827527895607
+    ],
+    "projected_to_standard_ratio": [
+      10.19567979226133,
+      10.19567979226133,
+      10.195679792261332
+    ],
+    "ratio_median": 10.19567979226133
+  }
+}
