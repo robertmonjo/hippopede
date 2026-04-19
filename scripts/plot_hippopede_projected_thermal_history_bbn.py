@@ -29,18 +29,19 @@ ALPHA_HIGH = 0.5
 ZC = 1.604e4
 DELTA = 2.0
 
-# Conservative BBN-equivalent observational corridor written as an allowed
-# excess/deficit in relativistic energy density.
+# BBN-inferred observational corridor from primordial abundances, expressed
+# as an equivalent extra-radiation contribution (Schoneberg 2024).
 NEFF_SM = 3.046
-DELTA_NEFF_CENTER = 0.0
-DELTA_NEFF_95 = 0.30
+DELTA_NEFF_CENTER = -0.10
+DELTA_NEFF_SIGMA = 0.21
+DELTA_NEFF_95 = 1.96 * DELTA_NEFF_SIGMA
 
 T_MIN_MEV = 0.03
 T_MAX_MEV = 3.0
 N_T = 600
 # Mild log-space smoothing used only for the displayed running-alpha thermal
 # branch, to suppress derivative artefacts from the dense projected-map lookup.
-SMOOTH_WINDOW = 15
+SMOOTH_WINDOW = 25
 
 
 def alpha_logistic(z: np.ndarray, zc: float = ZC, delta: float = DELTA):
@@ -134,34 +135,38 @@ def main():
         h_bbn_lo_95,
         h_bbn_hi_95,
         color="#d7c4a3",
-        alpha=0.34,
+        alpha=0.30,
         linewidth=0.0,
-        label=r"BBN-equivalent allowed band ($|\Delta N_{\mathrm{eff}}|\lesssim 0.3$, 95\%)",
+        label=(
+            r"Observed BBN-inferred band "
+            r"($\Delta N_{\mathrm{eff}}=-0.10\pm0.21$, 95\%)"
+        ),
         zorder=1,
     )
     ax1.plot(
         temperatures,
         h_bbn_center,
         color="#b08a53",
-        lw=1.6,
+        lw=1.8,
         ls="--",
         alpha=0.9,
-        label=r"BBN-equivalent central expansion ($\Delta N_{\mathrm{eff}}=0$)",
-        zorder=2,
+        label=r"Observed BBN-inferred central expansion",
+        zorder=5,
     )
     ax1.plot(
         temperatures,
         h_std,
         color="#2d2d2d",
-        lw=2.6,
+        lw=1.8,
+        ls=(0, (5, 2)),
         label=r"Standard radiation era ($g_*=10.75$)",
-        zorder=3,
+        zorder=6,
     )
     ax1.plot(
         temperatures,
         h_run,
         color="#1f78b4",
-        lw=2.8,
+        lw=2.4,
         label=rf"Projected hippopede with running $\alpha(z)$ ($z_c={ZC:.3g}$, $\Delta={DELTA:.0f}$)",
         zorder=4,
     )
@@ -169,8 +174,9 @@ def main():
         temperatures,
         h_low,
         color="#6a3d9a",
-        lw=1.9,
-        alpha=0.9,
+        lw=1.7,
+        ls="-.",
+        alpha=0.85,
         label=rf"Projected branch with constant $\alpha={ALPHA_LOW:.3f}$",
         zorder=3.5,
     )
@@ -178,7 +184,8 @@ def main():
         temperatures,
         h_half,
         color="#e31a1c",
-        lw=1.9,
+        lw=1.7,
+        ls=":",
         alpha=0.9,
         label=rf"Projected branch with constant $\alpha={ALPHA_HIGH:.1f}$",
         zorder=3.6,
@@ -189,14 +196,15 @@ def main():
         np.full_like(temperatures, scale_lo_95),
         np.full_like(temperatures, scale_hi_95),
         color="#d7c4a3",
-        alpha=0.34,
+        alpha=0.30,
         linewidth=0.0,
         zorder=1,
     )
-    ax2.axhline(1.0, color="#2d2d2d", lw=1.5, ls="--", alpha=0.75, zorder=2)
-    ax2.plot(temperatures, ratio_run, color="#1f78b4", lw=2.8, zorder=4)
-    ax2.plot(temperatures, ratio_low, color="#6a3d9a", lw=1.9, alpha=0.9, zorder=3)
-    ax2.plot(temperatures, ratio_half, color="#e31a1c", lw=1.9, alpha=0.9, zorder=3)
+    ax2.axhline(1.0, color="#2d2d2d", lw=1.5, ls=(0, (5, 2)), alpha=0.8, zorder=5)
+    ax2.axhline(scale_center, color="#b08a53", lw=1.6, ls="--", alpha=0.9, zorder=4)
+    ax2.plot(temperatures, ratio_run, color="#1f78b4", lw=2.4, zorder=6)
+    ax2.plot(temperatures, ratio_low, color="#6a3d9a", lw=1.7, ls="-.", alpha=0.85, zorder=3)
+    ax2.plot(temperatures, ratio_half, color="#e31a1c", lw=1.7, ls=":", alpha=0.9, zorder=3)
 
     for ax in (ax1, ax2):
         ax.set_xscale("log")
@@ -206,7 +214,7 @@ def main():
 
     ax1.set_yscale("log")
     ax1.set_ylabel(r"Expansion rate $H(T)\ [{\rm s}^{-1}]$")
-    ax1.set_title(r"Projected thermal history of the hippopede model vs. standard and BBN-equivalent expansion")
+    ax1.set_title(r"Projected thermal history of the hippopede model vs. standard and BBN-inferred expansion")
     ax1.legend(loc="upper left", fontsize=9, frameon=False)
 
     ax2.set_ylabel(r"$H(T)/H_{\rm rad}(T)$")
@@ -218,6 +226,36 @@ def main():
     sample_z = z_of_temperature_mev(sample_temperatures)
     sample_alpha = alpha_logistic(sample_z)
     sample_ratio_run = np.interp(sample_temperatures, temperatures, ratio_run)
+    sample_h_run = np.interp(sample_temperatures, temperatures, h_run)
+    sample_h_bbn = np.interp(sample_temperatures, temperatures, h_bbn_center)
+
+    ax1.scatter(
+        sample_temperatures,
+        sample_h_run,
+        s=18,
+        facecolor="white",
+        edgecolor="#1f78b4",
+        linewidth=0.9,
+        zorder=7,
+    )
+    ax1.scatter(
+        sample_temperatures,
+        sample_h_bbn,
+        s=14,
+        facecolor="#b08a53",
+        edgecolor="white",
+        linewidth=0.4,
+        zorder=7,
+    )
+    ax2.scatter(
+        sample_temperatures,
+        sample_ratio_run,
+        s=18,
+        facecolor="white",
+        edgecolor="#1f78b4",
+        linewidth=0.9,
+        zorder=7,
+    )
 
     summary = {
         "alpha_low": ALPHA_LOW,
@@ -225,6 +263,7 @@ def main():
         "z_c": ZC,
         "delta": DELTA,
         "delta_neff_center": DELTA_NEFF_CENTER,
+        "delta_neff_sigma": DELTA_NEFF_SIGMA,
         "delta_neff_95": DELTA_NEFF_95,
         "temperature_mev_samples": sample_temperatures.tolist(),
         "alpha_at_temperature_samples": sample_alpha.tolist(),
