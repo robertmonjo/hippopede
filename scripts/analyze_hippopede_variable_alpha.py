@@ -6,11 +6,12 @@ import sys
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPT_ROOT = Path(__file__).resolve().parent
 FIGURES = ROOT / "figures"
 FIGURES.mkdir(exist_ok=True)
 
-for extra in (str(ROOT), str(ROOT / "vendor_gapp"), str(ROOT / "vendor_gapp" / "covfunctions")):
+for extra in (str(SCRIPT_ROOT), str(ROOT / "vendor_gapp"), str(ROOT / "vendor_gapp" / "covfunctions")):
     if extra not in sys.path:
         sys.path.insert(0, extra)
 
