@@ -38,6 +38,8 @@ DELTA_NEFF_95 = 0.30
 T_MIN_MEV = 0.03
 T_MAX_MEV = 3.0
 N_T = 600
+# Mild log-space smoothing used only for the displayed running-alpha thermal
+# branch, to suppress derivative artefacts from the dense projected-map lookup.
 SMOOTH_WINDOW = 15
 
 
