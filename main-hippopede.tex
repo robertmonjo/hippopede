@@ -322,7 +322,7 @@ In this sense, the dS/AdS hyperboloids, their degenerate null-cone limits, and t
 
 \section*{\blue{Data Availability}}
 
-\blue{The numerical scripts used to generate the figures are included in the project folder together with the local data files required for the final four-panel comparison figure. In particular, Fig.~\ref{fig:hippopede_growth_3d} is produced by \texttt{plot\_hippopede\_growth\_3d.py}, whereas Fig.~\ref{fig:qz_final} is produced by \texttt{plot\_hippopede\_qz\_double\_panel\_with\_gapp.py}. The supplementary diagnostic script \texttt{analyze\_hippopede\_dipole\_bbn.py} reproduces the late-time dipole-like fit and the BBN-oriented $\alpha=1/2$ thermal check reported in the main text and Appendix. The bundled data directory contains the curated CC/BAO compilation, the local binned Pantheon$+$ input used by the GaPP reconstruction, and the local copy of the GaPP code needed to reproduce the figure.}
+\blue{The numerical scripts used to generate the figures are included in the project folder together with the local data files required for the final four-panel comparison figure. In particular, Fig.~\ref{fig:hippopede_growth_3d} is produced by \texttt{plot\_hippopede\_growth\_3d.py}, whereas Fig.~\ref{fig:qz_final} is produced by \texttt{plot\_hippopede\_qz\_double\_panel\_with\_gapp.py}. The supplementary diagnostic script \texttt{analyze\_hippopede\_dipole\_bbn.py} reproduces the late-time dipole-like fit and the constant-$\alpha$ BBN-oriented thermal checks reported in the main text and Appendix, while \texttt{analyze\_hippopede\_variable\_alpha.py} reproduces the running-$\alpha$ scans discussed in the Appendix. The bundled data directory contains the curated CC/BAO compilation, the local binned Pantheon$+$ input used by the GaPP reconstruction, and the local copy of the GaPP code needed to reproduce the figure.}
 
 \bibliographystyle{unsrt}
 \bibliography{main-hippopede}
@@ -418,7 +418,48 @@ The radiation-dominated standard law $H(T)\propto T^2$ is therefore recovered pr
 \alpha=\frac12.
 \end{equation}
 
-\blue{The asymptotic exponent, however, is only part of the BBN requirement. A direct numerical calibration of the same projected prescription, performed with the extended lookup implemented in \texttt{analyze\_hippopede\_dipole\_bbn.py}, gives $n_{\mathrm{eff}}=1.999999$ over the interval $10^3\lesssim z\lesssim10^6$, as expected for $\alpha=1/2$, but the corresponding physical normalization obtained from $H_{\mathrm{perc}}(T)=H_0E_{\mathrm{hyp}}^{\mathrm{proj}}(T/T_0-1)$ is still too large by an approximately constant factor $H_{\mathrm{perc}}/H_{\mathrm{rad}}\simeq10.2$ in the representative BBN temperature range $T\simeq0.07$--$1\,\mathrm{MeV}$ when compared with the standard radiation-era law. Thus the $\alpha=1/2$ branch reproduces the correct $T^2$ scaling but not yet the standard normalization. A complete BBN claim would still require a consistent treatment of $g_{*S}(T)$, the weak-interaction freeze-out and the light-element network. What the present result does show is more precise than our earlier qualitative statement: the pure-coasting objection is softened at the level of the high-redshift exponent, but a full early-universe completion is still needed before the primordial abundances can be regarded as reproduced.}
+\blue{The asymptotic exponent, however, is only part of the BBN requirement. A direct numerical calibration of the same projected prescription, performed with the extended lookup implemented in \texttt{analyze\_hippopede\_dipole\_bbn.py}, gives $n_{\mathrm{eff}}=1.999999$ over the interval $10^3\lesssim z\lesssim10^6$, as expected for $\alpha=1/2$, but the corresponding physical normalization obtained from $H_{\mathrm{perc}}(T)=H_0E_{\mathrm{hyp}}^{\mathrm{proj}}(T/T_0-1)$ is still too large by an approximately constant factor $H_{\mathrm{perc}}/H_{\mathrm{rad}}\simeq10.2$ in the representative BBN temperature range $T\simeq0.07$--$1\,\mathrm{MeV}$ when compared with the standard radiation-era law. Thus the constant-$\alpha$ branch with $\alpha=1/2$ reproduces the correct $T^2$ scaling but not yet the standard normalization.}
+
+\blue{This observation motivates a second, more flexible numerical test within the same projected family: instead of identifying a single constant projection index, one may allow a smooth perceived-history interpolation}
+\begin{equation}
+\blue{
+\alpha(z)=\alpha_{\mathrm{low}}+\frac{\alpha_{\mathrm{high}}-\alpha_{\mathrm{low}}}{2}
+\left[
+1+\tanh\!\left(
+\frac{\ln(1+z)-\ln(1+z_c)}{\Delta}
+\right)
+\right],
+}
+\end{equation}
+\blue{with $\alpha_{\mathrm{low}}=0.283$ fixed by the successful low-redshift phenomenology of Fig.~\ref{fig:qz_final}, and $\alpha_{\mathrm{high}}=1/2$ fixed by the radiation-like asymptotic requirement. Exploratory scans with the supplementary script \texttt{analyze\_hippopede\_variable\_alpha.py} show that a broad transition around}
+\begin{equation}
+\blue{
+z_c\sim 10^7,\qquad \Delta\sim 10,
+}
+\end{equation}
+\blue{yields an apparent BBN normalization much closer to the standard radiation-era value while preserving the low-redshift sector almost unchanged. A representative near-optimal case is}
+\begin{equation}
+\blue{
+z_c=10^7,\qquad \Delta=11,
+}
+\end{equation}
+\blue{for which the geometric-mean normalization over the interval $T\simeq0.07$--$1\,\mathrm{MeV}$ is}
+\begin{equation}
+\blue{
+\left\langle \frac{H_{\mathrm{perc}}}{H_{\mathrm{rad}}}\right\rangle_{\mathrm{geom}}
+\simeq 0.94,
+}
+\end{equation}
+\blue{with pointwise values}
+\begin{equation}
+\blue{
+\frac{H_{\mathrm{perc}}}{H_{\mathrm{rad}}}\approx
+0.649,\ 0.728,\ 0.904,\ 1.184,\ 1.434
+}
+\end{equation}
+\blue{at $T=0.07,\ 0.10,\ 0.20,\ 0.50,\ 1.0\,\mathrm{MeV}$, respectively. In other words, the same projected family admits a smooth perceived thermal history for which the whole BBN window is brought to within a factor of order unity of the standard radiation background, rather than remaining separated by four orders of magnitude as in the low-redshift constant-$\alpha$ branch or by a factor $\sim10$ as in the pure $\alpha=1/2$ branch.}
+
+\blue{This does not yet amount to a full light-element calculation, and we therefore do not claim in this paper that the primordial abundances are already reproduced in detail. Nevertheless, the numerical result is strong enough to support a more focused statement: within the projected-hyperconical interpretation, the apparent thermal history can be made quantitatively compatible with the order-of-magnitude normalization expected for a BBN-like radiation era, while still approaching the asymptotic $T^2$ scaling singled out by the high-redshift argument, provided one allows a smooth transition from the low-redshift phenomenological value $\alpha\simeq0.283$ to the asymptotic physical value $\alpha=1/2$. A complete BBN claim would then require the next layer of analysis, namely a consistent treatment of $g_{*S}(T)$, the weak-interaction freeze-out, and the light-element reaction network.}
 
 \end{document}
 
