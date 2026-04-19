@@ -162,7 +162,7 @@ def main():
         h_run,
         color="#1f78b4",
         lw=2.8,
-        label=rf"Projected hippopede with running $\alpha(z)$ ($z_c={ZC:.0e}$, $\Delta={DELTA:.0f}$)",
+        label=rf"Projected hippopede with running $\alpha(z)$ ($z_c={ZC:.3g}$, $\Delta={DELTA:.0f}$)",
         zorder=4,
     )
     ax1.plot(
