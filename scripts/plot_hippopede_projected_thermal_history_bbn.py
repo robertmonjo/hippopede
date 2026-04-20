@@ -39,9 +39,10 @@ DELTA_NEFF_95 = 1.96 * DELTA_NEFF_SIGMA
 T_MIN_MEV = 0.01
 T_MAX_MEV = 10.0
 N_T = 900
+RUN_MAX_MEV = 1.5
 # Mild log-space smoothing used only for the displayed running-alpha thermal
 # branch, to suppress derivative artefacts from the dense projected-map lookup.
-SMOOTH_WINDOW = 61
+SMOOTH_WINDOW = 41
 
 
 def alpha_logistic(z: np.ndarray, zc: float = ZC, delta: float = DELTA):
@@ -63,16 +64,14 @@ def e_constant_alpha(model: ExtendedProjectedHyperconical, z: np.ndarray):
 
 def e_variable_alpha(model: ExtendedProjectedHyperconical, z: np.ndarray, zc: float = ZC, delta: float = DELTA):
     z = np.asarray(z, dtype=float)
-    lz = np.log1p(z)
-    x = model.x_from_lz(lz)
+    x = model.x_from_lz(np.log1p(z))
     u = np.sqrt(np.maximum(1.0 / model.k - x**2, 1.0e-14))
     y = np.arctan2(x, u)
     a = alpha_logistic(z, zc=zc, delta=delta)
     g = np.maximum(1.0 - y / model.y0, 1.0e-12)
     t = (y / 2.0) / (g**a)
     rhat = 2.0 * np.arctan(t)
-    dr_dlz = np.gradient(rhat, lz, edge_order=2)
-    dr_dz = dr_dlz / (1.0 + z)
+    dr_dz = np.gradient(rhat, z, edge_order=2)
     dr_dz = np.where(np.abs(dr_dz) < 1.0e-18, np.sign(dr_dz) * 1.0e-18 + (dr_dz == 0.0) * 1.0e-18, dr_dz)
     h_raw = 1.0 / dr_dz
     h0 = np.interp(0.0, z, h_raw)
@@ -101,8 +100,8 @@ def main():
 
     model_low = ExtendedProjectedHyperconical(alpha=ALPHA_LOW)
     model_half = ExtendedProjectedHyperconical(alpha=ALPHA_HIGH)
-    lz_eval = np.linspace(0.0, np.log1p(max(1.0e10, z.max() * 1.05)), 20000)
-    z_eval = np.expm1(lz_eval)
+    z_eval = np.unique(np.concatenate(([0.0], np.geomspace(1.0e3, max(1.0e10, z.max() * 1.05), 5000), z)))
+    z_eval.sort()
 
     h_std = standard_radiation_hubble(temperatures)
     e_low = e_constant_alpha(model_low, z_eval)
@@ -124,6 +123,9 @@ def main():
     h_bbn_center = scale_center * h_std
     h_bbn_lo_95 = scale_lo_95 * h_std
     h_bbn_hi_95 = scale_hi_95 * h_std
+    run_mask = temperatures <= RUN_MAX_MEV
+    h_run_plot = np.where(run_mask, h_run, np.nan)
+    resid_run_plot = np.where(run_mask, h_run / h_bbn_center - 1.0, np.nan)
     resid_std = h_std / h_bbn_center - 1.0
     resid_run = h_run / h_bbn_center - 1.0
     resid_lo_95 = h_bbn_lo_95 / h_bbn_center - 1.0
@@ -171,7 +173,7 @@ def main():
     )
     ax1.plot(
         temperatures,
-        h_run,
+        h_run_plot,
         color="#1f78b4",
         lw=2.4,
         label=rf"Projected hippopede with running $\alpha(z)$ ($z_c={ZC:.3g}$)",
@@ -219,7 +221,7 @@ def main():
     )
     ax2.plot(
         temperatures,
-        resid_run,
+        resid_run_plot,
         color="#1f78b4",
         lw=2.4,
         zorder=6,
