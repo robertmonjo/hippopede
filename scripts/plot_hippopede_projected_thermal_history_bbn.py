@@ -71,7 +71,12 @@ def e_variable_alpha(model: ExtendedProjectedHyperconical, z: np.ndarray, zc: fl
     t = (y / 2.0) / (g**a)
     rhat = 2.0 * np.arctan(t)
     dr_dz = np.gradient(rhat, z, edge_order=2)
-    h_raw = np.where(np.abs(dr_dz) > 1.0e-18, 1.0 / dr_dz, np.nan)
+    dr_dz = np.where(
+        np.abs(dr_dz) < 1.0e-18,
+        np.sign(dr_dz) * 1.0e-18 + (dr_dz == 0.0) * 1.0e-18,
+        dr_dz,
+    )
+    h_raw = 1.0 / dr_dz
     h0 = np.interp(0.0, z, h_raw)
     return h_raw / h0
 
