@@ -39,6 +39,7 @@ DELTA_NEFF_95 = 1.96 * DELTA_NEFF_SIGMA
 T_MIN_MEV = 0.01
 T_MAX_MEV = 10.0
 N_T = 1500
+RUN_MAX_MEV = 0.15
 # Mild log-space smoothing used only for the displayed running-alpha thermal
 # branch, to suppress derivative artefacts from the dense projected-map lookup.
 SMOOTH_WINDOW = 41
@@ -115,6 +116,7 @@ def main():
     h_half = H0_SI * np.interp(z, z_eval, e_half)
     h_run = H0_SI * np.interp(z, z_eval, e_run)
     h_run = smooth_positive_series(h_run, window=SMOOTH_WINDOW)
+    run_mask = temperatures <= RUN_MAX_MEV
 
     ratio_low = h_low / h_std
     ratio_half = h_half / h_std
@@ -128,6 +130,8 @@ def main():
     h_bbn_hi_95 = scale_hi_95 * h_std
     resid_std = h_std / h_bbn_center - 1.0
     resid_run = h_run / h_bbn_center - 1.0
+    h_run_plot = np.where(run_mask, h_run, np.nan)
+    resid_run_plot = np.where(run_mask, resid_run, np.nan)
     resid_lo_95 = h_bbn_lo_95 / h_bbn_center - 1.0
     resid_hi_95 = h_bbn_hi_95 / h_bbn_center - 1.0
 
@@ -173,7 +177,7 @@ def main():
     )
     ax1.plot(
         temperatures,
-        h_run,
+        h_run_plot,
         color="#1f78b4",
         lw=2.4,
         label=rf"Projected hippopede with running $\alpha(z)$ ($z_c={ZC:.3g}$)",
@@ -221,7 +225,7 @@ def main():
     )
     ax2.plot(
         temperatures,
-        resid_run,
+        resid_run_plot,
         color="#1f78b4",
         lw=2.4,
         zorder=6,
@@ -284,6 +288,7 @@ def main():
         "alpha_high": ALPHA_HIGH,
         "z_c": ZC,
         "delta": DELTA,
+        "running_plot_max_mev": RUN_MAX_MEV,
         "delta_neff_center": DELTA_NEFF_CENTER,
         "delta_neff_sigma": DELTA_NEFF_SIGMA,
         "delta_neff_95": DELTA_NEFF_95,

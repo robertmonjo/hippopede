@@ -3,6 +3,7 @@
   "alpha_high": 0.5,
   "z_c": 16155.0,
   "delta": 2.0,
+  "running_plot_max_mev": 0.15,
   "delta_neff_center": -0.1,
   "delta_neff_sigma": 0.21,
   "delta_neff_95": 0.41159999999999997,
