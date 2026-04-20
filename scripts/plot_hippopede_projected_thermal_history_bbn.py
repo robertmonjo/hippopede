@@ -39,6 +39,7 @@ DELTA_NEFF_95 = 1.96 * DELTA_NEFF_SIGMA
 T_MIN_MEV = 0.01
 T_MAX_MEV = 10.0
 N_T = 900
+RUN_MIN_MEV = 0.03
 RUN_MAX_MEV = 1.5
 # Mild log-space smoothing used only for the displayed running-alpha thermal
 # branch, to suppress derivative artefacts from the dense projected-map lookup.
@@ -97,25 +98,30 @@ def smooth_positive_series(y: np.ndarray, window: int = SMOOTH_WINDOW):
 def main():
     temperatures = np.geomspace(T_MIN_MEV, T_MAX_MEV, N_T)
     z = z_of_temperature_mev(temperatures)
+    temperatures_run = np.geomspace(RUN_MIN_MEV, RUN_MAX_MEV, max(400, N_T // 2))
+    z_run = z_of_temperature_mev(temperatures_run)
 
     model_low = ExtendedProjectedHyperconical(alpha=ALPHA_LOW)
     model_half = ExtendedProjectedHyperconical(alpha=ALPHA_HIGH)
     z_eval = np.unique(np.concatenate(([0.0], np.geomspace(1.0e3, max(1.0e10, z.max() * 1.05), 5000), z)))
     z_eval.sort()
+    z_eval_run = np.unique(np.concatenate(([0.0], np.geomspace(1.0e3, max(1.0e10, z_run.max() * 1.05), 5000), z_run)))
+    z_eval_run.sort()
 
     h_std = standard_radiation_hubble(temperatures)
     e_low = e_constant_alpha(model_low, z_eval)
     e_half = e_constant_alpha(model_half, z_eval)
-    e_run = e_variable_alpha(model_low, z_eval, zc=ZC, delta=DELTA)
+    e_run = e_variable_alpha(model_low, z_eval_run, zc=ZC, delta=DELTA)
 
     h_low = H0_SI * np.interp(z, z_eval, e_low)
     h_half = H0_SI * np.interp(z, z_eval, e_half)
-    h_run = H0_SI * np.interp(z, z_eval, e_run)
+    h_run = H0_SI * np.interp(z_run, z_eval_run, e_run)
     h_run = smooth_positive_series(h_run, window=SMOOTH_WINDOW)
 
     ratio_low = h_low / h_std
     ratio_half = h_half / h_std
-    ratio_run = h_run / h_std
+    h_std_run = standard_radiation_hubble(temperatures_run)
+    ratio_run = h_run / h_std_run
 
     scale_center = neff_to_scale(DELTA_NEFF_CENTER)
     scale_lo_95 = neff_to_scale(DELTA_NEFF_CENTER - DELTA_NEFF_95)
@@ -123,9 +129,8 @@ def main():
     h_bbn_center = scale_center * h_std
     h_bbn_lo_95 = scale_lo_95 * h_std
     h_bbn_hi_95 = scale_hi_95 * h_std
-    run_mask = temperatures <= RUN_MAX_MEV
-    h_run_plot = np.where(run_mask, h_run, np.nan)
-    resid_run_plot = np.where(run_mask, h_run / h_bbn_center - 1.0, np.nan)
+    h_bbn_center_run = scale_center * h_std_run
+    resid_run_plot = h_run / h_bbn_center_run - 1.0
     resid_std = h_std / h_bbn_center - 1.0
     resid_run = h_run / h_bbn_center - 1.0
     resid_lo_95 = h_bbn_lo_95 / h_bbn_center - 1.0
@@ -172,8 +177,8 @@ def main():
         zorder=6,
     )
     ax1.plot(
-        temperatures,
-        h_run_plot,
+        temperatures_run,
+        h_run,
         color="#1f78b4",
         lw=2.4,
         label=rf"Projected hippopede with running $\alpha(z)$ ($z_c={ZC:.3g}$)",
@@ -220,7 +225,7 @@ def main():
         label=r"Standard$-$observations",
     )
     ax2.plot(
-        temperatures,
+        temperatures_run,
         resid_run_plot,
         color="#1f78b4",
         lw=2.4,
@@ -247,11 +252,11 @@ def main():
     sample_temperatures = np.array([0.07, 0.10, 0.20, 0.50, 1.00])
     sample_z = z_of_temperature_mev(sample_temperatures)
     sample_alpha = alpha_logistic(sample_z)
-    sample_ratio_run = np.interp(sample_temperatures, temperatures, ratio_run)
+    sample_ratio_run = np.interp(sample_temperatures, temperatures_run, ratio_run)
     sample_h_bbn = np.interp(sample_temperatures, temperatures, h_bbn_center)
     sample_h_bbn_lo = np.interp(sample_temperatures, temperatures, h_bbn_lo_95)
     sample_h_bbn_hi = np.interp(sample_temperatures, temperatures, h_bbn_hi_95)
-    sample_resid_run = np.interp(sample_temperatures, temperatures, resid_run)
+    sample_resid_run = np.interp(sample_temperatures, temperatures_run, resid_run_plot)
     sample_resid_std = np.interp(sample_temperatures, temperatures, resid_std)
     obs_err = np.vstack((sample_h_bbn - sample_h_bbn_lo, sample_h_bbn_hi - sample_h_bbn))
     ax1.errorbar(
