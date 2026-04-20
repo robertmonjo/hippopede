@@ -41,7 +41,7 @@ T_MAX_MEV = 3.0
 N_T = 600
 # Mild log-space smoothing used only for the displayed running-alpha thermal
 # branch, to suppress derivative artefacts from the dense projected-map lookup.
-SMOOTH_WINDOW = 25
+SMOOTH_WINDOW = 41
 
 
 def alpha_logistic(z: np.ndarray, zc: float = ZC, delta: float = DELTA):
