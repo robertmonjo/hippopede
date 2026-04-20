@@ -63,14 +63,16 @@ def e_constant_alpha(model: ExtendedProjectedHyperconical, z: np.ndarray):
 
 def e_variable_alpha(model: ExtendedProjectedHyperconical, z: np.ndarray, zc: float = ZC, delta: float = DELTA):
     z = np.asarray(z, dtype=float)
-    x = model.x_from_lz(np.log1p(z))
+    lz = np.log1p(z)
+    x = model.x_from_lz(lz)
     u = np.sqrt(np.maximum(1.0 / model.k - x**2, 1.0e-14))
     y = np.arctan2(x, u)
     a = alpha_logistic(z, zc=zc, delta=delta)
     g = np.maximum(1.0 - y / model.y0, 1.0e-12)
     t = (y / 2.0) / (g**a)
     rhat = 2.0 * np.arctan(t)
-    dr_dz = np.gradient(rhat, z, edge_order=2)
+    dr_dlz = np.gradient(rhat, lz, edge_order=2)
+    dr_dz = dr_dlz / (1.0 + z)
     dr_dz = np.where(np.abs(dr_dz) < 1.0e-18, np.sign(dr_dz) * 1.0e-18 + (dr_dz == 0.0) * 1.0e-18, dr_dz)
     h_raw = 1.0 / dr_dz
     h0 = np.interp(0.0, z, h_raw)
@@ -99,8 +101,8 @@ def main():
 
     model_low = ExtendedProjectedHyperconical(alpha=ALPHA_LOW)
     model_half = ExtendedProjectedHyperconical(alpha=ALPHA_HIGH)
-    z_eval = np.unique(np.concatenate(([0.0], np.geomspace(1.0e3, max(1.0e10, z.max() * 1.05), 5000), z)))
-    z_eval.sort()
+    lz_eval = np.linspace(0.0, np.log1p(max(1.0e10, z.max() * 1.05)), 20000)
+    z_eval = np.expm1(lz_eval)
 
     h_std = standard_radiation_hubble(temperatures)
     e_low = e_constant_alpha(model_low, z_eval)
