@@ -236,29 +236,19 @@ def main():
 
     ax2.set_ylabel(r"Residual $(H-H_{\rm obs})/H_{\rm obs}$")
     ax2.set_xlabel(r"Perceived temperature $T\ [{\rm MeV}]$")
-    ax2.set_ylim(-0.08, 0.08)
+    ax2.set_ylim(-0.05, 0.05)
+    ax2.set_xlim(0.05, 1.5)
     ax2.legend(loc="lower left", fontsize=9, frameon=False)
 
     sample_temperatures = np.array([0.07, 0.10, 0.20, 0.50, 1.00])
     sample_z = z_of_temperature_mev(sample_temperatures)
     sample_alpha = alpha_logistic(sample_z)
     sample_ratio_run = np.interp(sample_temperatures, temperatures, ratio_run)
-    sample_h_run = np.interp(sample_temperatures, temperatures, h_run)
     sample_h_bbn = np.interp(sample_temperatures, temperatures, h_bbn_center)
     sample_h_bbn_lo = np.interp(sample_temperatures, temperatures, h_bbn_lo_95)
     sample_h_bbn_hi = np.interp(sample_temperatures, temperatures, h_bbn_hi_95)
     sample_resid_run = np.interp(sample_temperatures, temperatures, resid_run)
     sample_resid_std = np.interp(sample_temperatures, temperatures, resid_std)
-
-    ax1.scatter(
-        sample_temperatures,
-        sample_h_run,
-        s=18,
-        facecolor="white",
-        edgecolor="#1f78b4",
-        linewidth=0.9,
-        zorder=7,
-    )
     obs_err = np.vstack((sample_h_bbn - sample_h_bbn_lo, sample_h_bbn_hi - sample_h_bbn))
     ax1.errorbar(
         sample_temperatures,
@@ -283,24 +273,6 @@ def main():
         edgecolor="white",
         linewidth=0.6,
         zorder=7,
-    )
-    ax2.scatter(
-        sample_temperatures,
-        sample_resid_std,
-        s=16,
-        facecolor="white",
-        edgecolor="#2d2d2d",
-        linewidth=0.8,
-        zorder=7,
-    )
-    ax2.scatter(
-        sample_temperatures,
-        sample_resid_run,
-        s=18,
-        facecolor="white",
-        edgecolor="#1f78b4",
-        linewidth=0.9,
-        zorder=8,
     )
 
     summary = {
