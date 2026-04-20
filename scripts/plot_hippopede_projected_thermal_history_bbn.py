@@ -121,6 +121,10 @@ def main():
     h_bbn_center = scale_center * h_std
     h_bbn_lo_95 = scale_lo_95 * h_std
     h_bbn_hi_95 = scale_hi_95 * h_std
+    resid_std = h_std / h_bbn_center - 1.0
+    resid_run = h_run / h_bbn_center - 1.0
+    resid_lo_95 = h_bbn_lo_95 / h_bbn_center - 1.0
+    resid_hi_95 = h_bbn_hi_95 / h_bbn_center - 1.0
 
     fig, (ax1, ax2) = plt.subplots(
         2,
@@ -139,7 +143,7 @@ def main():
         linewidth=0.0,
         label=(
             r"Observed BBN-inferred band "
-            r"($\Delta N_{\mathrm{eff}}=-0.10\pm0.21$, 95\%)"
+            r"(Sch\"oneberg 2024; $\Delta N_{\mathrm{eff}}=-0.10\pm0.21$, 95\%)"
         ),
         zorder=1,
     )
@@ -150,7 +154,7 @@ def main():
         lw=1.8,
         ls="--",
         alpha=0.9,
-        label=r"Observed BBN-inferred central expansion",
+        label=r"Observed BBN-inferred central expansion (Sch\"oneberg 2024)",
         zorder=5,
     )
     ax1.plot(
@@ -193,18 +197,31 @@ def main():
 
     ax2.fill_between(
         temperatures,
-        np.full_like(temperatures, scale_lo_95),
-        np.full_like(temperatures, scale_hi_95),
+        resid_lo_95,
+        resid_hi_95,
         color="#d7c4a3",
         alpha=0.30,
         linewidth=0.0,
         zorder=1,
     )
-    ax2.axhline(1.0, color="#2d2d2d", lw=1.5, ls=(0, (5, 2)), alpha=0.8, zorder=5)
-    ax2.axhline(scale_center, color="#b08a53", lw=1.6, ls="--", alpha=0.9, zorder=4)
-    ax2.plot(temperatures, ratio_run, color="#1f78b4", lw=2.4, zorder=6)
-    ax2.plot(temperatures, ratio_low, color="#6a3d9a", lw=1.7, ls="-.", alpha=0.85, zorder=3)
-    ax2.plot(temperatures, ratio_half, color="#e31a1c", lw=1.7, ls=":", alpha=0.9, zorder=3)
+    ax2.axhline(0.0, color="#2d2d2d", lw=1.3, ls=(0, (5, 2)), alpha=0.8, zorder=5)
+    ax2.plot(
+        temperatures,
+        resid_std,
+        color="#2d2d2d",
+        lw=1.8,
+        ls=(0, (5, 2)),
+        zorder=4,
+        label=r"Standard$-$observations",
+    )
+    ax2.plot(
+        temperatures,
+        resid_run,
+        color="#1f78b4",
+        lw=2.4,
+        zorder=6,
+        label=r"Hyperconical$_{\rm CMB}-$observations",
+    )
 
     for ax in (ax1, ax2):
         ax.set_xscale("log")
@@ -217,10 +234,10 @@ def main():
     ax1.set_title(r"Projected thermal history of the hippopede model vs. standard and BBN-inferred expansion")
     ax1.legend(loc="upper left", fontsize=9, frameon=False)
 
-    ax2.set_ylabel(r"$H(T)/H_{\rm rad}(T)$")
+    ax2.set_ylabel(r"Residual $(H-H_{\rm obs})/H_{\rm obs}$")
     ax2.set_xlabel(r"Perceived temperature $T\ [{\rm MeV}]$")
-    ax2.set_ylim(1.0e-3, 2.0e1)
-    ax2.set_yscale("log")
+    ax2.set_ylim(-0.08, 0.08)
+    ax2.legend(loc="lower left", fontsize=9, frameon=False)
 
     sample_temperatures = np.array([0.07, 0.10, 0.20, 0.50, 1.00])
     sample_z = z_of_temperature_mev(sample_temperatures)
@@ -228,6 +245,10 @@ def main():
     sample_ratio_run = np.interp(sample_temperatures, temperatures, ratio_run)
     sample_h_run = np.interp(sample_temperatures, temperatures, h_run)
     sample_h_bbn = np.interp(sample_temperatures, temperatures, h_bbn_center)
+    sample_h_bbn_lo = np.interp(sample_temperatures, temperatures, h_bbn_lo_95)
+    sample_h_bbn_hi = np.interp(sample_temperatures, temperatures, h_bbn_hi_95)
+    sample_resid_run = np.interp(sample_temperatures, temperatures, resid_run)
+    sample_resid_std = np.interp(sample_temperatures, temperatures, resid_std)
 
     ax1.scatter(
         sample_temperatures,
@@ -238,23 +259,48 @@ def main():
         linewidth=0.9,
         zorder=7,
     )
-    ax1.scatter(
+    obs_err = np.vstack((sample_h_bbn - sample_h_bbn_lo, sample_h_bbn_hi - sample_h_bbn))
+    ax1.errorbar(
         sample_temperatures,
         sample_h_bbn,
-        s=14,
+        yerr=obs_err,
+        fmt="o",
+        ms=4.2,
+        color="#b08a53",
+        mfc="white",
+        mec="#8b6a3d",
+        mew=0.9,
+        elinewidth=0.9,
+        capsize=2.2,
+        zorder=7,
+        label=r"BBN-inferred anchor points (Sch\"oneberg 2024)",
+    )
+    ax2.scatter(
+        sample_temperatures,
+        np.zeros_like(sample_temperatures),
+        s=18,
         facecolor="#b08a53",
         edgecolor="white",
-        linewidth=0.4,
+        linewidth=0.6,
         zorder=7,
     )
     ax2.scatter(
         sample_temperatures,
-        sample_ratio_run,
+        sample_resid_std,
+        s=16,
+        facecolor="white",
+        edgecolor="#2d2d2d",
+        linewidth=0.8,
+        zorder=7,
+    )
+    ax2.scatter(
+        sample_temperatures,
+        sample_resid_run,
         s=18,
         facecolor="white",
         edgecolor="#1f78b4",
         linewidth=0.9,
-        zorder=7,
+        zorder=8,
     )
 
     summary = {
@@ -268,6 +314,8 @@ def main():
         "temperature_mev_samples": sample_temperatures.tolist(),
         "alpha_at_temperature_samples": sample_alpha.tolist(),
         "running_ratio_samples": sample_ratio_run.tolist(),
+        "running_residual_samples": sample_resid_run.tolist(),
+        "standard_residual_samples": sample_resid_std.tolist(),
         "constant_alpha_0.283_ratio_samples": np.interp(sample_temperatures, temperatures, ratio_low).tolist(),
         "constant_alpha_0.5_ratio_samples": np.interp(sample_temperatures, temperatures, ratio_half).tolist(),
         "bbn_band_ratio_95": [float(scale_lo_95), float(scale_hi_95)],
