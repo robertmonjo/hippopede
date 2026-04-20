@@ -26,7 +26,7 @@ from analyze_hippopede_dipole_bbn import (  # noqa: E402
 
 ALPHA_LOW = 0.283
 ALPHA_HIGH = 0.5
-ZC = 1.604e4
+ZC = 1.6155e4
 DELTA = 2.0
 
 # BBN-inferred observational corridor from primordial abundances, expressed
