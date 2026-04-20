@@ -41,7 +41,7 @@ T_MAX_MEV = 3.0
 N_T = 600
 # Mild log-space smoothing used only for the displayed running-alpha thermal
 # branch, to suppress derivative artefacts from the dense projected-map lookup.
-SMOOTH_WINDOW = 41
+SMOOTH_WINDOW = 21
 
 
 def alpha_logistic(z: np.ndarray, zc: float = ZC, delta: float = DELTA):
@@ -49,6 +49,13 @@ def alpha_logistic(z: np.ndarray, zc: float = ZC, delta: float = DELTA):
     return ALPHA_LOW + 0.5 * (ALPHA_HIGH - ALPHA_LOW) * (
         1.0 + np.tanh((np.log1p(z) - np.log1p(zc)) / delta)
     )
+
+
+def dalpha_dz(z: np.ndarray, zc: float = ZC, delta: float = DELTA):
+    z = np.asarray(z, dtype=float)
+    arg = (np.log1p(z) - np.log1p(zc)) / delta
+    sech2 = 1.0 / np.cosh(arg) ** 2
+    return 0.5 * (ALPHA_HIGH - ALPHA_LOW) * sech2 / (delta * (1.0 + z))
 
 
 def z_of_temperature_mev(T_mev: np.ndarray):
@@ -67,10 +74,16 @@ def e_variable_alpha(model: ExtendedProjectedHyperconical, z: np.ndarray, zc: fl
     u = np.sqrt(np.maximum(1.0 / model.k - x**2, 1.0e-14))
     y = np.arctan2(x, u)
     a = alpha_logistic(z, zc=zc, delta=delta)
+    ap = dalpha_dz(z, zc=zc, delta=delta)
     g = np.maximum(1.0 - y / model.y0, 1.0e-12)
-    t = (y / 2.0) / (g**a)
-    rhat = 2.0 * np.arctan(t)
-    dr_dz = np.gradient(rhat, z, edge_order=2)
+    dydx = 1.0 / u
+    dydz = dydx * model.dxdLZ(x) / (1.0 + z)
+    pref = g ** (-a)
+    t = 0.5 * y * pref
+    dtdz = pref * (
+        0.5 * dydz + 0.5 * y * (-ap * np.log(g) + a * dydz / (model.y0 * g))
+    )
+    dr_dz = 2.0 * dtdz / (1.0 + t**2)
     h_raw = 1.0 / dr_dz
     h0 = np.interp(0.0, z, h_raw)
     return h_raw / h0
@@ -93,7 +106,7 @@ def smooth_positive_series(y: np.ndarray, window: int = SMOOTH_WINDOW):
 
 
 def main():
-    temperatures = np.geomspace(T_MIN_MEV, T_MAX_MEV, N_T)
+    temperatures = np.geomspace(1.0e-2, 1.0e1, 900)
     z = z_of_temperature_mev(temperatures)
 
     model_low = ExtendedProjectedHyperconical(alpha=ALPHA_LOW)
@@ -171,14 +184,14 @@ def main():
         h_run,
         color="#1f78b4",
         lw=2.4,
-        label=rf"Projected hippopede with running $\alpha(z)$ ($z_c={ZC:.3g}$, $\Delta={DELTA:.0f}$)",
+        label=rf"Projected hippopede with running $\alpha(z)$ ($z_c={ZC:.3g}$)",
         zorder=4,
     )
     ax1.plot(
         temperatures,
         h_low,
         color="#6a3d9a",
-        lw=1.7,
+        lw=1.35,
         ls="-.",
         alpha=0.85,
         label=rf"Projected branch with constant $\alpha={ALPHA_LOW:.3f}$",
@@ -188,7 +201,7 @@ def main():
         temperatures,
         h_half,
         color="#e31a1c",
-        lw=1.7,
+        lw=1.35,
         ls=":",
         alpha=0.9,
         label=rf"Projected branch with constant $\alpha={ALPHA_HIGH:.1f}$",
@@ -220,7 +233,6 @@ def main():
         color="#1f78b4",
         lw=2.4,
         zorder=6,
-        label=r"Hyperconical$_{\rm CMB}-$observations",
     )
 
     for ax in (ax1, ax2):
@@ -231,14 +243,13 @@ def main():
 
     ax1.set_yscale("log")
     ax1.set_ylabel(r"Expansion rate $H(T)\ [{\rm s}^{-1}]$")
-    ax1.set_title(r"Projected thermal history of the hippopede model vs. standard and BBN-inferred expansion")
     ax1.legend(loc="upper left", fontsize=9, frameon=False)
+    ax1.set_ylim(3.0e-4, 1.0e3)
 
     ax2.set_ylabel(r"Residual $(H-H_{\rm obs})/H_{\rm obs}$")
     ax2.set_xlabel(r"Perceived temperature $T\ [{\rm MeV}]$")
     ax2.set_ylim(-0.05, 0.05)
-    ax2.set_xlim(0.05, 1.5)
-    ax2.legend(loc="lower left", fontsize=9, frameon=False)
+    ax2.set_xlim(1.0e-2, 1.0e1)
 
     sample_temperatures = np.array([0.07, 0.10, 0.20, 0.50, 1.00])
     sample_z = z_of_temperature_mev(sample_temperatures)
