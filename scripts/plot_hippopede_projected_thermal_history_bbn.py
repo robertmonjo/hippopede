@@ -39,8 +39,11 @@ DELTA_NEFF_95 = 1.96 * DELTA_NEFF_SIGMA
 T_MIN_MEV = 0.01
 T_MAX_MEV = 10.0
 N_T = 900
+# Keep the running-alpha branch on the numerically stable domain of the literal
+# projected map. We still show the full x-range for the reference curves, but
+# avoid extending the blue branch into a regime dominated by derivative noise.
 RUN_MIN_MEV = 0.03
-RUN_MAX_MEV = 1.5
+RUN_MAX_MEV = 3.0
 # Mild log-space smoothing used only for the displayed running-alpha thermal
 # branch, to suppress derivative artefacts from the dense projected-map lookup.
 SMOOTH_WINDOW = 41
@@ -98,7 +101,7 @@ def smooth_positive_series(y: np.ndarray, window: int = SMOOTH_WINDOW):
 def main():
     temperatures = np.geomspace(T_MIN_MEV, T_MAX_MEV, N_T)
     z = z_of_temperature_mev(temperatures)
-    temperatures_run = np.geomspace(RUN_MIN_MEV, RUN_MAX_MEV, max(400, N_T // 2))
+    temperatures_run = np.geomspace(RUN_MIN_MEV, RUN_MAX_MEV, max(500, N_T // 2))
     z_run = z_of_temperature_mev(temperatures_run)
 
     model_low = ExtendedProjectedHyperconical(alpha=ALPHA_LOW)
@@ -132,7 +135,6 @@ def main():
     h_bbn_center_run = scale_center * h_std_run
     resid_run_plot = h_run / h_bbn_center_run - 1.0
     resid_std = h_std / h_bbn_center - 1.0
-    resid_run = h_run / h_bbn_center - 1.0
     resid_lo_95 = h_bbn_lo_95 / h_bbn_center - 1.0
     resid_hi_95 = h_bbn_hi_95 / h_bbn_center - 1.0
 
@@ -230,7 +232,6 @@ def main():
         color="#1f78b4",
         lw=2.4,
         zorder=6,
-        label=r"Hyperconical$_{\rm CMB}-$observations",
     )
 
     for ax in (ax1, ax2):
@@ -242,7 +243,7 @@ def main():
     ax1.set_yscale("log")
     ax1.set_ylabel(r"Expansion rate $H(T)\ [{\rm s}^{-1}]$")
     ax1.legend(loc="upper left", fontsize=9, frameon=False)
-    ax1.set_ylim(3.0e-4, 1.0e2)
+    ax1.set_ylim(3.0e-4, 1.0e3)
 
     ax2.set_ylabel(r"Residual $(H-H_{\rm obs})/H_{\rm obs}$")
     ax2.set_xlabel(r"Perceived temperature $T\ [{\rm MeV}]$")
