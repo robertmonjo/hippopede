@@ -36,12 +36,12 @@ DELTA_NEFF_CENTER = -0.10
 DELTA_NEFF_SIGMA = 0.21
 DELTA_NEFF_95 = 1.96 * DELTA_NEFF_SIGMA
 
-T_MIN_MEV = 0.03
-T_MAX_MEV = 3.0
-N_T = 600
+T_MIN_MEV = 0.01
+T_MAX_MEV = 10.0
+N_T = 900
 # Mild log-space smoothing used only for the displayed running-alpha thermal
 # branch, to suppress derivative artefacts from the dense projected-map lookup.
-SMOOTH_WINDOW = 41
+SMOOTH_WINDOW = 61
 
 
 def alpha_logistic(z: np.ndarray, zc: float = ZC, delta: float = DELTA):
@@ -71,6 +71,7 @@ def e_variable_alpha(model: ExtendedProjectedHyperconical, z: np.ndarray, zc: fl
     t = (y / 2.0) / (g**a)
     rhat = 2.0 * np.arctan(t)
     dr_dz = np.gradient(rhat, z, edge_order=2)
+    dr_dz = np.where(np.abs(dr_dz) < 1.0e-18, np.sign(dr_dz) * 1.0e-18 + (dr_dz == 0.0) * 1.0e-18, dr_dz)
     h_raw = 1.0 / dr_dz
     h0 = np.interp(0.0, z, h_raw)
     return h_raw / h0
@@ -82,7 +83,7 @@ def neff_to_scale(delta_neff: np.ndarray | float):
 
 
 def smooth_positive_series(y: np.ndarray, window: int = SMOOTH_WINDOW):
-    y = np.asarray(y, dtype=float)
+    y = np.maximum(np.asarray(y, dtype=float), 1.0e-30)
     if window <= 1 or len(y) < window:
         return y.copy()
     pad = window // 2
@@ -171,7 +172,7 @@ def main():
         h_run,
         color="#1f78b4",
         lw=2.4,
-        label=rf"Projected hippopede with running $\alpha(z)$ ($z_c={ZC:.3g}$, $\Delta={DELTA:.0f}$)",
+        label=rf"Projected hippopede with running $\alpha(z)$ ($z_c={ZC:.3g}$)",
         zorder=4,
     )
     ax1.plot(
@@ -231,14 +232,13 @@ def main():
 
     ax1.set_yscale("log")
     ax1.set_ylabel(r"Expansion rate $H(T)\ [{\rm s}^{-1}]$")
-    ax1.set_title(r"Projected thermal history of the hippopede model vs. standard and BBN-inferred expansion")
     ax1.legend(loc="upper left", fontsize=9, frameon=False)
+    ax1.set_ylim(3.0e-4, 1.0e2)
 
     ax2.set_ylabel(r"Residual $(H-H_{\rm obs})/H_{\rm obs}$")
     ax2.set_xlabel(r"Perceived temperature $T\ [{\rm MeV}]$")
     ax2.set_ylim(-0.05, 0.05)
-    ax2.set_xlim(0.05, 1.5)
-    ax2.legend(loc="lower left", fontsize=9, frameon=False)
+    ax2.set_xlim(1.0e-2, 1.0e1)
 
     sample_temperatures = np.array([0.07, 0.10, 0.20, 0.50, 1.00])
     sample_z = z_of_temperature_mev(sample_temperatures)
