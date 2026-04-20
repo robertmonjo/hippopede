@@ -36,12 +36,12 @@ DELTA_NEFF_CENTER = -0.10
 DELTA_NEFF_SIGMA = 0.21
 DELTA_NEFF_95 = 1.96 * DELTA_NEFF_SIGMA
 
-T_MIN_MEV = 0.03
-T_MAX_MEV = 3.0
-N_T = 600
+T_MIN_MEV = 0.01
+T_MAX_MEV = 10.0
+N_T = 1500
 # Mild log-space smoothing used only for the displayed running-alpha thermal
 # branch, to suppress derivative artefacts from the dense projected-map lookup.
-SMOOTH_WINDOW = 21
+SMOOTH_WINDOW = 41
 
 
 def alpha_logistic(z: np.ndarray, zc: float = ZC, delta: float = DELTA):
@@ -49,13 +49,6 @@ def alpha_logistic(z: np.ndarray, zc: float = ZC, delta: float = DELTA):
     return ALPHA_LOW + 0.5 * (ALPHA_HIGH - ALPHA_LOW) * (
         1.0 + np.tanh((np.log1p(z) - np.log1p(zc)) / delta)
     )
-
-
-def dalpha_dz(z: np.ndarray, zc: float = ZC, delta: float = DELTA):
-    z = np.asarray(z, dtype=float)
-    arg = (np.log1p(z) - np.log1p(zc)) / delta
-    sech2 = 1.0 / np.cosh(arg) ** 2
-    return 0.5 * (ALPHA_HIGH - ALPHA_LOW) * sech2 / (delta * (1.0 + z))
 
 
 def z_of_temperature_mev(T_mev: np.ndarray):
@@ -74,17 +67,11 @@ def e_variable_alpha(model: ExtendedProjectedHyperconical, z: np.ndarray, zc: fl
     u = np.sqrt(np.maximum(1.0 / model.k - x**2, 1.0e-14))
     y = np.arctan2(x, u)
     a = alpha_logistic(z, zc=zc, delta=delta)
-    ap = dalpha_dz(z, zc=zc, delta=delta)
     g = np.maximum(1.0 - y / model.y0, 1.0e-12)
-    dydx = 1.0 / u
-    dydz = dydx * model.dxdLZ(x) / (1.0 + z)
-    pref = g ** (-a)
-    t = 0.5 * y * pref
-    dtdz = pref * (
-        0.5 * dydz + 0.5 * y * (-ap * np.log(g) + a * dydz / (model.y0 * g))
-    )
-    dr_dz = 2.0 * dtdz / (1.0 + t**2)
-    h_raw = 1.0 / dr_dz
+    t = (y / 2.0) / (g**a)
+    rhat = 2.0 * np.arctan(t)
+    dr_dz = np.gradient(rhat, z, edge_order=2)
+    h_raw = np.where(np.abs(dr_dz) > 1.0e-18, 1.0 / dr_dz, np.nan)
     h0 = np.interp(0.0, z, h_raw)
     return h_raw / h0
 
@@ -95,7 +82,7 @@ def neff_to_scale(delta_neff: np.ndarray | float):
 
 
 def smooth_positive_series(y: np.ndarray, window: int = SMOOTH_WINDOW):
-    y = np.asarray(y, dtype=float)
+    y = np.maximum(np.asarray(y, dtype=float), 1.0e-30)
     if window <= 1 or len(y) < window:
         return y.copy()
     pad = window // 2
@@ -106,7 +93,7 @@ def smooth_positive_series(y: np.ndarray, window: int = SMOOTH_WINDOW):
 
 
 def main():
-    temperatures = np.geomspace(1.0e-2, 1.0e1, 900)
+    temperatures = np.geomspace(T_MIN_MEV, T_MAX_MEV, N_T)
     z = z_of_temperature_mev(temperatures)
 
     model_low = ExtendedProjectedHyperconical(alpha=ALPHA_LOW)
@@ -243,7 +230,6 @@ def main():
 
     ax1.set_yscale("log")
     ax1.set_ylabel(r"Expansion rate $H(T)\ [{\rm s}^{-1}]$")
-    ax1.legend(loc="upper left", fontsize=9, frameon=False)
     ax1.set_ylim(3.0e-4, 1.0e3)
 
     ax2.set_ylabel(r"Residual $(H-H_{\rm obs})/H_{\rm obs}$")
@@ -285,6 +271,8 @@ def main():
         linewidth=0.6,
         zorder=7,
     )
+
+    ax1.legend(loc="upper left", fontsize=9, frameon=False)
 
     summary = {
         "alpha_low": ALPHA_LOW,
