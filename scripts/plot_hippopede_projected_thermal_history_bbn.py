@@ -21,6 +21,8 @@ from analyze_hippopede_dipole_bbn import (  # noqa: E402
     H0_SI,
     T0_EV,
     standard_radiation_hubble,
+    effective_g_star,
+    _fd_energy_ratio,
 )
 
 
@@ -82,9 +84,25 @@ def e_variable_alpha(model: ExtendedProjectedHyperconical, z: np.ndarray, zc: fl
     return h_raw / h0
 
 
-def neff_to_scale(delta_neff: np.ndarray | float):
+def neff_to_scale(delta_neff, T_mev=None):
+    """
+    H / H_std = sqrt(1 + delta_g_* / g_*(T))
+    where delta_g_* = (7/4) * (T_nu/T_gamma)^4 * delta_neff.
+
+    When T_mev is None: uses constant g_*=10.75 and T_nu=T_gamma,
+    recovering sqrt(1 + 7*delta_neff/43) (legacy behaviour).
+    When T_mev is provided: uses effective_g_star(T) and entropy-conserved
+    T_nu/T_gamma, giving the correct T-dependent scale factor.
+    """
     delta_neff = np.asarray(delta_neff, dtype=float)
-    return np.sqrt(1.0 + (7.0 / 43.0) * delta_neff)
+    if T_mev is None:
+        return np.sqrt(1.0 + (7.0 / 43.0) * delta_neff)
+    T_mev = np.asarray(T_mev, dtype=float)
+    g = effective_g_star(T_mev)
+    x_e = 0.511 / T_mev
+    h_e = _fd_energy_ratio(x_e)
+    nu_ratio_4 = ((4.0 + 7.0 * h_e) / 11.0) ** (4.0 / 3.0)
+    return np.sqrt(1.0 + (7.0 / 4.0) * nu_ratio_4 * delta_neff / g)
 
 
 def smooth_positive_series(y: np.ndarray, window: int = SMOOTH_WINDOW):
@@ -122,9 +140,9 @@ def main():
     ratio_half = h_half / h_std
     ratio_run = h_run / h_std
 
-    scale_center = neff_to_scale(DELTA_NEFF_CENTER)
-    scale_lo_95 = neff_to_scale(DELTA_NEFF_CENTER - DELTA_NEFF_95)
-    scale_hi_95 = neff_to_scale(DELTA_NEFF_CENTER + DELTA_NEFF_95)
+    scale_center = neff_to_scale(DELTA_NEFF_CENTER, T_mev=temperatures)
+    scale_lo_95 = neff_to_scale(DELTA_NEFF_CENTER - DELTA_NEFF_95, T_mev=temperatures)
+    scale_hi_95 = neff_to_scale(DELTA_NEFF_CENTER + DELTA_NEFF_95, T_mev=temperatures)
     h_bbn_center = scale_center * h_std
     h_bbn_lo_95 = scale_lo_95 * h_std
     h_bbn_hi_95 = scale_hi_95 * h_std
@@ -151,8 +169,8 @@ def main():
         alpha=0.30,
         linewidth=0.0,
         label=(
-            r"Observed BBN-inferred band "
-            r"(Sch\"oneberg 2024; $\Delta N_{\mathrm{eff}}=-0.10\pm0.21$, 95\%)"
+            r"BBN-compatible expansion band "
+            r"($\Delta N_{\mathrm{eff}}=-0.10\pm0.21$, 95\%; parametric, cf.\ Sch\"oneberg 2024)"
         ),
         zorder=1,
     )
@@ -163,7 +181,7 @@ def main():
         lw=1.8,
         ls="--",
         alpha=0.9,
-        label=r"Observed BBN-inferred central expansion (Sch\"oneberg 2024)",
+        label=r"BBN-compatible central expansion ($\Delta N_{\mathrm{eff}}=-0.10$; parametric, cf.\ Sch\"oneberg 2024)",
         zorder=5,
     )
     ax1.plot(
@@ -172,7 +190,7 @@ def main():
         color="#2d2d2d",
         lw=1.8,
         ls=(0, (5, 2)),
-        label=r"Standard radiation era ($g_*=10.75$)",
+        label=r"Standard radiation era (variable $g_*(T)$)",
         zorder=6,
     )
     ax1.plot(
@@ -269,7 +287,7 @@ def main():
         elinewidth=0.9,
         capsize=2.2,
         zorder=7,
-        label=r"BBN-inferred anchor points (Sch\"oneberg 2024)",
+        label=r"BBN-compatible anchor points (parametric; cf.\ Sch\"oneberg 2024)",
     )
     ax2.scatter(
         sample_temperatures,
@@ -299,7 +317,11 @@ def main():
         "standard_residual_samples": sample_resid_std.tolist(),
         "constant_alpha_0.283_ratio_samples": np.interp(sample_temperatures, temperatures, ratio_low).tolist(),
         "constant_alpha_0.5_ratio_samples": np.interp(sample_temperatures, temperatures, ratio_half).tolist(),
-        "bbn_band_ratio_95": [float(scale_lo_95), float(scale_hi_95)],
+        "bbn_band_scale_at_samples": {
+            "temperatures_mev": sample_temperatures.tolist(),
+            "scale_lo_95": np.interp(sample_temperatures, temperatures, scale_lo_95).tolist(),
+            "scale_hi_95": np.interp(sample_temperatures, temperatures, scale_hi_95).tolist(),
+        },
     }
 
     png_path = FIGURES / "hippopede_projected_thermal_history_bbn.png"

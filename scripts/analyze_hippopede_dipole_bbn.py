@@ -6,7 +6,7 @@ import sys
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
 FIGURES = ROOT / "figures"
 FIGURES.mkdir(exist_ok=True)
 
@@ -28,6 +28,57 @@ MPC_KM = 3.0856775814913673e19
 H0_SI = H0_KM_S_MPC / MPC_KM
 MPL_GEV = 1.220890e19
 HBAR_GEV_S = 6.582119569e-25
+
+# ---------------------------------------------------------------------------
+# Fermi-Dirac energy integral for massive species
+# h(x) = (120/7π⁴) ∫₀^∞ u² √(u²+x²) / (e^{√(u²+x²)}+1) du, x = m/T
+# h(0) = 1 (massless limit), h(∞) = 0.
+# Precomputed once at import on a 220-point x-grid; accessed via np.interp.
+# ---------------------------------------------------------------------------
+
+def _build_fd_table():
+    x_tab = np.unique(np.concatenate([
+        np.linspace(0.0, 1.0, 60),
+        np.linspace(1.0, 5.0, 100),
+        np.linspace(5.0, 20.0, 60),
+    ]))
+    u = np.linspace(1e-5, 60.0, 5000)
+    prefac = 120.0 / (7.0 * np.pi ** 4)
+    h_tab = np.empty_like(x_tab)
+    for i, xi in enumerate(x_tab):
+        eps = np.sqrt(u ** 2 + xi ** 2)
+        integrand = u ** 2 * eps / (np.exp(np.minimum(eps, 500.0)) + 1.0)
+        h_tab[i] = prefac * np.trapz(integrand, u)
+    return x_tab, h_tab
+
+
+_FD_X_TAB, _FD_H_TAB = _build_fd_table()
+
+
+def _fd_energy_ratio(x):
+    """FD energy density ratio for a massive fermion relative to massless limit."""
+    return np.interp(np.asarray(x, dtype=float), _FD_X_TAB, _FD_H_TAB,
+                     left=1.0, right=0.0)
+
+
+def effective_g_star(T_mev):
+    """
+    Effective relativistic DOF g_*(T) for T in [0.01, 100] MeV.
+
+    g_*(T) = 2 [photons]
+           + (7/8)*4 * h(m_e/T)            [e+e-  with exact FD integral]
+           + (7/8)*6 * (T_nu/T_gamma)^4    [3 nu + 3 nubar, massless]
+
+    Neutrino temperature from entropy conservation during e+e- annihilation:
+        (T_nu/T_gamma)^3 = (4 + 7*h(m_e/T)) / 11
+    Limits: T_nu/T_gamma -> 1 for T >> m_e;  -> (4/11)^(1/3) for T << m_e.
+    g_*(T>>m_e) = 10.75,  g_*(T<<m_e) = 3.36.
+    """
+    T_mev = np.asarray(T_mev, dtype=float)
+    x_e = 0.511 / T_mev
+    h_e = _fd_energy_ratio(x_e)
+    nu_ratio_4 = ((4.0 + 7.0 * h_e) / 11.0) ** (4.0 / 3.0)
+    return 2.0 + (7.0 / 8.0) * 4.0 * h_e + (7.0 / 8.0) * 6.0 * nu_ratio_4
 
 
 class ExtendedProjectedHyperconical(MonjoProjectedHyperconical):
@@ -62,10 +113,18 @@ class ExtendedProjectedHyperconical(MonjoProjectedHyperconical):
         return 1.0 / dr_dz
 
 
-def standard_radiation_hubble(T_mev: np.ndarray | float, g_star: float = 10.75):
+def standard_radiation_hubble(T_mev, g_star=None):
+    """
+    H(T) for the radiation-dominated era in SI units [s^-1].
+
+    Uses effective_g_star(T_mev) by default (variable g_* accounting for
+    e+e- annihilation and neutrino decoupling).  Pass g_star=10.75 to
+    reproduce the old constant-g_* behaviour.
+    """
     T_mev = np.asarray(T_mev, dtype=float)
     T_gev = T_mev / 1000.0
-    h_gev = 1.66 * np.sqrt(g_star) * (T_gev**2) / MPL_GEV
+    g = effective_g_star(T_mev) if g_star is None else np.full_like(T_mev, float(g_star))
+    h_gev = 1.66 * np.sqrt(g) * (T_gev ** 2) / MPL_GEV
     return h_gev / HBAR_GEV_S
 
 

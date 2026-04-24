@@ -71,18 +71,26 @@ def analyze_zc(zc: float):
     e_ref_low, _ = model.e_and_q(z_low)
     e_std_low = e_lcdm(z_low)
 
+    # Local effective exponent in the high-z radiation-like regime
     z_hi = np.logspace(3.0, 6.0, 240)
     e_var_hi = e_variable_alpha(model, z_hi, zc)
     n_eff = np.gradient(np.log(e_var_hi), np.log1p(z_hi))
 
-    alpha_hi = alpha_of_z(z_hi, zc)
-    coeff_hi = e_var_hi / ((1.0 + z_hi) ** (1.0 + 2.0 * alpha_hi))
-    coeff_med = float(np.nanmedian(coeff_hi))
-
+    # BBN temperatures: evaluate H directly by interpolation on an extended z grid.
+    # A power-law extrapolation H ~ (1+z)^(1+2*alpha(z)) is NOT used because the
+    # exponent 1+2*alpha is only valid for constant alpha; for running alpha(z) the
+    # effective local exponent differs from 1+2*alpha(z_i).
     temperatures = np.array([0.07, 0.10, 1.0], dtype=float)
     z_t = temperatures * 1.0e6 / T0_EV - 1.0
-    alpha_t = alpha_of_z(z_t, zc)
-    h_projected = H0_SI * coeff_med * ((temperatures * 1.0e6) / T0_EV) ** (1.0 + 2.0 * alpha_t)
+    z_all = np.unique(np.concatenate([
+        np.array([0.0]),
+        np.geomspace(0.1, 1.0, 10),
+        np.geomspace(1.0, max(1.0e10, z_t.max() * 1.05), 6000),
+    ]))
+    z_all.sort()
+    e_all = e_variable_alpha(model, z_all, zc)
+    e_at_t = np.interp(z_t, z_all, e_all)
+    h_projected = H0_SI * e_at_t
     h_standard = standard_radiation_hubble(temperatures)
     ratio = h_projected / h_standard
 
@@ -93,8 +101,7 @@ def analyze_zc(zc: float):
         "rms_vs_alpha_0283_on_0_2": rms(e_var_low, e_ref_low),
         "rms_vs_lcdm_on_0_2": rms(e_var_low, e_std_low),
         "n_eff_median_1e3_1e6": float(np.nanmedian(n_eff)),
-        "alpha_median_1e3_1e6": float(np.nanmedian(alpha_hi)),
-        "prefactor_median": coeff_med,
+        "alpha_median_1e3_1e6": float(np.nanmedian(alpha_of_z(z_hi, zc))),
         "bbn_temperatures_mev": temperatures.tolist(),
         "hproj_over_hrad": ratio.tolist(),
         "ratio_median": float(np.nanmedian(ratio)),
