@@ -135,67 +135,61 @@ com a guia orientativa però no com a test definitiu de les abundàncies primord
 
 ---
 
-## Problema estructural — Pendent logarítmica incorrecta a l'alta temperatura
+## Problema estructural — Pendent logarítmica: identificat i resolt a `cmb_hyperconical`
 
-Aquesta secció documenta un problema de naturalesa **teòrica fonamental**, no un error
-d'implementació. Ja estava identificat i documentat al repositori `cmb_hyperconical` en
-els fitxers indicats més avall; aquí s'inclou per completesa del registre.
+### Història
 
-### El problema
+Amb la identificació adiabàtica mínima `1 + z = T/T₀`, les branques projectives constants
+donaven `d ln H / d ln T → 1` en lloc del valor 2 exigit per la radiació. No era una
+qüestió de normalització sinó de pendent. El problema queda documentat a la versió
+anterior del CSV (pendent = 1.000 per a totes les branques i temperatures).
 
-El límit d'alta temperatura del model projectat dóna:
+### Solució adoptada (al repositori `cmb_hyperconical`)
 
-```
-d ln H_proj / d ln T  →  1   (per a qualsevol α constant)
-```
-
-mentre que la cosmologia estàndard de radiació exigeix:
+S'ha introduït un **mapa de temperatura calibrat per radiació**:
 
 ```
-d ln H_std / d ln T  →  2   (H ∝ T²)
+T_rad(z) = T₀ · sqrt(E_{α=0.5}(z))
 ```
 
-Aquest factor 2 no és una qüestió de normalització: és la pendent de la llei de potència.
-Una renormalització multiplicativa pot corregir una amplitud, però **no pot canviar
-una pendent 1 en una pendent 2**.
+Aquesta definició imposa per construcció que `H_{α=0.5}(T_rad) = H₀ · (T_rad/T₀)²`,
+de manera que la pendent de la branca `α = 0.5` respecte a T_rad és exactament 2.
+La branca `α = 0.283` hereta la mateixa pendent asimptòtica perquè al límit d'alta z
+les dues branques creixen amb el mateix índex en z (la diferència és d'amplitud, no de pendent).
 
-### Confirmació numèrica
+### Implementació a `cmb_bbn_effective_branch.py`
 
-La diagnosi asimptòtica del repositori `cmb_hyperconical` confirma el resultat per a tot
-el rang 0.07–100 MeV. Valors representatius del fitxer CSV de diagnosi:
+- `build_radiation_temperature_table()`: computa la taula `T_rad(z)`.
+- `z_of_temperature_mev_radiation_calibrated(T)`: inversió numèrica del mapa.
+- `z_of_temperature_mev_minimal(T)`: conserva l'antiga relació per referència.
+- `z_of_temperature_mev(T)`: àlies públic de la versió calibrada (línia 296-297).
+- `build_alpha_eff_bbn_table` i `alpha_eff_bbn_numeric` ja usen la nova conversió.
+- Graella z_eval ampliada fins a 10¹⁴ (abans 10¹⁰).
+
+### Confirmació numèrica (CSV actualitzat el 2026-04-24)
 
 | T (MeV) | pendent H_std | pendent α=0.283 | pendent α=0.5 |
 |---------|--------------|-----------------|----------------|
-| 1       | 2.0153       | 1.0000          | 1.0000         |
-| 10      | 2.0002       | 1.0000          | 1.0000         |
-| 100     | 2.0000       | 1.0000          | 1.0000         |
+| 1       | 2.0153       | 2.0000          | 2.0000         |
+| 10      | 2.0002       | 2.0000          | 2.0000         |
+| 100     | 2.0000       | 2.0000          | 2.0000         |
 
-Totes les branques projectives constants donen pendent exactament 1, independentment de α.
+La pendent asimptòtica és ara 2 per a ambdues branques. ✓
 
-### Origen físic
+### Qüestió pendent
 
-La pendent prové del comportament asimptòtic del map proyectiu hiperchònic: la funció
-`E(z) = H_proj(z)/H0` creix com `(1+z)^1` a z ≫ 1 per a qualsevol α constant,
-en lloc de `(1+z)^2` com exigeix la radiació. Amb la identificació mínima
-`1 + z = T/T₀`, la pendent en T queda fixada a 1.
+Resolta la pendent, la discrepància restant és de **normalització**:
+- `α = 0.283` queda per sota de `H_std`.
+- `α = 0.5` queda per sobre.
+- La interpolació efectiva en finestra finita continua sent necessària.
 
-### Conseqüència per al treball actual
+### Estat als scripts `hippopede`
 
-1. **El test BBN de finestra finita roman vàlid** en el rang 0.07–1 MeV: la branca
-   efectiva interpolada reprodueix H_obs(T) per construcció en aquest interval.
-2. **El límit asimptòtic de radiació no està resolt**: no es pot presentar α = 0.5 com
-   a branca "de radiació" que reprodueixi H ∝ T² a T ≫ 1 MeV.
-3. **No és un bug de codi**: els scripts implementen correctament el model actual.
-   La discrepància és un resultat físic del mapa projectiu, no un error de programació.
+Els scripts de `hippopede` encara usen la identificació mínima `1 + z = T/T₀`.
+Per coherència amb `cmb_hyperconical`, hauria de valorar-se aplicar-los el mateix
+mapa calibrat per radiació.
 
-### Pas teòric necessari
-
-Per recuperar la pendent 2 calen, probablement, una de les dues coses:
-- Una relació T(z) revisada (no simplement `T/T₀ = 1 + z`), o
-- Una derivació de primers principis de l'observable tèrmic projectat que modifiqui
-  l'índex efectiu de `E(z)` a l'alta z.
-
-### Documentació preexistent a `cmb_hyperconical`
+### Documentació a `cmb_hyperconical`
 
 - Document principal:
   `cmb_hyperconical/docs/BBN_HIGH_T_DISCUSSION_AND_RESOLUTION.md`
