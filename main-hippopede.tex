@@ -424,6 +424,54 @@ Since $q_\chi(t)=-\tan^2\chi/(4t^2)$, the deceleration parameter is not merely l
 Hence the toy universe does not shrink to a point uniformly as $t\to0$: most angular sectors retain a finite initial radius and start with vanishing expansion rate but positive acceleration. The axis $\chi=0$ is singular in this limit, since $a_0(t)=2t$ collapses linearly to zero while the oblique sectors remain finite. This nonuniform behaviour is another sign that the model should be read as a biaxial toy geometry rather than as a realistic isotropic cosmology.
 
 
+\subsubsection*{Bilobulated interpretation, axial hyperconical limit, and a possible $K=-1$ extension}
+
+The large-$t$ geometry of the quartic model is best interpreted in two complementary ways. In the origin-based description one has
+\begin{equation}
+\rho(t,\chi)=\sqrt{\sin^2\chi+4t^2\cos^2\chi}
+=2|{\cos\chi}|\,t+\frac{\sin^2\chi}{4|{\cos\chi}|\,t}+O(t^{-3}),
+\end{equation}
+so the leading term reproduces the dipolar law of the two tangent $3$-spheres discussed in the main text. Since the hyperconical universe of Monjo is foliated by spatial $3$-spheres of radius proportional to $t$, this is the precise sense in which each axial branch of the hippopede approaches a hyperconical branch at late times. Along the preferred directions $\chi\approx0$ and $\chi\approx\pi$, the quartic model therefore recovers the same linear coasting behaviour as the hyperconical construction, while the oblique sectors retain the anisotropic correction encoded in the subleading term.
+
+The centered description clarifies the geometry of each individual lobe. On the $+u$ branch we defined
+\begin{equation}
+a_{c,\chi}(t):=\sqrt{r^2+(u-t)^2}
+=\sqrt{\rho(t,\chi)^2+t^2-2t\,\rho(t,\chi)\cos\chi}.
+\end{equation}
+Using the same large-$t$ expansion for $\rho(t,\chi)$ one finds
+\begin{equation}
+a_{c,\chi}(t)^2
+=t^2+\frac{\sin^2\chi}{2}+O(t^{-2}),
+\qquad
+a_{c,\chi}(t)
+=t+\frac{\sin^2\chi}{4t}+O(t^{-3}).
+\end{equation}
+Thus, when each branch is viewed from the center of curvature of its own asymptotic tangent sphere, the lobe tends to a linearly expanding spatial $3$-sphere. This is again compatible with the hyperconical picture, because the constant-time spatial sections of the latter are themselves $3$-spheres. The difference is therefore mainly one of viewpoint: the origin-based picture emphasizes the dipolar two-branch structure, whereas the centered picture emphasizes the local recovery of a single hyperconical lobe.
+
+This also shows why the bilobulated interpretation is close to, but not identical with, the quartic hippopede. The neck joining the two asymptotic lobes is certainly the most visible new geometric feature, but it is not the only one. Away from the strict large-$t$ limit the quartic relation leaves a residual angular deformation throughout the profile, and this is precisely what produces the anisotropic correction
+\begin{equation}
+\rho(t,\chi)-2|{\cos\chi}|\,t
+=\frac{\sin^2\chi}{4|{\cos\chi}|\,t}+O(t^{-3}).
+\end{equation}
+In that sense, the hippopede should be viewed as a bilobulated hyperconical deformation: the neck expresses the global two-lobe topology, while the quartic angular term controls how the geometry departs from a pair of exact hyperconical branches at finite $t$.
+
+The same intuition suggests a natural negative-curvature extension, although this goes beyond the exact quartic model studied in the main text. One may consider a compact hyperbolic $3$-manifold $N$ with totally geodesic boundary $\partial N\cong\Sigma_g$, where $\Sigma_g$ is a closed surface of genus $g\ge2$, and form the double
+\begin{equation}
+M_g=N\cup_{\phi}\bar N,
+\end{equation}
+with $\phi:\Sigma_g\to\Sigma_g$ an orientation-reversing boundary isometry. The resulting closed manifold carries a smooth metric of constant sectional curvature $K=-1$ and provides a mathematically natural bilobulated space with a geodesic neck. A cosmological line element of the form
+\begin{equation}
+ds^2=-dt^2+a(t)^2 h_{ij}dx^i dx^j,
+\end{equation}
+with $h_{ij}$ the hyperbolic metric on $M_g$, then defines a negatively curved FRW-type extension of the same bilobulated intuition.
+
+However, this $K=-1$ construction should be interpreted carefully. The standard geodesic-polar expression
+\begin{equation}
+d\ell^2=d\rho^2+\sinh^2\rho\,d\Omega_2^2
+\end{equation}
+describes the simply connected space $H^3$ around a chosen point, not the full global geometry of a compact double $M_g$. Likewise, the quartic hippopede relation is not literally recovered as a global section of an arbitrary hyperbolic double. The connection is therefore structural rather than exact: the quartic model provides the explicit anisotropic toy geometry studied in this paper, whereas the doubled hyperbolic manifolds furnish a natural family of bilobulated negative-curvature analogues in which the neck is global and the asymptotic hyperconical intuition is replaced by hyperbolic ends or local axial neighbourhoods. The present work establishes the former rigorously and leaves the latter as a plausible geometric extension for future study.
+
+
 \subsubsection*{Projected thermal asymptotics and the BBN-motivated limit $\alpha=1/2$}
 
 To discuss primordial nucleosynthesis in the projected picture, one must distinguish between the intrinsic geometric time and the perceived thermal history of the projected radiation sector. The latter is the relevant quantity for BBN. Assuming the minimal adiabatic identification $T_{\mathrm{perc}}\propto 1+z$ (up to the usual slowly varying entropy factor $g_{*S}$), the high-redshift behaviour of the projected Hubble function follows directly from the asymptotics of the Monjo-type projection.
