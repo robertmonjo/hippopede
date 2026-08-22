@@ -1,0 +1,20 @@
+{
+  "dataset": "DESI DR1 compressed BAO (galaxy+quasar bins, LyA included)",
+  "n_data": 12,
+  "hyperconical_projected": {
+    "alpha_best": 0.36445,
+    "alpha_1sigma_low": 0.3539214977940931,
+    "alpha_1sigma_high": 0.375227556074823,
+    "beta_best": 29.10712472771546,
+    "chi2_best": 14.310703620084466,
+    "chi2_dof": 1.4310703620084466,
+    "AIC": 18.310703620084468
+  },
+  "lcdm_flat": {
+    "omega_m_best": 0.29400000000000004,
+    "chi2_best": 12.755644297089987,
+    "chi2_dof": 1.2755644297089987,
+    "AIC": 16.755644297089987
+  },
+  "delta_AIC_hyp_minus_lcdm": 1.555059322994481
+}
