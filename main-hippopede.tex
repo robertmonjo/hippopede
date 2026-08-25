@@ -172,23 +172,17 @@ Its directional Hubble $H_\chi(t)= \dot a_\chi / a_\chi$ and acceleration $\ddot
 
 The analytic scale factor $a_\chi(t)=\rho(t,\chi)$ introduced above is the most direct reading of the quartic hypersurface, but the large-$t$ tangent-sphere limit also suggests a second effective radius measured from the center of curvature of one asymptotic lobe. In the numerical figures we therefore define, on the $+u$ lobe, the centered effective scale factor
 \begin{equation}
-
 a_{c,\chi}(t):=\sqrt{r^2+(u-t)^2}
 =\sqrt{\rho(t,\chi)^2+t^2-2t\,\rho(t,\chi)\cos\chi}.
-
 \end{equation}
 This prescription is not meant to replace the intrinsic quartic relation; it is introduced only as a figure-level effective radius motivated by the double-sphere asymptotic geometry. The corresponding centered redshift, Hubble and deceleration functions used in the simulations are
 \begin{equation}
-
 1+z_\chi(t)=\frac{a_{c,\chi}(t_0)}{a_{c,\chi}(t)},\qquad
 H_{c,\chi}(t)=\frac{\dot a_{c,\chi}(t)}{a_{c,\chi}(t)},\qquad
 E_\chi(z)=\frac{H_{c,\chi}(t)}{H_{c,\chi}(t_0)},
-
 \end{equation}
 \begin{equation}
-
 q_\chi(z)=-\frac{a_{c,\chi}(t)\,\ddot a_{c,\chi}(t)}{\dot a_{c,\chi}(t)^2},
-
 \end{equation}
 with the derivatives evaluated numerically along each centered history. In the final comparison figures we fix $t_0=3$ and show the angular sectors $\chi=0^\circ,15^\circ,30^\circ,45^\circ,60^\circ,85^\circ$. The case $\chi=0^\circ$ is then identical to the unprojected hyperconical/coasting reference of the same centered prescription.
 
@@ -196,87 +190,65 @@ with the derivatives evaluated numerically along each centered history. In the f
 
 To generate the projected simulations, we keep the same centered histories but remap them through the projected-hyperconical construction used by Monjo in the inhomogeneous hyperconical programme \cite{monjo2017hyperconical, monjo2018projected, monjo2020lagrangian, monjo2023hubble, Monjo_2024}. In the notation of \cite{monjo2018projected}, let
 \begin{equation}
-
 \xi_1(x):=\int_{0}^{x}\frac{\sqrt{1-(1-b)^2}}{b\left[2(b-1)+1\right]}\,d\tilde x,
 \qquad
 b=b(\tilde x):=\sqrt{1-\tilde x^2},
-
 \end{equation}
 be the dimensionless line-of-sight function of the $k=1$ hyperconical model, and define
 \begin{equation}
-
 x(z):=\xi_1^{-1}(\ln(1+z)).
-
 \end{equation}
 The preferred $\gamma$-projection is then written as
 \begin{equation}
 \label{eq:projection_map}
-
 f_{\hat r}^{\alpha}(x):=
 2\arctan\!\left[
 \frac{\gamma(x)/2}{\left(1-\gamma(x)/\gamma_U\right)^\alpha}
 \right],
-
 \end{equation}
 where
 \begin{equation}
-
 \gamma(x):=\arctan\!\left(\frac{x}{\sqrt{1-x^2}}\right)
 ,
 \qquad \gamma_U:=\gamma(x_{\max}).
-
 \end{equation}
 For the $k=1$ hyperconical domain one has $x_{\max}=\sqrt{3}/2$, hence
 \begin{equation}
-
 \gamma_U=\arctan\!\left(\frac{\sqrt{3}/2}{1/2}\right)=\arctan(\sqrt{3})=\frac{\pi}{3}.
-
 \end{equation}
 The projected hyperconical proper distance is therefore
 \begin{equation}
-
 \hat r(z)= f_{\hat r}^{\alpha}\!\left(x(z)\right)
 = f_{\hat r}^{\alpha}\!\left(\xi_1^{-1}(\ln(1+z))\right),
-
 \end{equation}
 and the associated projected reference Hubble function is defined by
 \begin{equation}
-
 \hat H(z):=\left(\frac{d\hat r}{dz}\right)^{-1},
 \qquad
 E_{\mathrm{hyp}}^{\mathrm{proj}}(z)=\frac{\hat H(z)}{\hat H(0)}.
-
 \end{equation}
 Each centered hippopede simulation is then projected through the common redshift remapping
 \begin{equation}
-
 z^*=E_{\mathrm{hyp}}^{\mathrm{proj}}(z)-1,
 \qquad
 E^{\mathrm{proj}}_\chi(z)=E_\chi(z^*),
-
 \end{equation}
 \begin{equation}
-
 q^{\mathrm{proj}}_\chi(z)=-1+(1+z)\frac{d\ln E^{\mathrm{proj}}_\chi(z)}{dz}.
-
 \end{equation}
 In the low-redshift phenomenological implementation used for Fig.~\ref{fig:qz_final}, we adopt the preferred observationally calibrated value $\alpha\simeq0.283$ discussed in \cite{monjo2018projected}. However, the local projected-hyperconical analysis of Monjo and Campoamor-Stursberg motivates a distinct asymptotic value, $\alpha=1/2$, when one asks for the projected early-time scaling to behave like a standard radiation-dominated thermal history \cite{monjo2020lagrangian, monjo2023hubble}. The two values should therefore be read as characterizing two different regimes of the same projected class: $\alpha\simeq0.283$ as an effective low-redshift phenomenological value, and $\alpha=1/2$ as the physically motivated asymptotic limit singled out by the high-redshift thermal argument developed below.
 
 If the projected redshift is interpreted as the perceived redshift of the radiation sector, a minimal adiabatic prescription gives
 \begin{equation}
-
 g_{*S}(T_{\mathrm{perc}})\,T_{\mathrm{perc}}^3 a_{\mathrm{perc}}^3=
 \mathrm{const},
 \qquad
 T_{\mathrm{perc}}(z)\simeq T_0(1+z)
 \left(\frac{g_{*S}(T_0)}{g_{*S}(T_{\mathrm{perc}})}\right)^{1/3}.
-
 \end{equation}
 Neglecting for the moment the slow variation of $g_{*S}$, one may simply write $T_{\mathrm{perc}}\propto 1+z$ and hence
 \begin{equation}
-
 H_{\mathrm{perc}}(T)=H_0 E_{\mathrm{hyp}}^{\mathrm{proj}}\!\left(\frac{T}{T_0}-1\right).
-
 \end{equation}
 This is the quantity relevant to the primordial-nucleosynthesis discussion, because BBN constrains the thermal relation $H(T)$ rather than the late-time deceleration function alone. In the Appendix we show that the Monjo-type class implies the asymptotic scaling $E_{\mathrm{hyp}}^{\mathrm{proj}}(z)\propto (1+z)^{1+2\alpha}$, so that the special value $\alpha=1/2$ yields the radiation-like law $H_{\mathrm{perc}}(T)\propto T^2$.
 
@@ -302,13 +274,11 @@ to the observed values: here $M_B$ is analytically eliminated. The parameter $\a
 
 For the BAO analysis, the model predictions
 \begin{equation}
-
 \frac{D_M}{r_s} = \beta \chi(z),
 \qquad
 \frac{D_H}{r_s} = \frac{\beta}{E(z)},
 \qquad
 \frac{D_V}{r_s} = \beta \left(\frac{z\chi^2}{E(z)}\right)^{1/3}
-
 \end{equation}
 are compared to the DESI DR1 measurements through a Gaussian $\chi^2$. The nuisance $\beta = c/(H_0 r_s)$ is minimized analytically at each $\alpha$, giving $\chi^2(\alpha)$ that is minimized by grid search. The $1\sigma$ uncertainty is determined from the $\Delta \chi^2 = 1$ interval. For model comparison, flat $\Lambda$CDM with free $\Omega_m$ and the same $\beta$ marginalization is fitted to the same data, with the Akaike Information Criterion (AIC) used to assess the relative quality of fit.
 
@@ -543,40 +513,30 @@ The asymptotic exponent, however, is only part of the BBN requirement. A direct 
 
 This observation motivates a second, more flexible numerical test within the same projected class: instead of identifying a single constant projection index, one may allow a smooth perceived-history interpolation
 \begin{equation}
-
 \alpha(z)=\alpha_{\mathrm{low}}+\frac{\alpha_{\mathrm{high}}-\alpha_{\mathrm{low}}}{2}
 \left[
 1+\tanh\!\left(
 \frac{\ln(1+z)-\ln(1+z_c)}{2}
 \right)
 \right],
-
 \end{equation}
 with $\alpha_{\mathrm{low}}=0.283$ fixed by the successful low-redshift phenomenology of Fig.~\ref{fig:qz_final}, and $\alpha_{\mathrm{high}}=1/2$ fixed by the radiation-like asymptotic requirement. Exploratory scans with the supplementary script \texttt{analyze\_hippopede\_variable\_alpha.py}, checked directly against the literal projected-map relation $H_{\mathrm{perc}}(T)=H_0E_{\mathrm{hyp}}^{\mathrm{proj}}(T/T_0-1)$, show that the most promising BBN-like window is obtained for an earlier and narrower transition, approximately around
 \begin{equation}
-
 z_c\sim 1.6\times10^4
-
 \end{equation}
 This choice preserves the low-redshift sector almost unchanged, since $\alpha(1)\simeq0.28302$ and $\alpha(2)\simeq0.28303$, while driving the projected thermal history very close to the standard radiation-era normalization across the BBN window. In the updated diagnostic we compare it directly with the observationally inferred BBN corridor obtained from the 2024 primordial-abundance fit $\Delta N_{\mathrm{eff}}=-0.10\pm0.21$ of \cite{schoneberg2024bbn}. A representative near-optimal case is
 \begin{equation}
-
 z_c=1.616\times10^4
-
 \end{equation}
 for which the geometric-mean normalization with respect to the standard radiation curve over the interval $T\simeq0.07$--$1\,\mathrm{MeV}$ is
 \begin{equation}
-
 \left\langle \frac{H_{\mathrm{perc}}}{H_{\mathrm{rad}}}\right\rangle_{\mathrm{geom}}
 \simeq 0.9915,
-
 \end{equation}
 with pointwise values
 \begin{equation}
-
 \frac{H_{\mathrm{perc}}}{H_{\mathrm{rad}}}\approx
 0.991,\ 0.992,\ 0.993,\ 0.991,\ 0.991
-
 \end{equation}
 at $T=0.07,\ 0.10,\ 0.20,\ 0.50,\ 1.0\,\mathrm{MeV}$, respectively. Relative to the BBN-inferred central history of \cite{schoneberg2024bbn}, the corresponding residuals are only $-1.2\times10^{-3},\ 4.0\times10^{-4},\ 1.0\times10^{-3},\ -1.2\times10^{-3},\ -6.3\times10^{-4}$ over the same five temperatures. In the plotted diagnostic these values are read from the same literal projected-map evaluation after the mild log-space smoothing mentioned above, which removes small non-physical spikes produced by numerical differentiation of the dense lookup table without changing the BBN-window normalization in any material way. In other words, the same projected class admits a smooth perceived thermal history for which the whole BBN window is brought extremely close not only to the standard radiation background, but also to the currently inferred observational BBN corridor, rather than remaining strongly suppressed in the low-redshift constant-$\alpha$ case or enhanced by more than one order of magnitude in the pure $\alpha=1/2$ case.
 
@@ -584,27 +544,19 @@ This does not yet amount to a full light-element calculation, and we therefore d
 
 The same numerical exploration clarifies how the inherited anisotropy enters the projected early-time discussion. If one tries to construct a genuinely sector-dependent quantity
 \begin{equation}
-
 R_\chi(T):=\frac{H_{\chi,\mathrm{perc}}(T)}{H_{\mathrm{rad}}(T)},
-
 \end{equation}
 using the projected centered histories themselves, one finds that each fixed angle $\chi$ has only a finite internal redshift support. For the centered branches adopted in this work, the maximum unprojected redshifts are approximately
 \begin{equation}
-
 z^*_{\max}\simeq 3.0\times10^4,\ 12.36,\ 5.87,\ 3.78,\ 2.80,\ 2.13
-
 \end{equation}
 for $\chi=0^\circ$, $15^\circ$, $30^\circ$, $45^\circ$, $60^\circ$ and $85^\circ$, respectively. When these endpoints are translated back through the common projected-hyperconical map with $\alpha=1/2$, they correspond only to
 \begin{equation}
-
 z_{\mathrm{obs},\max}\simeq 422,\ 7.64,\ 5.01,\ 3.87,\ 3.23,\ 2.74,
-
 \end{equation}
 or, equivalently, to perceived temperatures of order
 \begin{equation}
-
 T_{\max}\simeq 9.9\times10^{-8},\ 2.0\times10^{-9},\ 1.4\times10^{-9},\ 1.1\times10^{-9},\ 1.0\times10^{-9},\ 8.8\times10^{-10}\ \mathrm{MeV}.
-
 \end{equation}
 These scales lie far below the standard BBN window $T\sim0.07$--$1\,\mathrm{MeV}$. Therefore the present centered lobe does not yet provide a full anisotropic BBN calculation sector by sector: the oblique projected histories simply terminate long before one reaches the redshifts relevant to primordial nucleosynthesis.
 
