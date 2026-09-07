@@ -262,15 +262,15 @@ The normalized expansion rate $E(z)$ of the geometric projection is then used to
 \end{equation}
 Here $D_A$ is dimensionless and the overall $c/H_0$ is absorbed by the nuisance parameters analytically eliminated in each likelihood. The central quantity of interest is the parameter $\alpha$, as it controls the degree of stereographic distortion in mapping from the hyperconical geometry to the observable distance-redshift relation. In the isotropic limit $(\chi = 0^\circ)$, $\alpha$ is the single free parameter of the model. Rather than a strict constant, $\alpha$ is predicted to run slowly with redshift \cite{monjo2018projected}, increasing from $\alpha \approx 0.283$ at $z \rightarrow 0$ toward higher values at intermediate and high redshifts. When a single constant $\alpha$ is fitted over a finite redshift window, the recovered value reflects the effective mean of $\alpha(z)$ over that window.
 
-In both analyses the likelihood is kept purely geometric, with nuisance parameters eliminated analytically rather than sampled. For the supernova analysis, the absolute magnitude $M_B$ - fully degenerate with $H_0$ - is analytically marginalized. For the BAO analysis, the sound horizon $r_s$ is not independently defined within the projected hyperconical approach, since the model describes only late-time expansion history and does not commit to the early-universe physics that sets $r_s$. The combined nuisance $\beta = c/(H_0r_s)$ is therefore marginalized in the same spirit. This avoids importing $\Lambda$CDM assumptions for the pre-recombination era. This places both analyses on equal footing: each reduces to fitting the shape of $E(z)$ with $\alpha$ as the single parameter and one analytically eliminated nuisance.
+In both analyzes the likelihood is kept purely geometric, with nuisance parameters eliminated analytically rather than sampled. For the supernova analysis, the absolute magnitude $M_B$ - fully degenerate with $H_0$ - is analytically marginalized. For the BAO analysis, the sound horizon $r_s$ is not independently defined within the projected hyperconical approach, since the model describes only the late-time expansion history and does not commit to the early-universe physics that sets $r_s$. The combined nuisance $\beta = c/(H_0r_s)$ is therefore marginalized in the same spirit. This avoids importing $\Lambda$CDM assumptions for the pre-recombination era. This places both analyzes on equal footing: each reduces to fitting the shape of $E(z)$ with $\alpha$ as the single parameter and one analytically eliminated nuisance.
 
 For a given $\alpha$, the expansion rate $E(z)$ is computed on a dense internal grid, with the derivative $d\hat{r}/dz$ evaluated by finite differences on this uniform grid to ensure numerical stability.
 
-For the supernova analysis, dimensionless angular diameter distance is evaluated in a CosmoSIS plugin integrated with the Dovekie likelihood code, which then compares the model distance modulus
+For supernova analysis, dimensionless angular diameter distance is evaluated in a CosmoSIS plugin integrated with the Dovekie likelihood code \cite{}, which then compares the model distance modulus
 \begin{equation}
     \mu(z) = 5\log_{10}[(1 + z_{CMB})(1 + z_{HEL})D_A(z)] + 25
 \end{equation}
-to the observed values: here $M_B$ is analytically eliminated. The parameter $\alpha$ is sampled with the emcee sampler using a flat prior $\alpha \in [0.1,0.9]$, and convergence is verified by an independent rerun.
+to the observed values: here $M_B$ is analytically eliminated. The parameter $\alpha$ is sampled with the emcee sampler using a flat prior $\alpha \in [0.1,0.9]$, and the convergence is verified by independent rerun.
 
 For the BAO analysis, the model predictions
 \begin{equation}
