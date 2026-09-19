@@ -13,12 +13,13 @@ Scripts and data to reproduce the figures and numerical diagnostics in:
 | Script | Output |
 |---|---|
 | `scripts/plot_hippopede_qz_double_panel_with_gapp.py` | Fig. 2 — $q(z)$ and $E(z)$, centered and projected hippopede histories with GaPP reconstruction |
+| `scripts/plot_hippopede_projected_thermal_history_bbn.py` | Fig. 3 — projected thermal history versus standard BBN corridor |
 | `scripts/analyze_hippopede_variable_alpha.py` | Running-$\alpha$ scan; BBN thermal window diagnostics (Appendix) |
 | `scripts/hz_background_models.py` | Background $H(z)$ comparison curves |
 | `scripts/reconstruct_qz_mukherjee2021_gapp.py` | GaPP reconstruction of $q(z)$ from CC+Pantheon+ |
 | `scripts/obsolete_bbn/analyze_hippopede_dipole_bbn.py` | Dipole fit and constant-$\alpha$ BBN check (superseded by `analyze_hippopede_variable_alpha.py`) |
 
-Fig. 1 (3D hippopede growth) and the BAO fit figure are produced by standalone scripts not included here; the output figures are in `figures/`.
+Fig. 1 (3D hippopede growth) and the BAO fit figure are produced by scripts not yet deposited here; the output figures are in `figures/`.
 
 ## Data
 
