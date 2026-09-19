@@ -403,11 +403,10 @@ The opposite limit is also informative. For any fixed oblique direction with $\s
 \begin{equation}
 a_\chi(0)=|\sin\chi|,\qquad \dot a_\chi(0)=0,\qquad \ddot a_\chi(0)=\frac{4\cos^2\chi}{|\sin\chi|}.
 \end{equation}
-Since $q_\chi(t)=-\tan^2\chi/(4t^2)$, the deceleration parameter diverges to $-\infty$ for every fixed oblique direction with $\chi\neq0$ as $t\to0$\textcolor{red}{\sout{. Numerically, for $\chi=\pi/6$ one finds $q_\chi(1)=-0.0833$, $q_\chi(0.5)=-0.333$, and $q_\chi(0.1)=-8.33$, while for $\chi=\pi/4$ the corresponding values are $-0.25$, $-1$, and $-25$.}} \textcolor{blue}{(for instance, $q_{\pi/4}(0.1)=-25$).} Thus the model becomes extremely accelerated at early times unless one approaches the privileged axis $\chi=0$.\textcolor{red}{\sout{ If one wishes to compare the toy model with observationally inferred $q(z)$, the next step would be to introduce an effective isotropized scale factor $a_{\mathrm{eff}}(t)$ and then use $1+z=a_{\mathrm{eff}}(t_0)/a_{\mathrm{eff}}(t)$ to map the directional dynamics into redshift space. A dedicated fit is therefore possible, but it requires an additional averaging prescription and should probably be presented separately as a numerical extension rather than as part of the conceptual derivation given here.}}
-\textcolor{red}{\sout{Hence the toy universe does not shrink to a point uniformly as $t\to0$: most angular sectors retain a finite initial radius and start with vanishing expansion rate but positive acceleration. The axis $\chi=0$ is singular in this limit, since $a_0(t)=2t$ collapses linearly to zero while the oblique sectors remain finite. This nonuniform behaviour is another sign that the model should be read as a biaxial toy geometry rather than as a realistic isotropic cosmology.}}\textcolor{blue}{The non-uniform early behaviour --- oblique sectors have finite initial radius $|\sin\chi|$ with $\dot a_\chi(0)=0$, while the axial branch collapses to zero --- confirms the biaxial rather than isotropic character of the model.}
+Since $q_\chi(t)=-\tan^2\chi/(4t^2)$, the deceleration parameter diverges to $-\infty$ for every fixed oblique direction with $\chi\neq0$ as $t\to0$ (for instance, $q_{\pi/6}(0.5)=-1/3$). Thus the model becomes extremely accelerated at early times unless one approaches the privileged axis $\chi=0$. The non-uniform early behaviour leads to oblique sectors having finite initial radius $|\sin\chi|$ with $\dot a_\chi(0)=0$, while the axial direction collapses to zero, which confirms the biaxial character of the model.
 
 
-\subsubsection*{Bilobulated interpretation, axial hyperconical limit, and a possible $K=-1$ extension}
+\subsubsection*{Bilobulated interpretation and axial hyperconical limit}
 
 The large-$t$ geometry of the quartic model is best interpreted in two complementary ways. In the origin-based description one has
 \begin{equation}
@@ -438,51 +437,17 @@ This also shows why the bilobulated interpretation is close to, but not identica
 \end{equation}
 In that sense, the hippopede should be viewed as a bilobulated hyperconical deformation: the neck expresses the global two-lobe topology, while the quartic angular term controls how the geometry departs from a pair of exact hyperconical branches at finite $t$.
 
-\textcolor{red}{\sout{The same intuition suggests a natural negative-curvature extension, although this goes beyond the exact quartic model studied in the main text. One may consider a compact hyperbolic $3$-manifold $N$ with totally geodesic boundary $\partial N\cong\Sigma_g$, where $\Sigma_g$ is a closed surface of genus $g\ge2$, and form the double
-\begin{equation}
-M_g=N\cup_{\phi}\bar N,
-\end{equation}
-with $\phi:\Sigma_g\to\Sigma_g$ an orientation-reversing boundary isometry. The resulting closed manifold carries a smooth metric of constant sectional curvature $K=-1$ and provides a mathematically natural bilobulated space with a geodesic neck. A cosmological line element of the form
-\begin{equation}
-ds^2=-dt^2+a(t)^2 h_{ij}dx^i dx^j,
-\end{equation}
-with $h_{ij}$ the hyperbolic metric on $M_g$, then defines a negatively curved FRW-type extension of the same bilobulated intuition.
-
-However, this $K=-1$ construction should be interpreted carefully. The standard geodesic-polar expression
-\begin{equation}
-d\ell^2=d\rho^2+\sinh^2\rho\,d\Omega_2^2
-\end{equation}
-describes the simply connected space $H^3$ around a chosen point, not the full global geometry of a compact double $M_g$. Likewise, the quartic hippopede relation is not literally recovered as a global section of an arbitrary hyperbolic double. The connection is therefore structural rather than exact: the quartic model provides the explicit anisotropic toy geometry studied in this paper, whereas the doubled hyperbolic manifolds furnish a natural class of bilobulated negative-curvature analogues in which the neck is global and the asymptotic hyperconical intuition is replaced by hyperbolic ends or local axial neighbourhoods. The present work establishes the former rigorously and leaves the latter as a plausible geometric extension for future study.}}\textcolor{blue}{The same bilobulated intuition admits a natural $K=-1$ extension via compact hyperbolic doubles $M_g = N\cup_\phi\bar N$ carrying a smooth metric of constant sectional curvature, but this construction goes beyond the exact quartic model and is left as a geometric generalisation for future study.}
+The same bilobulated intuition admits a natural $K=-1$ extension via compact hyperbolic doubles $M_g = N\cup_\phi\bar N$ carrying a smooth metric of constant sectional curvature, but this construction goes beyond the exact quartic model and is left as a geometric generalisation for future study.
 
 
 \subsubsection*{Projected thermal asymptotics and the BBN-motivated limit $\alpha=1/2$}
 
 To discuss primordial nucleosynthesis in the projected picture, one must distinguish between the intrinsic geometric time and the perceived thermal history of the projected radiation sector. The latter is the relevant quantity for BBN. Assuming the minimal adiabatic identification $T_{\mathrm{perc}}\propto 1+z$ (up to the usual slowly varying entropy factor $g_{*S}$), the high-redshift behaviour of the projected Hubble function follows directly from the asymptotics of the Monjo-type projection.
 
-For $k=1$ one has $x_{\max}=\sqrt{3}/2$ and $b(x_{\max})=1/2$. \textcolor{red}{\sout{Writing $x=x_{\max}-\delta$ with $\delta\downarrow0$, one finds
-\begin{equation}
-2b-1\;=\;2\sqrt{1-x^2}-1\;=\;-2\sqrt{3}\,\delta+O(\delta^2),
-\end{equation}
-while
-\begin{equation}
-\sqrt{1-(1-b)^2}=\sqrt{2b-b^2}=\frac{\sqrt{3}}{2}+O(\delta).
-\end{equation}
-Therefore the line-of-sight integrand behaves as
-\begin{equation}
-\frac{\sqrt{1-(1-b)^2}}{b[2(b-1)+1]}
-\;=\; -\frac{1}{2\delta}+O(1),
-\end{equation}
-so that
-\begin{equation}
-\xi_1(x)= -\frac12\ln\delta + O(1).
-\end{equation}
-Since $\xi_1(x)=\ln(1+z)$, this implies the boundary relation
+For $k=1$ one has $x_{\max}=\sqrt{3}/2$ and $b(x_{\max})=1/2$. Writing $x=x_{\max}-\delta$ with $\delta\downarrow0$ and Taylor-expanding $b(x)=\sqrt{1-x^2}$, one finds $2b-1=-2\sqrt{3}\,\delta+O(\delta^2)$ and $\sqrt{1-(1-b)^2}=\frac{\sqrt{3}}{2}+O(\delta)$, so the line-of-sight integrand reduces to $-\frac{1}{2\delta}+O(1)$ and $\xi_1(x)=-\frac{1}{2}\ln\delta+O(1)$. Since $\xi_1(x)=\ln(1+z)$, this gives
 \begin{equation}
 \delta=x_{\max}-x(z)\propto (1+z)^{-2}.
-\end{equation}}}\textcolor{blue}{Writing $x=x_{\max}-\delta$ with $\delta\downarrow0$ and Taylor-expanding $b(x)=\sqrt{1-x^2}$, one finds $2b-1=-2\sqrt{3}\,\delta+O(\delta^2)$ and $\sqrt{1-(1-b)^2}=\frac{\sqrt{3}}{2}+O(\delta)$, so the line-of-sight integrand reduces to $-\frac{1}{2\delta}+O(1)$ and $\xi_1(x)=-\frac{1}{2}\ln\delta+O(1)$. Since $\xi_1(x)=\ln(1+z)$, this gives
-\begin{equation}
-\delta=x_{\max}-x(z)\propto (1+z)^{-2}.
-\end{equation}}
+\end{equation}
 
 Now define $\eta:=\gamma_0-\gamma(x)$. Because $\gamma'(x)=1/\sqrt{1-x^2}$ is finite at $x=x_{\max}$, one has $\eta\propto\delta$. Near the boundary, the Monjo-type projection
 \begin{equation}
@@ -523,7 +488,7 @@ This observation motivates a second, more flexible numerical test within the sam
 \right)
 \right],
 \end{equation}
-with $\alpha_{\mathrm{low}}=0.283$ fixed by the successful low-redshift phenomenology of Fig.~\ref{fig:qz_final}, and $\alpha_{\mathrm{high}}=1/2$ fixed by the radiation-like asymptotic requirement. Exploratory scans with the supplementary script \texttt{analyze\_hippopede\_variable\_alpha.py}, checked directly against the literal projected-map relation $H_{\mathrm{perc}}(T)=H_0E_{\mathrm{hyp}}^{\mathrm{proj}}(T/T_0-1)$, show that the most promising BBN-like window is obtained for an earlier and narrower transition, approximately around
+with $\alpha_{\mathrm{low}}=0.283$ fixed by the successful low-redshift phenomenology of Fig.~\ref{fig:qz_final}, and $\alpha_{\mathrm{high}}=1/2$ fixed by the radiation-like asymptotic requirement. Exploratory scans with the supplementary scripts, checked directly against the literal projected-map relation $H_{\mathrm{perc}}(T)=H_0E_{\mathrm{hyp}}^{\mathrm{proj}}(T/T_0-1)$, show that the most promising BBN-like window is obtained for an earlier and narrower transition, approximately around
 \begin{equation}
 z_c\sim 1.6\times10^4
 \end{equation}
@@ -541,7 +506,7 @@ with pointwise values
 \frac{H_{\mathrm{perc}}}{H_{\mathrm{rad}}}\approx
 0.991,\ 0.992,\ 0.993,\ 0.991,\ 0.991
 \end{equation}
-at $T=0.07,\ 0.10,\ 0.20,\ 0.50,\ 1.0\,\mathrm{MeV}$, respectively. Relative to the BBN-inferred central history of \cite{schoneberg2024bbn}, the corresponding residuals are only $-1.2\times10^{-3},\ 4.0\times10^{-4},\ 1.0\times10^{-3},\ -1.2\times10^{-3},\ -6.3\times10^{-4}$ over the same five temperatures. \textcolor{red}{\sout{In the plotted diagnostic these values are read from the same literal projected-map evaluation after the mild log-space smoothing mentioned above, which removes small non-physical spikes produced by numerical differentiation of the dense lookup table without changing the BBN-window normalization in any material way. In other words, the same projected class admits a smooth perceived thermal history for which the whole BBN window is brought extremely close not only to the standard radiation background, but also to the currently inferred observational BBN corridor, rather than remaining strongly suppressed in the low-redshift constant-$\alpha$ case or enhanced by more than one order of magnitude in the pure $\alpha=1/2$ case.}}\textcolor{blue}{The same projected class therefore admits a smooth perceived thermal history compatible with both the standard radiation background and the observational BBN corridor, contrasting with the strongly suppressed low-$z$ constant-$\alpha$ case and the order-of-magnitude enhancement of the pure $\alpha=1/2$ case (values above are from the mildly smoothed lookup evaluation described in \S\ref{sec:methods}).}
+at $T=0.07,\ 0.10,\ 0.20,\ 0.50,\ 1.0\,\mathrm{MeV}$, respectively. Relative to the BBN-inferred central history of \cite{schoneberg2024bbn}, the corresponding residuals are only $-1.2\times10^{-3},\ 4.0\times10^{-4},\ 1.0\times10^{-3},\ -1.2\times10^{-3},\ -6.3\times10^{-4}$ over the same five temperatures. The same projected class therefore admits a smooth perceived thermal history compatible with both the standard radiation background and the observational BBN corridor, contrasting with the strongly suppressed low-$z$ constant-$\alpha$ case and the order-of-magnitude enhancement of the pure $\alpha=1/2$ case (values above are from the mildly smoothed lookup evaluation described in \S\ref{sec:methods}).
 
 This does not yet amount to a full light-element calculation, and we therefore do not claim in this paper that the primordial abundances are already reproduced in detail. Nevertheless, the numerical result is strong enough to support a more focused statement: within the projected-hyperconical interpretation, the apparent thermal history can be made quantitatively compatible with both the normalization and the asymptotic $T^2$ scaling expected for a BBN-like radiation era, provided one allows a smooth transition from the low-redshift phenomenological value $\alpha\simeq0.283$ to the asymptotic physical value $\alpha=1/2$. A complete BBN claim would then require the next layer of analysis, namely a consistent treatment of $g_{*S}(T)$, the weak-interaction freeze-out, and the light-element reaction network.
 
@@ -563,6 +528,6 @@ T_{\max}\simeq 9.9\times10^{-8},\ 2.0\times10^{-9},\ 1.4\times10^{-9},\ 1.1\time
 \end{equation}
 These scales lie far below the standard BBN window $T\sim0.07$--$1\,\mathrm{MeV}$. Therefore the present centered lobe does not yet provide a full anisotropic BBN calculation sector by sector: the oblique projected histories simply terminate long before one reaches the redshifts relevant to primordial nucleosynthesis.
 
-\textcolor{red}{\sout{This is nevertheless physically informative. It means that the stereographic remapping does not erase the underlying anisotropy, but it does strongly filter its observational visibility. The oblique sectors dominate the low-redshift phenomenology and are responsible for the dipole-like modulation discussed in the main text, whereas at sufficiently high apparent redshift the observer progressively loses access to those sectors and is left mainly with the nearly axial sector. In that sense the projected model suggests an effective observational isotropization toward high redshift: the background remains intrinsically anisotropic, yet the observable radiation history becomes increasingly dominated by the preferred direction. The running-$\alpha$ BBN-like result obtained above should therefore be interpreted as an effective perceived thermal history of the projected radiation sector, not as a complete primordial-nucleosynthesis solution on the anisotropic centered background itself.}}\textcolor{blue}{This confirms the effective observational isotropization discussed in \S\ref{sec:discussion}: the running-$\alpha$ BBN result above is an effective perceived thermal history of the projected radiation sector, not a sector-by-sector nucleosynthesis calculation on the full anisotropic background.}
+This confirms the effective observational isotropization discussed in \S\ref{sec:discussion}: the running-$\alpha$ BBN result above is an effective perceived thermal history of the projected radiation sector, not a sector-by-sector nucleosynthesis calculation on the full anisotropic background.
 
 \end{document}
