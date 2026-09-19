@@ -444,30 +444,10 @@ The same bilobulated intuition admits a natural $K=-1$ extension via compact hyp
 
 To discuss primordial nucleosynthesis in the projected picture, one must distinguish between the intrinsic geometric time and the perceived thermal history of the projected radiation sector. The latter is the relevant quantity for BBN. Assuming the minimal adiabatic identification $T_{\mathrm{perc}}\propto 1+z$ (up to the usual slowly varying entropy factor $g_{*S}$), the high-redshift behaviour of the projected Hubble function follows directly from the asymptotics of the Monjo-type projection.
 
-For $k=1$ one has $x_{\max}=\sqrt{3}/2$ and $b(x_{\max})=1/2$. \textcolor{red}{\sout{Writing $x=x_{\max}-\delta$ with $\delta\downarrow0$, one finds
-\begin{equation}
-2b-1\;=\;2\sqrt{1-x^2}-1\;=\;-2\sqrt{3}\,\delta+O(\delta^2),
-\end{equation}
-while
-\begin{equation}
-\sqrt{1-(1-b)^2}=\sqrt{2b-b^2}=\frac{\sqrt{3}}{2}+O(\delta).
-\end{equation}
-Therefore the line-of-sight integrand behaves as
-\begin{equation}
-\frac{\sqrt{1-(1-b)^2}}{b[2(b-1)+1]}
-\;=\; -\frac{1}{2\delta}+O(1),
-\end{equation}
-so that
-\begin{equation}
-\xi_1(x)= -\frac12\ln\delta + O(1).
-\end{equation}
-Since $\xi_1(x)=\ln(1+z)$, this implies the boundary relation
+For $k=1$ one has $x_{\max}=\sqrt{3}/2$ and $b(x_{\max})=1/2$. Writing $x=x_{\max}-\delta$ with $\delta\downarrow0$ and Taylor-expanding $b(x)=\sqrt{1-x^2}$, one finds $2b-1=-2\sqrt{3}\,\delta+O(\delta^2)$ and $\sqrt{1-(1-b)^2}=\frac{\sqrt{3}}{2}+O(\delta)$, so the line-of-sight integrand reduces to $-\frac{1}{2\delta}+O(1)$ and $\xi_1(x)=-\frac{1}{2}\ln\delta+O(1)$. Since $\xi_1(x)=\ln(1+z)$, this gives
 \begin{equation}
 \delta=x_{\max}-x(z)\propto (1+z)^{-2}.
-\end{equation}}}\textcolor{blue}{Writing $x=x_{\max}-\delta$ with $\delta\downarrow0$ and Taylor-expanding $b(x)=\sqrt{1-x^2}$, one finds $2b-1=-2\sqrt{3}\,\delta+O(\delta^2)$ and $\sqrt{1-(1-b)^2}=\frac{\sqrt{3}}{2}+O(\delta)$, so the line-of-sight integrand reduces to $-\frac{1}{2\delta}+O(1)$ and $\xi_1(x)=-\frac{1}{2}\ln\delta+O(1)$. Since $\xi_1(x)=\ln(1+z)$, this gives
-\begin{equation}
-\delta=x_{\max}-x(z)\propto (1+z)^{-2}.
-\end{equation}}
+\end{equation}
 
 Now define $\eta:=\gamma_0-\gamma(x)$. Because $\gamma'(x)=1/\sqrt{1-x^2}$ is finite at $x=x_{\max}$, one has $\eta\propto\delta$. Near the boundary, the Monjo-type projection
 \begin{equation}
@@ -526,7 +506,7 @@ with pointwise values
 \frac{H_{\mathrm{perc}}}{H_{\mathrm{rad}}}\approx
 0.991,\ 0.992,\ 0.993,\ 0.991,\ 0.991
 \end{equation}
-at $T=0.07,\ 0.10,\ 0.20,\ 0.50,\ 1.0\,\mathrm{MeV}$, respectively. Relative to the BBN-inferred central history of \cite{schoneberg2024bbn}, the corresponding residuals are only $-1.2\times10^{-3},\ 4.0\times10^{-4},\ 1.0\times10^{-3},\ -1.2\times10^{-3},\ -6.3\times10^{-4}$ over the same five temperatures. \textcolor{red}{\sout{In the plotted diagnostic these values are read from the same literal projected-map evaluation after the mild log-space smoothing mentioned above, which removes small non-physical spikes produced by numerical differentiation of the dense lookup table without changing the BBN-window normalization in any material way. In other words, the same projected class admits a smooth perceived thermal history for which the whole BBN window is brought extremely close not only to the standard radiation background, but also to the currently inferred observational BBN corridor, rather than remaining strongly suppressed in the low-redshift constant-$\alpha$ case or enhanced by more than one order of magnitude in the pure $\alpha=1/2$ case.}}\textcolor{blue}{The same projected class therefore admits a smooth perceived thermal history compatible with both the standard radiation background and the observational BBN corridor, contrasting with the strongly suppressed low-$z$ constant-$\alpha$ case and the order-of-magnitude enhancement of the pure $\alpha=1/2$ case (values above are from the mildly smoothed lookup evaluation described in \S\ref{sec:methods}).}
+at $T=0.07,\ 0.10,\ 0.20,\ 0.50,\ 1.0\,\mathrm{MeV}$, respectively. Relative to the BBN-inferred central history of \cite{schoneberg2024bbn}, the corresponding residuals are only $-1.2\times10^{-3},\ 4.0\times10^{-4},\ 1.0\times10^{-3},\ -1.2\times10^{-3},\ -6.3\times10^{-4}$ over the same five temperatures. The same projected class therefore admits a smooth perceived thermal history compatible with both the standard radiation background and the observational BBN corridor, contrasting with the strongly suppressed low-$z$ constant-$\alpha$ case and the order-of-magnitude enhancement of the pure $\alpha=1/2$ case (values above are from the mildly smoothed lookup evaluation described in \S\ref{sec:methods}).
 
 This does not yet amount to a full light-element calculation, and we therefore do not claim in this paper that the primordial abundances are already reproduced in detail. Nevertheless, the numerical result is strong enough to support a more focused statement: within the projected-hyperconical interpretation, the apparent thermal history can be made quantitatively compatible with both the normalization and the asymptotic $T^2$ scaling expected for a BBN-like radiation era, provided one allows a smooth transition from the low-redshift phenomenological value $\alpha\simeq0.283$ to the asymptotic physical value $\alpha=1/2$. A complete BBN claim would then require the next layer of analysis, namely a consistent treatment of $g_{*S}(T)$, the weak-interaction freeze-out, and the light-element reaction network.
 
