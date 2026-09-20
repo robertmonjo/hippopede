@@ -10,7 +10,8 @@ OUTDIR = Path(__file__).resolve().parent / "figures"
 SHOW_TITLE = False
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-for extra in (str(SCRIPT_DIR), str(SCRIPT_DIR / "vendor_gapp"), str(SCRIPT_DIR / "vendor_gapp" / "covfunctions")):
+ROOT = SCRIPT_DIR.parent
+for extra in (str(SCRIPT_DIR), str(ROOT / "vendor_gapp"), str(ROOT / "vendor_gapp" / "covfunctions")):
     if extra not in sys.path:
         sys.path.insert(0, extra)
 

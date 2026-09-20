@@ -11,7 +11,7 @@ from matplotlib.lines import Line2D
 from matplotlib.ticker import FixedLocator, FixedFormatter
 
 FACTOR_SIZE = 1.25
-PROJECT_ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DATA = PROJECT_ROOT / "data" / "hz_background" / "hz_curated_chronometers.csv"
 DEFAULT_BAO_DATA = PROJECT_ROOT / "data" / "hz_background" / "hz_curated_bao.csv"
 DEFAULT_PNG = PROJECT_ROOT / "figures" / "fig_hz_background_models.png"
