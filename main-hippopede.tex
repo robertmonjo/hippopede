@@ -291,7 +291,7 @@ Comparison of the deceleration parameter $q(z)$ (top panels) and normalized expa
 
 \subsection{Observational constraints on the projected model}
 
-Applying the likelihood analysis described above to the DES-SN5YR supernova sample gives $\alpha_{\mathrm{eff}} = 0.323_{-0.012}^{+0.011}\;(1\sigma)$ with the result remaining stable across two independent \texttt{emcee} runs with different stretch-scale choices. Applying the same projected model to the DESI DR1 compressed BAO data gives $\alpha_{\mathrm{eff}} = 0.375_{-0.017}^{+0.016}\; (1\sigma)$, together with best-fit nuisance parameter $\beta = 28.85$ and $\chi^2_{\mathrm{best}}=12.39$ for 10 data points and 2 free parameters. For comparison, a flat $\Lambda$CDM fit with free $\Omega_m$ on the same BAO vector gives $\Omega_m = 0.289$ and $\chi^2_{\mathrm{best}}=11.72$, corresponding to $\Delta \mathrm{AIC}=0.68$. The two models are therefore statistically indistinguishable on the present DESI DR1 compressed BAO compilation.
+Applying the likelihood analysis described above to the DES-SN5YR supernova sample gives $\alpha_{\mathrm{eff}} = 0.323_{-0.012}^{+0.011}\;(1\sigma)$ with the result remaining stable across two independent \texttt{emcee} runs with different stretch-scale choices. Applying the same projected model to the DESI DR1 compressed BAO data gives $\alpha_{\mathrm{eff}} = 0.375_{-0.016}^{+0.017}\; (1\sigma)$, together with best-fit nuisance parameter $\beta = 28.85$ and $\chi^2_{\mathrm{best}}=12.33$ for 10 data points and 2 free parameters. For comparison, a flat $\Lambda$CDM fit with free $\Omega_m$ on the same BAO vector gives $\Omega_m = 0.290$ and $\chi^2_{\mathrm{best}}=11.66$, corresponding to $\Delta \mathrm{AIC}=0.68$. The two models are therefore statistically indistinguishable on the present DESI DR1 compressed BAO compilation.
 
 \begin{figure*}[htbp]
 \centering
@@ -313,7 +313,7 @@ Constraint & Redshift range & $\alpha_{\mathrm{eff}}$ \\
 \hline
 Low-$z$ projected reference \cite{monjo2018projected} & $z \rightarrow 0$ & 0.283 \\
 DES-SN5YR \cite{abbott2024dark} & $0.025$--$1.3$ & $0.323_{-0.012}^{+0.011}$ \\
-DESI DR1 BAO \cite{adame2025desi} & $0.295$--$1.491$ & $0.375_{-0.017}^{+0.016}$ \\
+DESI DR1 BAO \cite{adame2025desi} & $0.295$--$1.491$ & $0.375_{-0.016}^{+0.017}$ \\
 \hline
 \end{tabular}
 \end{table}
@@ -348,7 +348,7 @@ At the purely geometric level, the same appendix also clarifies how the quartic 
 
 The centered scale factor provides a cleaner phenomenological bridge between the quartic hypersurface and the asymptotic tangent-sphere picture than the origin-based scale factor.
 
-The observational tests of the projected model support this geometric picture. Fitting the projection parameter $\alpha$ to the DES-SN5YR supernova sample and to the DESI DR1 compressed BAO data yields $\alpha_{\mathrm{eff}}=0.323_{-0.012}^{+0.011}$ over $z=0.025$--$1.3$ and $\alpha_{\mathrm{eff}}=0.375_{-0.017}^{+0.016}$ over $z=0.295$--$1.491$, respectively. Both values exceed the low-redshift reference $\alpha\simeq0.283$ and are mutually consistent with a slow increase of the effective projection index with redshift. On the present DESI DR1 data the projected hippopede model and flat $\Lambda$CDM are statistically indistinguishable ($\Delta\mathrm{AIC}=0.68$), showing that the toy geometry is not disfavoured by current geometric probes despite having only one free shape parameter.
+The observational tests of the projected model support this geometric picture. Fitting the projection parameter $\alpha$ to the DES-SN5YR supernova sample and to the DESI DR1 compressed BAO data yields $\alpha_{\mathrm{eff}}=0.323_{-0.012}^{+0.011}$ over $z=0.025$--$1.3$ and $\alpha_{\mathrm{eff}}=0.375_{-0.016}^{+0.017}$ over $z=0.295$--$1.491$, respectively. Both values exceed the low-redshift reference $\alpha\simeq0.283$ and are mutually consistent with a slow increase of the effective projection index with redshift. On the present DESI DR1 data the projected hippopede model and flat $\Lambda$CDM are statistically indistinguishable ($\Delta\mathrm{AIC}=0.68$), showing that the toy geometry is not disfavoured by current geometric probes despite having only one free shape parameter.
 
 The value $\alpha\simeq0.283$ gives the best low-redshift phenomenological agreement in the present implementation, but the projected class also contains the asymptotic value $\alpha=1/2$, which is selected by the high-redshift condition that the perceived thermal history satisfies $H_{\mathrm{perc}}(T)\propto T^2$. The two values need not be contradictory: the former can be understood as an effective late-time observational parameter, whereas the latter plays the role of a local/asymptotic physical limit in the sense discussed by Monjo and Campoamor-Stursberg \cite{monjo2020lagrangian, monjo2023hubble}.
 
@@ -372,7 +372,7 @@ R. Monjo thanks Moncy V. John for his encouragement and support at the start of 
 
 \section*{Data availability}
 
-The Python scripts used to generate all figures and supplementary diagnostics are publicly available at \url{https://github.com/robertmonjo/hippopede}, together with the required data files (chronometer compilation, DESI DR1 compressed BAO covariance, and GaPP vendor code). The DESI DR1 BAO fit ($\alpha=0.375$, $\chi^2=12.33$) is reproduced by \texttt{scripts/hippopede\_bao\_fit\_compute.py}; the BBN thermal history figure is reproduced by \texttt{scripts/plot\_hippopede\_projected\_thermal\_history\_bbn.py}; and the $q(z)$ reconstruction with GaPP is reproduced by \texttt{scripts/plot\_hippopede\_qz\_double\_panel\_with\_gapp.py}. The DES-SN5YR fit ($\alpha=0.323\pm0.012$) is reproduced by the CosmoSIS pipeline of Ardra E.\ Sasi available at \url{https://github.com/ardrajune/hippopede_DESI-analysis}.
+The Python scripts used to generate all figures and supplementary diagnostics are publicly available at \url{https://github.com/robertmonjo/hippopede}, together with the required data files (chronometer compilation, DESI DR1 compressed BAO covariance, and GaPP vendor code). The DESI DR1 BAO fit ($\alpha=0.375$, $\chi^2=12.33$) is reproduced by \texttt{scripts/hippopede\_bao\_fit\_compute.py}; the BBN thermal history figure is reproduced by \texttt{scripts/plot\_hippopede\_projected\_thermal\_history\_bbn.py}; and the $q(z)$ reconstruction with GaPP is reproduced by \texttt{scripts/plot\_hippopede\_qz\_double\_panel\_with\_gapp.py}. The DES-SN5YR fit ($\alpha=0.323\pm0.012$) is reproduced by the CosmoSIS/Dovekie pipeline developed by Ardra E.\ Sasi (available from the authors upon reasonable request).
 
 \section*{CRediT authorship contribution statement}
 \textbf{Robert Monjo:} Conceptualization, Methodology, Software, Formal analysis, Writing -- original draft, Writing -- review \& editing, Supervision, Project administration. \textbf{Manel Romero:} Conceptualization, Writing -- review \& editing. \textbf{Ardra E. Sasi:} Software, Writing -- review \& editing.
