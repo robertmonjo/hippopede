@@ -125,7 +125,7 @@ def main():
     z_eval = np.unique(np.concatenate(([0.0], np.geomspace(1.0e3, max(1.0e10, z.max() * 1.05), 5000), z)))
     z_eval.sort()
 
-    h_std = standard_radiation_hubble(temperatures)
+    h_std = standard_radiation_hubble(temperatures, g_star=10.75)
     e_low = e_constant_alpha(model_low, z_eval)
     e_half = e_constant_alpha(model_half, z_eval)
     e_run = e_variable_alpha(model_low, z_eval, zc=ZC, delta=DELTA)
