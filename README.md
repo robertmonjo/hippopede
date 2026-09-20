@@ -31,14 +31,14 @@ Scripts and data to reproduce the figures and numerical diagnostics in:
 
 | Script | Output |
 |---|---|
+| `scripts/hippopede_growth_3d.py` | Fig. 1 — 3D hippopede growth and projection |
 | `scripts/plot_hippopede_qz_double_panel_with_gapp.py` | Fig. 2 — $q(z)$ and $E(z)$, centered and projected hippopede histories with GaPP reconstruction |
 | `scripts/plot_hippopede_projected_thermal_history_bbn.py` | Fig. 3 — projected thermal history versus standard BBN corridor |
-| `scripts/analyze_hippopede_variable_alpha.py` | Running-$\alpha$ scan; BBN thermal window diagnostics (Appendix) |
+| `scripts/hippopede_bao_fit_compute.py` | DESI DR1 BAO fit: $\alpha$, $\beta$, $\chi^2$, $\Delta$AIC (10-pt and 12-pt); writes `data/Ardra/hippopede_bao_fit_results.json` |
+| `scripts/hippopede_bao_fit_data.py` | BAO fit figure (diagnostic plot at fixed best-fit values) |
+| `scripts/analyze_hippopede_variable_alpha.py` | Running-$\alpha$ scan; BBN thermal window diagnostics |
 | `scripts/hz_background_models.py` | Background $H(z)$ comparison curves |
 | `scripts/reconstruct_qz_mukherjee2021_gapp.py` | GaPP reconstruction of $q(z)$ from CC+Pantheon+ |
-| `scripts/obsolete_bbn/analyze_hippopede_dipole_bbn.py` | Dipole fit and constant-$\alpha$ BBN check (superseded by `analyze_hippopede_variable_alpha.py`) |
-
-Fig. 1 (3D hippopede growth) and the BAO fit figure are produced by scripts not yet deposited here; the output figures are in `figures/`.
 
 ## Data
 
@@ -48,7 +48,8 @@ data/hz_background/hz_curated_bao.csv            — BAO H(z) measurements
 data/gapp/pantheon_plus_binned_50.csv            — Pantheon+ binned distance moduli (input for GaPP)
 data/Ardra/desi_dr1_bao_galqso_lya_mean.csv      — DESI DR1 compressed BAO means
 data/Ardra/desi_dr1_bao_galqso_lya_cov.csv       — DESI DR1 covariance matrix
-data/Ardra/hippopede_bao_fit_summary.json         — projected-model BAO fit results
+data/Ardra/hippopede_bao_fit_summary.json         — BAO fit summary (12-pt with Lyα; alpha=0.364)
+data/Ardra/hippopede_bao_fit_results.json         — full BAO fit output from hippopede_bao_fit_compute.py
 ```
 
 The GaPP Gaussian-process code used by `reconstruct_qz_mukherjee2021_gapp.py` is included under `vendor_gapp/` (original: Seikel et al. 2012, [arXiv:1204.2832](https://arxiv.org/abs/1204.2832)).
