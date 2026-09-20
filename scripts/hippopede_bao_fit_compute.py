@@ -15,7 +15,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.optimize import minimize_scalar
+from scipy.optimize import brentq, minimize_scalar
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_ROOT = Path(__file__).resolve().parent
@@ -205,15 +205,31 @@ def run_fit(d: np.ndarray, C_inv: np.ndarray, obs: list[str],
     chi2_best_refined, beta_best = chi2_marginalized(alpha_best, d, C_inv, obs, z)
     chi2_best = chi2_best_refined
 
-    # 1σ uncertainty: Deltachi2 = 1
+    # 1σ uncertainty: Deltachi2 = 1 — find exact roots via brentq
     chi2_1sig = chi2_best + 1.0
-    alpha_lo = alpha_best
-    alpha_hi = alpha_best
-    for a, c2 in zip(alpha_grid, chi2_arr):
-        if a < alpha_best and c2 < chi2_1sig:
-            alpha_lo = a
-        if a > alpha_best and c2 < chi2_1sig and alpha_hi == alpha_best:
-            alpha_hi = a
+
+    def chi2_profile(a):
+        return chi2_marginalized(a, d, C_inv, obs, z)[0]
+
+    # Lower bound: scan left from refined minimum; bracket the first crossing
+    alpha_lo = 0.10
+    for i in range(len(alpha_grid) - 2, -1, -1):
+        if alpha_grid[i + 1] > alpha_best:
+            continue
+        if chi2_arr[i] >= chi2_1sig and chi2_arr[i + 1] < chi2_1sig:
+            alpha_lo = brentq(lambda a: chi2_profile(a) - chi2_1sig,
+                              alpha_grid[i], alpha_grid[i + 1], xtol=1e-6)
+            break
+
+    # Upper bound: scan right from refined minimum; bracket the first crossing
+    alpha_hi = 0.90
+    for i in range(len(alpha_grid) - 1):
+        if alpha_grid[i] < alpha_best:
+            continue
+        if chi2_arr[i] < chi2_1sig and chi2_arr[i + 1] >= chi2_1sig:
+            alpha_hi = brentq(lambda a: chi2_profile(a) - chi2_1sig,
+                              alpha_grid[i], alpha_grid[i + 1], xtol=1e-6)
+            break
 
     n_data = len(d)
     n_params = 2  # alpha and beta (beta marginalized analytically)
