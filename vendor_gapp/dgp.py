@@ -38,6 +38,16 @@ from numpy import append, array, concatenate, diagonal, dot, eye, \
     transpose, zeros
 import scipy.optimize as opt
 
+# NumPy 2.x compatibility: float() no longer accepts non-0-d arrays
+_float = float
+def float(x):  # noqa: A001
+    try:
+        return _float(x)
+    except TypeError:
+        return _float(np.asarray(x).flat[0])
+
+
+
 
 class DGaussianProcess(gp.GaussianProcess):
     def __init__(self, X, Y, Sigma, covfunction=covariance.SquaredExponential,

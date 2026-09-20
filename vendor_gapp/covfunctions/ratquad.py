@@ -30,6 +30,16 @@ import numpy as np
 from numpy import array, exp, log, reshape, sqrt
 import warnings
 
+# NumPy 2.x compatibility: float() no longer accepts non-0-d arrays
+_float = float
+def float(x):  # noqa: A001
+    try:
+        return _float(x)
+    except TypeError:
+        return _float(np.asarray(x).flat[0])
+
+
+
 
 class RationalQuadratic(cov.CovarianceFunction):
     # initialize class with initial hyperparameter theta

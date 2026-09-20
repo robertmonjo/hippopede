@@ -25,6 +25,16 @@
 import numpy as np
 from numpy import append, array, flatnonzero, reshape, take, zeros
 
+# NumPy 2.x compatibility: float() no longer accepts non-0-d arrays
+_float = float
+def float(x):  # noqa: A001
+    try:
+        return _float(x)
+    except TypeError:
+        return _float(np.asarray(x).flat[0])
+
+
+
 class CovarianceFunction(object):
     def __init__(self, theta):
         self.theta = array(theta)

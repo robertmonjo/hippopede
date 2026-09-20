@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 
-OUTDIR = Path(__file__).resolve().parent / "figures"
+OUTDIR = Path(__file__).resolve().parents[1] / "figures"
 SHOW_TITLE = False
 
 SCRIPT_DIR = Path(__file__).resolve().parent
