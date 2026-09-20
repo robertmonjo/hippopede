@@ -11,9 +11,9 @@ import numpy as np
 
 import hz_background_models as hz
 
-PROJECT_ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_ROOT = PROJECT_ROOT / "data"
-GAPP_ROOT = Path(__file__).resolve().parent / "vendor_gapp"
+GAPP_ROOT = Path(__file__).resolve().parents[1] / "vendor_gapp"
 GAPP_COV_ROOT = GAPP_ROOT / "covfunctions"
 for extra in (str(GAPP_ROOT), str(GAPP_COV_ROOT)):
     if extra not in sys.path:
