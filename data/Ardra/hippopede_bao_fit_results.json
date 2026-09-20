@@ -1,0 +1,35 @@
+{
+  "dataset": "DESI DR1 compressed BAO",
+  "10point_no_lya": {
+    "label": "10-point (no Lya)",
+    "n_data": 10,
+    "alpha_best": 0.37489494671151136,
+    "alpha_1sigma_low": 0.37,
+    "alpha_1sigma_high": 0.375,
+    "beta_best": 28.85399666314669,
+    "chi2_best": 12.334860054841556,
+    "chi2_dof": 1.5418575068551945,
+    "AIC": 16.334860054841556,
+    "lcdm_omega_m": 0.2896848389846572,
+    "lcdm_chi2": 11.65623197608511,
+    "lcdm_beta": 29.3225218847342,
+    "lcdm_AIC": 15.65623197608511,
+    "delta_AIC_hyp_minus_lcdm": 0.6786280787564465
+  },
+  "12point_with_lya": {
+    "label": "12-point (with Lya)",
+    "n_data": 12,
+    "alpha_best": 0.3638277090882045,
+    "alpha_1sigma_low": 0.36,
+    "alpha_1sigma_high": 0.365,
+    "beta_best": 29.127782468694484,
+    "chi2_best": 14.286762916352018,
+    "chi2_dof": 1.4286762916352018,
+    "AIC": 18.286762916352018,
+    "lcdm_omega_m": 0.2948976826525143,
+    "lcdm_chi2": 12.763600594473246,
+    "lcdm_beta": 29.44241603470717,
+    "lcdm_AIC": 16.763600594473246,
+    "delta_AIC_hyp_minus_lcdm": 1.5231623218787718
+  }
+}
