@@ -12,7 +12,7 @@ SCRIPT_ROOT = Path(__file__).resolve().parent
 FIGURES = ROOT / "figures"
 FIGURES.mkdir(exist_ok=True)
 
-for extra in (str(SCRIPT_ROOT), str(ROOT / "vendor_gapp"), str(ROOT / "vendor_gapp" / "covfunctions")):
+for extra in (str(SCRIPT_ROOT), str(SCRIPT_ROOT / "obsolete_bbn"), str(ROOT / "vendor_gapp"), str(ROOT / "vendor_gapp" / "covfunctions")):
     if extra not in sys.path:
         sys.path.insert(0, extra)
 

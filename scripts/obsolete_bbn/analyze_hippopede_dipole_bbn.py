@@ -48,7 +48,7 @@ def _build_fd_table():
     for i, xi in enumerate(x_tab):
         eps = np.sqrt(u ** 2 + xi ** 2)
         integrand = u ** 2 * eps / (np.exp(np.minimum(eps, 500.0)) + 1.0)
-        h_tab[i] = prefac * np.trapz(integrand, u)
+        h_tab[i] = prefac * (np.trapezoid if hasattr(np, "trapezoid") else np.trapz)(integrand, u)
     return x_tab, h_tab
 
 
