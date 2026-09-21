@@ -95,22 +95,17 @@ for t_val, color in sorted(zip(T_VALUES, COLORS)):
 ax.set_xlabel("$u$", labelpad=8)
 ax.set_ylabel(r"$\sqrt{x^2+y^2}$", labelpad=8)
 ax.set_zlabel("$z$", labelpad=8)
-ax.legend(loc="lower left", fontsize=9)
 ax.view_init(elev=20, azim=-60)
 
-# Equal physical scale on all three axes: expand shorter axes to the max range.
-x_lims = ax.get_xlim3d()
-y_lims = ax.get_ylim3d()
-z_lims = ax.get_zlim3d()
-ranges    = [x_lims[1] - x_lims[0], y_lims[1] - y_lims[0], z_lims[1] - z_lims[0]]
-max_range = max(ranges)
-x_mid = sum(x_lims) / 2
-y_mid = sum(y_lims) / 2
-z_mid = sum(z_lims) / 2
-ax.set_xlim3d(x_mid - max_range / 2, x_mid + max_range / 2)
-ax.set_ylim3d(y_mid - max_range / 2, y_mid + max_range / 2)
-ax.set_zlim3d(z_mid - max_range / 2, z_mid + max_range / 2)
-ax.set_box_aspect([1, 1, 1])
+# Tight proportional limits: t=3 surface spans u∈[-6,6] but y/z∈[-3,3].
+# set_box_aspect matches the physical scale to these data ranges (no distortion).
+pad = 0.4
+ax.set_xlim3d(-6 - pad, 6 + pad)
+ax.set_ylim3d(-3 - pad, 3 + pad)
+ax.set_zlim3d(-3 - pad, 3 + pad)
+ax.set_box_aspect([12.8, 6.8, 6.8])
+
+ax.legend(loc="lower left", fontsize=9)
 
 plt.tight_layout()
 plt.savefig(OUT, dpi=150, bbox_inches="tight")
