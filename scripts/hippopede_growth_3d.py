@@ -95,7 +95,7 @@ for t_val, color in sorted(zip(T_VALUES, COLORS)):
 ax.set_xlabel("$u$", labelpad=8)
 ax.set_ylabel(r"$\sqrt{x^2+y^2}$", labelpad=8)
 ax.set_zlabel("$z$", labelpad=8)
-ax.legend(loc="upper left", fontsize=9)
+ax.legend(loc="lower left", fontsize=9)
 ax.view_init(elev=20, azim=-60)
 
 # Equal physical scale on all three axes: expand shorter axes to the max range.
