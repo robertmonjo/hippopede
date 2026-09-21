@@ -22,12 +22,12 @@ FIGURES = Path(__file__).resolve().parents[1] / "figures"
 FIGURES.mkdir(exist_ok=True)
 OUT = FIGURES / "hippopede_growth_3d.png"
 
-# Inner surfaces: light + opaque; outer surfaces: dark + transparent.
-# Drawn from outermost to innermost so the painter's algorithm shows
-# the inner (bright) shells through the semi-transparent outer (dark) ones.
-T_VALUES   = [3.0,     2.0,     1.0,     0.5    ]
-COLORS     = ["#1a1a1a", "#666666", "#aaaaaa", "#e8e8e8"]
-ALPHAS     = [0.20,    0.40,    0.65,    0.90   ]
+# Innermost surface: darkest + most opaque.
+# Outermost surface: lightest + most transparent (so inner surfaces remain visible).
+# Drawn from outermost to innermost so the opaque dark cores appear on top.
+T_VALUES   = [3.0,     2.0,     1.0,     0.5    ]  # draw order: outer first
+COLORS     = ["#cccccc", "#999999", "#555555", "#1a1a1a"]
+ALPHAS     = [0.18,    0.40,    0.65,    0.88   ]
 
 CHI = np.linspace(0, np.pi, 300)
 PHI = np.linspace(0, 2 * np.pi, 120)
@@ -88,7 +88,7 @@ for t_val, color, alpha in zip(T_VALUES, COLORS, ALPHAS):
     ax.plot_surface(u, y_ax, z_ax, facecolors=fc, alpha=alpha,
                     linewidth=0, antialiased=True)
 
-# Legend in increasing-t order
+# Legend in increasing-t order (T_VALUES is decreasing for draw order)
 for t_val, color in sorted(zip(T_VALUES, COLORS)):
     ax.plot([], [], [], color=color, lw=3, label=f"$t={t_val}$")
 
