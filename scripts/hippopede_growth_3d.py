@@ -21,8 +21,10 @@ FIGURES.mkdir(exist_ok=True)
 OUT = FIGURES / "hippopede_growth_3d.png"
 
 T_VALUES = [0.5, 1.0, 2.0, 3.0]
-# Sequential grayscale: lightest for innermost surface, darkest for outermost.
-COLORS = ["#d4d4d4", "#a0a0a0", "#606060", "#1e1e1e"]
+# Grayscale + alpha: outer surfaces are pale and translucent so the
+# inner (darker, more opaque) surfaces remain visible inside them.
+COLORS = ["#1a1a1a", "#555555", "#999999", "#cccccc"]
+ALPHAS = [0.80, 0.60, 0.40, 0.25]
 
 CHI = np.linspace(0, np.pi, 300)
 PHI = np.linspace(0, 2 * np.pi, 120)
@@ -41,9 +43,9 @@ def hippopede_surface(t: float) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
 fig = plt.figure(figsize=(7, 6))
 ax = fig.add_subplot(111, projection="3d")
 
-for t_val, color in zip(T_VALUES, COLORS):
+for t_val, color, alpha in zip(T_VALUES, COLORS, ALPHAS):
     u, y_ax, z_ax = hippopede_surface(t_val)
-    ax.plot_surface(u, y_ax, z_ax, color=color, alpha=0.50, linewidth=0, antialiased=True)
+    ax.plot_surface(u, y_ax, z_ax, color=color, alpha=alpha, linewidth=0, antialiased=True)
     ax.plot([], [], [], color=color, lw=3, label=f"$t={t_val}$")
 
 ax.set_xlabel("$u$", labelpad=8)
