@@ -107,7 +107,7 @@ ax.set_box_aspect([12.8, 6.8, 6.8])
 
 ax.legend(loc="lower left", fontsize=9)
 # z-axis label: tight bbox clips set_zlabel, so place it in 2D axes coords
-ax.text2D(0.88, 0.72, "$z$", transform=ax.transAxes, fontsize=12, ha="left", va="bottom")
+ax.text2D(0.93, 0.72, "$z$", transform=ax.transAxes, fontsize=12, ha="left", va="bottom")
 
 plt.tight_layout()
 plt.savefig(OUT, dpi=150, bbox_inches="tight", pad_inches=0.3)
