@@ -94,7 +94,7 @@ for t_val, color in sorted(zip(T_VALUES, COLORS)):
 
 ax.set_xlabel("$u$", labelpad=8)
 ax.set_ylabel(r"$\sqrt{x^2+y^2}$", labelpad=8)
-ax.set_zlabel("$z$", labelpad=8)
+ax.set_zlabel("")   # placeholder; actual label placed as 3D text below
 ax.view_init(elev=20, azim=-60)
 
 # Tight proportional limits: t=3 surface spans u∈[-6,6] but y/z∈[-3,3].
@@ -106,8 +106,10 @@ ax.set_zlim3d(-3 - pad, 3 + pad)
 ax.set_box_aspect([12.8, 6.8, 6.8])
 
 ax.legend(loc="lower left", fontsize=9)
+# z-axis label: tight bbox clips set_zlabel, so place it in 2D axes coords
+ax.text2D(0.88, 0.72, "$z$", transform=ax.transAxes, fontsize=12, ha="left", va="bottom")
 
 plt.tight_layout()
-plt.savefig(OUT, dpi=150, bbox_inches="tight")
+plt.savefig(OUT, dpi=150, bbox_inches="tight", pad_inches=0.3)
 plt.close()
 print(f"Saved {OUT}")
