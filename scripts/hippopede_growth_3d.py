@@ -26,7 +26,7 @@ OUT = FIGURES / "hippopede_growth_3d.png"
 # Outermost surface: lightest + most transparent (so inner surfaces remain visible).
 # Drawn from outermost to innermost so the opaque dark cores appear on top.
 T_VALUES   = [3.0,     2.0,     1.0,     0.5    ]  # draw order: outer first
-COLORS     = ["#cccccc", "#999999", "#555555", "#1a1a1a"]
+COLORS     = ["#c6dbef", "#6baed6", "#2171b5", "#08306b"]
 ALPHAS     = [0.18,    0.40,    0.65,    0.88   ]
 
 CHI = np.linspace(0, np.pi, 300)
