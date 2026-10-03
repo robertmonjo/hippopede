@@ -42,11 +42,12 @@ comparison, and not in the paper.
 | Reference t0 used by the other scripts | `t0_summary.py` | `figures/t0_summary.json` |
 | Table 2, t0 bounds per sector (Sect. 4.2) | `fit_cc_pantheon.py` | `figures/fit_cc_pantheon.json` |
 | Fit to the sector-averaged history, offsets from the GaPP median (Sect. 4.3, Table 2) | `fit_sector_average.py` | `figures/fit_sector_average.json` |
-| q0, z_t, spread of E, sector of a source for the axis observer (Sects. 4.1, 4.3) | `sector_kinematics.py` | `figures/sector_kinematics.json` |
+| q0, z_t and spread of E for Fig. 2 (Sect. 4.1) | `sector_kinematics.py --from-average-fit` | `figures/sector_kinematics_sector_average_alpha.json` |
+| z_t with the index fitted to the axial sector, sector of a source for the axis observer (Sects. 4.1, 4.3) | `sector_kinematics.py` | `figures/sector_kinematics.json` |
 | Redshift reach of the sectors, z_h (Sects. 3.2, 4.4; Appendix G) | `sector_reach.py` | `figures/sector_reach.json` |
 | Double-precision evaluation at high redshift (Appendix G) | `verify_high_z.py` | `figures/verify_high_z.json` |
 | Fig. 1 | `hippopede_growth_3d.py` | `figures/hippopede_growth_3d.png` |
-| Fig. 2 | `plot_hippopede_qz_double_panel_with_gapp.py` | `figures/hippopede_qz_double_panel_with_gapp.(png, pdf)` |
+| Fig. 2 | `plot_hippopede_qz_double_panel_with_gapp.py --from-average-fit --suffix _sector_average_alpha` | `figures/hippopede_qz_double_panel_with_gapp_sector_average_alpha.(png, pdf)` |
 | Fig. 3 | `plot_band_comparison.py --from-average-fit --suffix _sector_average_alpha` | `figures/hippopede_band_comparison_sector_average_alpha.(png, pdf)` |
 | Direction dependence with unbinned Pantheon+, spread of mu (Sect. 4.4) | `pantheon_offaxis_test.py` | `figures/pantheon_offaxis_test.json` |
 | Count dipole and the CatWISE excess, theta_obs(t0) (Sect. 4.5) | `quasar_dipole_fit.py` | `figures/quasar_dipole_fit.json` |

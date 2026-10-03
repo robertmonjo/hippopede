@@ -36,11 +36,12 @@ STEPS = [
     ["scripts/fit_cc_pantheon.py"],
     ["scripts/fit_sector_average.py"],
     ["scripts/sector_kinematics.py"],
+    ["scripts/sector_kinematics.py", "--from-average-fit"],
     ["scripts/sector_reach.py"],
     ["scripts/verify_high_z.py"],
     # figures
     ["scripts/hippopede_growth_3d.py"],
-    ["scripts/plot_hippopede_qz_double_panel_with_gapp.py"],
+    ["scripts/plot_hippopede_qz_double_panel_with_gapp.py", "--from-average-fit", "--suffix", "_sector_average_alpha"],
     ["scripts/plot_band_comparison.py", "--from-average-fit", "--suffix", "_sector_average_alpha"],
     # directional analyses
     ["scripts/pantheon_offaxis_test.py"],

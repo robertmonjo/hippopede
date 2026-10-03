@@ -39,6 +39,7 @@ def main():
     ax = load("fit_t0_axis_observer")
     sc = load("fit_t0_intrinsic_scatter")
     kin = load("sector_kinematics")
+    kin_avg = load("sector_kinematics_sector_average_alpha")
     reach = load("sector_reach")
     off = load("pantheon_offaxis_test")
     qd = load("quasar_dipole_fit")
@@ -49,6 +50,7 @@ def main():
     hz = load("verify_high_z")
     hz_4e9 = next(r for r in hz["ratio_mp_over_double"] if r["z"] == 4e9)
     sec = {s["theta"]: s for s in kin["sectors"]}
+    avg = {s["theta"]: s for s in kin_avg["sectors"]}
     lcdm = row(fit, "LCDM")["chi2"]
     q0_obs, q0_err = -0.364, 0.032
     joint = dm["q"]["joint"]
@@ -110,24 +112,30 @@ def main():
         ("axis observer t0 > (2 sigma)", "1.88", ax["interval"]["2sigma"][0]),
         ("intrinsic scatter t0 > (1 sigma)", "7.3", sc["interval"]["1sigma"][0]),
         ("intrinsic scatter t0 > (2 sigma)", "4.3", sc["interval"]["2sigma"][0]),
-        ("q0 unprojected 15", "-0.005", sec[15]["q0_unprojected"]),
-        ("q0 unprojected 30", "-0.019", sec[30]["q0_unprojected"]),
-        ("q0 unprojected 45", "-0.039", sec[45]["q0_unprojected"]),
-        ("q0 unprojected 60", "-0.064", sec[60]["q0_unprojected"]),
-        ("q0 projected 0", "-0.540", sec[0]["q0_projected"]),
-        ("q0 projected 15", "-0.543", sec[15]["q0_projected"]),
-        ("q0 projected 30", "-0.549", sec[30]["q0_projected"]),
-        ("q0 projected 45", "-0.558", sec[45]["q0_projected"]),
-        ("q0 projected 60", "-0.570", sec[60]["q0_projected"]),
-        ("q0 tension, axial (sigma)", "5.5", (q0_obs - sec[0]["q0_projected"]) / q0_err),
-        ("q0 tension, 60 deg (sigma)", "6.4", (q0_obs - sec[60]["q0_projected"]) / q0_err),
-        ("z_t 0 deg", "0.60", sec[0]["z_t_projected"][0]),
-        ("z_t 15 deg", "0.62", sec[15]["z_t_projected"][0]),
-        ("z_t 30 deg", "0.73", sec[30]["z_t_projected"][0]),
-        ("30 deg accelerates again from z", "1.70", sec[30]["z_t_projected"][1]),
-        ("E spread z = 0.1 [%]", "0.3", 100 * kin["E_spread"]["0.1"]),
-        ("E spread z = 0.5 [%]", "2.8", 100 * kin["E_spread"]["0.5"]),
-        ("E spread z = 1 [%]", "9.0", 100 * kin["E_spread"]["1.0"]),
+        ("Fig. 2: q0 unprojected 15", "-0.004", avg[15]["q0_unprojected"]),
+        ("Fig. 2: q0 unprojected 30", "-0.016", avg[30]["q0_unprojected"]),
+        ("Fig. 2: q0 unprojected 45", "-0.034", avg[45]["q0_unprojected"]),
+        ("Fig. 2: q0 unprojected 60", "-0.055", avg[60]["q0_unprojected"]),
+        ("Fig. 2: q0 projected 0", "-0.540", avg[0]["q0_projected"]),
+        ("Fig. 2: q0 projected 15", "-0.542", avg[15]["q0_projected"]),
+        ("Fig. 2: q0 projected 30", "-0.548", avg[30]["q0_projected"]),
+        ("Fig. 2: q0 projected 45", "-0.556", avg[45]["q0_projected"]),
+        ("Fig. 2: q0 projected 60", "-0.566", avg[60]["q0_projected"]),
+        ("Fig. 2: q0 tension, axial (sigma)", "5.5", (q0_obs - avg[0]["q0_projected"]) / q0_err),
+        ("Fig. 2: q0 tension, 60 deg (sigma)", "6.3", (q0_obs - avg[60]["q0_projected"]) / q0_err),
+        ("Fig. 2: z_t 0 deg", "0.45", avg[0]["z_t_projected"][0]),
+        ("Fig. 2: z_t 15 deg", "0.46", avg[15]["z_t_projected"][0]),
+        ("Fig. 2: z_t 30 deg", "0.49", avg[30]["z_t_projected"][0]),
+        ("Fig. 2: z_t 45 deg", "0.57", avg[45]["z_t_projected"][0]),
+        ("Fig. 2: 45 deg accelerates again from z", "1.21", avg[45]["z_t_projected"][1]),
+        ("Fig. 2: z_t within 1.2 sigma (0 deg vs 0.64 +- 0.16)", "1.2", (0.64 - avg[0]["z_t_projected"][0]) / 0.16),
+        ("Fig. 2: E spread z = 0.1 [%]", "0.3", 100 * kin_avg["E_spread"]["0.1"]),
+        ("Fig. 2: E spread z = 0.5 [%]", "2.6", 100 * kin_avg["E_spread"]["0.5"]),
+        ("Fig. 2: E spread z = 1 [%]", "8.9", 100 * kin_avg["E_spread"]["1.0"]),
+        ("axial fit: z_t 0 deg", "0.60", sec[0]["z_t_projected"][0]),
+        ("axial fit: z_t 15 deg", "0.62", sec[15]["z_t_projected"][0]),
+        ("axial fit: z_t 30 deg", "0.73", sec[30]["z_t_projected"][0]),
+        ("axial fit: 45 deg has no transition", "0", len(sec[45]["z_t_projected"])),
         ("axis source sector z = 0.1", "2.8", kin["axis_observer_sector_deg"]["0.1"]),
         ("axis source sector z = 0.5", "12.5", kin["axis_observer_sector_deg"]["0.5"]),
         ("axis source sector z = 1", "21.7", kin["axis_observer_sector_deg"]["1.0"]),

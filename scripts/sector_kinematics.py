@@ -8,11 +8,14 @@ At the reference t0 (figures/t0_summary.json) and for theta = 0, 15, 30, 45, 60 
     the sign of q, with no asymptotic expansion);
   * spread of the projected E(z) across sectors, (max - min)/mean, at z = 0.1, 0.5, 1;
 and the sector of a source at redshift z for an observer on the axis, theta = rhat(z)/2
-(sector_geometry.py).  Writes figures/sector_kinematics.json.
+(sector_geometry.py).  Writes figures/sector_kinematics.json.  With --from-average-fit, t0 and
+alpha_high are those of the fit to the sector-averaged history (fit_sector_average.py), and the
+output is figures/sector_kinematics_sector_average_alpha.json.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -31,12 +34,20 @@ SECTORS = [0, 15, 30, 45, 60]
 
 
 def main():
-    t0 = float(json.loads((ROOT / "figures" / "t0_summary.json").read_text())["figure_t0"])
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--from-average-fit", action="store_true")
+    args = ap.parse_args()
+    if args.from_average_fit:
+        fit = json.loads((ROOT / "figures" / "fit_sector_average.json").read_text())["cases"]["high"]
+        t0, ah, name = fit["t0"], fit["alpha_high"], "sector_kinematics_sector_average_alpha.json"
+    else:
+        t0 = float(json.loads((ROOT / "figures" / "t0_summary.json").read_text())["figure_t0"])
+        ah, name = PH.load_alpha_high(), "sector_kinematics.json"
     zw = HM.Z_WORK
     rows, E = [], {}
     for th in SECTORS:
         zd, qd, ed = HM.build_centered_history(np.radians(th), t0)
-        e_p, q_p = HM.projected_sector(th, t0)
+        e_p, q_p = HM.projected_sector(th, t0, ah)
         ok = np.isfinite(q_p) & (zw > 0.01) & (zw < 2.0)
         zt = [float(zw[ok][i]) for i in np.where(np.diff(np.sign(q_p[ok])) != 0)[0]]
         inside = (zd >= 0) & (zd <= 2.0) & np.isfinite(qd)
@@ -50,13 +61,13 @@ def main():
     for z in (0.1, 0.5, 1.0):
         v = np.array([np.interp(z, zw, E[th]) for th in SECTORS])
         spread[str(z)] = float((v.max() - v.min()) / v.mean())
-    run = lambda z: PH.alpha_sqrt(z, PH.ALPHA_LOW, PH.load_alpha_high())
+    run = lambda z: PH.alpha_sqrt(z, PH.ALPHA_LOW, ah)
     zs = np.array([0.1, 0.5, 1.0, 1.3, 2.0])
     th_z = G.source_sector_deg(0.0, PH.rhat_of_z(zs, run), 1.0)
     print("E spread across sectors (max-min)/mean [%]:", {k: round(100 * v, 2) for k, v in spread.items()})
     print("axis observer: sector theta = rhat(z)/2 [deg] at z =", zs.tolist(), "->", np.round(th_z, 2).tolist())
-    out = {"t0": t0, "sectors": rows, "E_spread": spread, "axis_observer_sector_deg": dict(zip(map(str, zs), th_z.tolist()))}
-    (ROOT / "figures" / "sector_kinematics.json").write_text(json.dumps(out, indent=1))
+    out = {"t0": t0, "alpha_high": ah, "sectors": rows, "E_spread": spread, "axis_observer_sector_deg": dict(zip(map(str, zs), th_z.tolist()))}
+    (ROOT / "figures" / name).write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":
