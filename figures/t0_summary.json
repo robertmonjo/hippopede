@@ -1,0 +1,94 @@
+{
+ "figure_t0": 2.6,
+ "rule": "joint 1- and 2-sigma match of the sector distribution of q(z) to the GaPP band",
+ "band_match": {
+  "q": {
+   "1sigma": {
+    "t0_best": 2.6674299566634248,
+    "jackknife_se": 0.0843358313614878,
+    "node_16_84": [
+     2.4948576815475008,
+     2.8430652999438233
+    ],
+    "at_grid_edge": false
+   },
+   "2sigma": {
+    "t0_best": 2.5369730756078566,
+    "jackknife_se": 0.08091890758796089,
+    "node_16_84": [
+     2.3325308605458908,
+     2.7360291671771804
+    ],
+    "at_grid_edge": false
+   },
+   "joint": {
+    "t0_best": 2.5995601178148724,
+    "jackknife_se": 0.08257243847079343,
+    "node_16_84": [
+     2.3512237167959134,
+     2.7870002750862923
+    ],
+    "at_grid_edge": false
+   }
+  },
+  "E": {
+   "1sigma": {
+    "t0_best": 4.415774059234279,
+    "jackknife_se": 0.3576270573292656,
+    "node_16_84": [
+     3.408585438413495,
+     6.1457811578094965
+    ],
+    "at_grid_edge": false
+   },
+   "2sigma": {
+    "t0_best": 3.9394640415183484,
+    "jackknife_se": 0.29647245060213434,
+    "node_16_84": [
+     3.1119012911465966,
+     5.405373826982019
+    ],
+    "at_grid_edge": false
+   },
+   "joint": {
+    "t0_best": 4.163884025930207,
+    "jackknife_se": 0.32702927902116835,
+    "node_16_84": [
+     3.270366442080218,
+     5.967316851477852
+    ],
+    "at_grid_edge": false
+   }
+  }
+ },
+ "axis_observer": {
+  "t0_best": 17.553857387031318,
+  "interval": {
+   "1sigma": [
+    2.5605108630799083,
+    null
+   ],
+   "2sigma": [
+    1.8837302269222278,
+    null
+   ]
+  },
+  "chi2_nu": 1.193934449738305,
+  "minimum_at_grid_edge": false,
+  "plateau_to_axial_limit": true
+ },
+ "intrinsic_scatter": {
+  "t0_best": 200.0,
+  "interval": {
+   "1sigma": [
+    7.336440481536382,
+    null
+   ],
+   "2sigma": [
+    4.3007458649058234,
+    null
+   ]
+  },
+  "minimum_at_grid_edge": true
+ }
+}

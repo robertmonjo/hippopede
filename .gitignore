@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+# downloaded by the scripts
+data/pantheon_plus/
+data/cc_compilation/data_MM20.dat
+dipole_zslices/data/

@@ -1,0 +1,80 @@
+{
+ "t0": 2.6,
+ "sectors": [
+  {
+   "theta": 1.0,
+   "z_max_unprojected": 171.01898720458158,
+   "z_reach_observed": 40.469906085204734
+  },
+  {
+   "theta": 5.0,
+   "z_max_unprojected": 33.44169652320992,
+   "z_reach_observed": 15.726641243519975
+  },
+  {
+   "theta": 15.0,
+   "z_max_unprojected": 10.583708349769543,
+   "z_reach_observed": 7.495196254836475
+  },
+  {
+   "theta": 30.0,
+   "z_max_unprojected": 4.964055673839166,
+   "z_reach_observed": 4.315273151574483
+  },
+  {
+   "theta": 45.0,
+   "z_max_unprojected": 3.1635660232811462,
+   "z_reach_observed": 3.024021946069939
+  },
+  {
+   "theta": 60.0,
+   "z_max_unprojected": 2.316660010229572,
+   "z_reach_observed": 2.3468550844969855
+  },
+  {
+   "theta": 70.0,
+   "z_max_unprojected": 1.985932064066728,
+   "z_reach_observed": 2.068362088037991
+  },
+  {
+   "theta": 75.0,
+   "z_max_unprojected": 1.8700608305056,
+   "z_reach_observed": 1.9687759164460699
+  },
+  {
+   "theta": 85.0,
+   "z_max_unprojected": 1.7522281799728807,
+   "z_reach_observed": 1.8663788734229994
+  }
+ ],
+ "axis_observer": {
+  "z_h": 3.132417707786592,
+  "table": [
+   {
+    "z": 1.0,
+    "sector_deg": 21.680226428584984,
+    "sector_reach": 5.645377300510019
+   },
+   {
+    "z": 2.0,
+    "sector_deg": 34.11003796029459,
+    "sector_reach": 3.8629088742700546
+   },
+   {
+    "z": 3.0,
+    "sector_deg": 42.36010022967112,
+    "sector_reach": 3.191270608773433
+   },
+   {
+    "z": 5.0,
+    "sector_deg": 52.97082962261058,
+    "sector_reach": 2.6161158813088927
+   },
+   {
+    "z": 1090.0,
+    "sector_deg": 89.5020134011852,
+    "sector_reach": 1.8889692607743815
+   }
+  ]
+ }
+}
