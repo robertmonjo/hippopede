@@ -1,4 +1,5 @@
 {
+ "n_data": 1621,
  "catwise": {
   "D_geo": 0.009902154194786622,
   "sigma": 0.0017428571428571426
@@ -25,6 +26,10 @@
    "dchi2_vs_lcdm": 0.0,
    "k": 1,
    "daic_vs_lcdm": 0.0,
+   "dbic_vs_lcdm": 0.0,
+   "k_axis": 1,
+   "daic_vs_lcdm_axis": 0.0,
+   "dbic_vs_lcdm_axis": 0.0,
    "parameters": {}
   },
   {
@@ -36,6 +41,10 @@
    "dchi2_vs_lcdm": 0.28328066792255413,
    "k": 1,
    "daic_vs_lcdm": 0.28328066792255413,
+   "dbic_vs_lcdm": 0.28328066792255413,
+   "k_axis": 1,
+   "daic_vs_lcdm_axis": 0.28328066792255413,
+   "dbic_vs_lcdm_axis": 0.28328066792255413,
    "parameters": {
     "alpha_high": 0.4111020355057699
    }
@@ -49,6 +58,10 @@
    "dchi2_vs_lcdm": -52.863123081708544,
    "k": 2,
    "daic_vs_lcdm": -50.863123081708544,
+   "dbic_vs_lcdm": -45.47232455997287,
+   "k_axis": 2,
+   "daic_vs_lcdm_axis": -50.863123081708544,
+   "dbic_vs_lcdm_axis": -45.47232455997287,
    "parameters": {
     "A": 0.011247174263845465
    }
@@ -62,6 +75,10 @@
    "dchi2_vs_lcdm": -55.66964249817832,
    "k": 3,
    "daic_vs_lcdm": -51.66964249817832,
+   "dbic_vs_lcdm": -40.88804545470697,
+   "k_axis": 3,
+   "daic_vs_lcdm_axis": -51.66964249817832,
+   "dbic_vs_lcdm_axis": -40.88804545470697,
    "parameters": {
     "A_CatWISE": 0.009902154194786622,
     "A_Quaia": 0.016240309374328504
@@ -76,6 +93,10 @@
    "dchi2_vs_lcdm": -45.599764279812696,
    "k": 3,
    "daic_vs_lcdm": -41.599764279812696,
+   "dbic_vs_lcdm": -30.818167236341345,
+   "k_axis": 5,
+   "daic_vs_lcdm_axis": -37.599764279812696,
+   "dbic_vs_lcdm_axis": -16.03657019286999,
    "parameters": {
     "alpha_high": 0.4049652427311144,
     "t0": 4.496188680821915,

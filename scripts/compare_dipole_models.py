@@ -10,7 +10,10 @@ Models (the chronometers and supernovae, 38 CC + 1579 unbinned SN, from fit_ball
   LCDM + two dipoles      one amplitude for CatWISE and one, redshift-independent, for Quaia;
   light-cone ball         amplitudes predicted by the geometry (refine_overview_minimum.json).
 Parameters counted beyond the nuisance ones (H0, M): Omega_m or alpha_high, the dipole amplitudes, and t0 and
-theta_obs for the ball; the dipole direction is not counted for any model.  Writes json/compare_dipole_models.json.
+theta_obs for the ball (k); the dipole direction is not compared for any model, but the ball uses an axis on the
+sky (fixed by the CatWISE excess) to modulate the supernova distances, which k_axis adds (2 parameters).
+AIC = chi2 + 2k and BIC = chi2 + k ln N with N = 38 + 1579 + 1 + 3 data, both relative to LCDM.
+Writes json/compare_dipole_models.json.
 """
 
 from __future__ import annotations
@@ -54,16 +57,23 @@ def main():
          {"alpha_high": ball["alpha_high"], "t0": ball["t0"], "theta_obs": ball["theta_obs"]}),
     ]
     ref = rows[0][1] + rows[0][2] + rows[0][3]
+    n_data = 38 + 1579 + 1 + len(a)
     out = []
-    print(f"{'model':22s} {'CC+SN':>7s} {'CatWISE':>8s} {'Quaia':>7s} {'total':>7s} {'dchi2':>7s} {'k':>2s} {'dAIC':>7s}")
+    print(f"{'model':22s} {'CC+SN':>7s} {'CatWISE':>8s} {'Quaia':>7s} {'total':>7s} {'dchi2':>7s} {'k':>2s} {'dAIC':>7s} {'dBIC':>7s}"
+          f" {'k_axis':>6s} {'dAIC':>7s} {'dBIC':>7s}")
     for name, cs, cw, q, k, par in rows:
         tot = cs + cw + q
+        ka = k + (2 if name == "light-cone ball" else 0)
         r = {"model": name, "dchi2_cc_sn": cs, "chi2_catwise": cw, "chi2_quaia": q, "total": tot,
-             "dchi2_vs_lcdm": tot - ref, "k": k, "daic_vs_lcdm": tot - ref + 2 * (k - 1), "parameters": par}
+             "dchi2_vs_lcdm": tot - ref, "k": k, "daic_vs_lcdm": tot - ref + 2 * (k - 1),
+             "dbic_vs_lcdm": tot - ref + (k - 1) * np.log(n_data), "k_axis": ka,
+             "daic_vs_lcdm_axis": tot - ref + 2 * (ka - 1), "dbic_vs_lcdm_axis": tot - ref + (ka - 1) * np.log(n_data),
+             "parameters": par}
         out.append(r)
-        print(f"{name:22s} {cs:+7.2f} {cw:8.2f} {q:7.2f} {tot:7.2f} {tot - ref:+7.2f} {k:2d} {r['daic_vs_lcdm']:+7.2f}")
+        print(f"{name:22s} {cs:+7.2f} {cw:8.2f} {q:7.2f} {tot:7.2f} {tot - ref:+7.2f} {k:2d} {r['daic_vs_lcdm']:+7.2f}"
+              f" {r['dbic_vs_lcdm']:+7.2f} {ka:6d} {r['daic_vs_lcdm_axis']:+7.2f} {r['dbic_vs_lcdm_axis']:+7.2f}")
     (JSON / "compare_dipole_models.json").write_text(json.dumps(
-        {"catwise": {"D_geo": d_geo, "sigma": s_geo}, "quaia": {"amp": a.tolist(), "sigma": s.tolist()}, "rows": out}, indent=1))
+        {"n_data": n_data, "catwise": {"D_geo": d_geo, "sigma": s_geo}, "quaia": {"amp": a.tolist(), "sigma": s.tolist()}, "rows": out}, indent=1))
 
 
 if __name__ == "__main__":
