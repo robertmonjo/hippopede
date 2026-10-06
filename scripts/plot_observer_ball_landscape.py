@@ -29,7 +29,7 @@ Balls that need sectors beyond the cut of the analysis (70 deg) are not evaluate
 Default grids: t0 in [1.5, 3.6], theta_obs in [0, 10] deg.  The wide version is
     python scripts/plot_observer_ball_landscape.py --t0-range 1 10 --nt 80 --theta-max 45 --theta-step 0.25 \
         --alpha-range 0.27 0.47 --tag joint_wide --dipole-alphas 0.30 0.32 0.34 0.36 0.38 0.40 0.42 0.44
-Writes figures/fit_observer_ball_landscape_<tag>.json and
+Writes json/fit_observer_ball_landscape_<tag>.json and
 figures/hippopede_observer_ball_landscape_<tag>.(png|pdf) (tag "joint" by default).
 """
 
@@ -55,6 +55,7 @@ sys.path.insert(0, str(SCRIPT_DIR))
 import fit_observer_ball as OB  # noqa: E402
 
 FIG = ROOT / "figures"
+JSON = ROOT / "json"   # numerical outputs; figures/ holds the png/pdf
 RED = "#d62728"
 T_BLOCKS = 4
 T_GRID = TH_GRID = A_GRID = None
@@ -71,7 +72,7 @@ def set_grids(t_range, nt, theta_max, theta_step, a_range, a_step):
 
 
 def _lcdm():
-    return json.loads((FIG / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
+    return json.loads((JSON / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
 
 
 def _task(args):
@@ -223,11 +224,11 @@ def dipole_runs(alphas):
     """{alpha_high: (t0, CatWISE [lo, best, hi], Quaia theta_obs)} from the saved dipole runs."""
     out = {}
     for a in alphas:
-        qd = json.loads((FIG / f"quasar_dipole_fit{_suffix(a)}.json").read_text())
+        qd = json.loads((JSON / f"quasar_dipole_fit{_suffix(a)}.json").read_text())
         runs = sorted((r for r in qd["runs"] if r["pz"] == "gamma" and abs(r["x"] - qd["x"]) < 1e-12), key=lambda r: r["t0"])
         cat = np.array([[np.nan if v is None else v for v in r["theta_obs_minus1sigma_best_plus1sigma"]] for r in runs], float)
         t = np.array([r["t0"] for r in runs], float)
-        qz = json.loads((FIG / f"quaia_zslice_model{_suffix(a)}.json").read_text())["model"]
+        qz = json.loads((JSON / f"quaia_zslice_model{_suffix(a)}.json").read_text())["model"]
         # theta_obs beyond the observer range of the dipole model (35 deg) is an extrapolation: dropped
         qmap = {round(float(k), 3): (v["theta_obs"] if v.get("within_observer_range", True) else np.nan) for k, v in qz.items()}
         quaia = np.array([qmap.get(round(x, 3), np.nan) for x in t], float)
@@ -243,7 +244,7 @@ def dipole_chi2(alphas):
     out = {}
     lt = np.log(T_GRID)
     for a in alphas:
-        qd = json.loads((FIG / f"quasar_dipole_fit{_suffix(a)}.json").read_text())
+        qd = json.loads((JSON / f"quasar_dipole_fit{_suffix(a)}.json").read_text())
         runs = sorted((r for r in qd["runs"] if r["pz"] == "gamma" and abs(r["x"] - qd["x"]) < 1e-12), key=lambda r: r["t0"])
         t = np.log([r["t0"] for r in runs])
         D = np.abs(np.array([r["D"] for r in runs], float))             # t0 x theta grid of the run
@@ -262,7 +263,7 @@ def dipole_chi2(alphas):
             if ok.sum() > 1:
                 d = np.interp(TH_GRID, g[ok], Dt[j, ok], right=np.nan)
                 cat[:, j] = ((d - qd["D_geo"]) / qd["sigma"]) ** 2
-        qz = json.loads((FIG / f"quaia_zslice_model{_suffix(a)}.json").read_text())
+        qz = json.loads((JSON / f"quaia_zslice_model{_suffix(a)}.json").read_text())
         amp = np.array([s["excess_amp"] for s in qz["slices"]])
         sig = np.array([s["sigma"] for s in qz["slices"]])
         tq = sorted((float(k), v["f_1deg"]) for k, v in qz["model"].items())
@@ -340,7 +341,7 @@ def main():
     a = ap.parse_args()
     grids = (a.t0_range, a.nt, a.theta_max, a.theta_step, a.alpha_range, a.alpha_step)
     set_grids(*grids)
-    path = FIG / f"fit_observer_ball_landscape_{a.tag}.json"
+    path = JSON / f"fit_observer_ball_landscape_{a.tag}.json"
     with ProcessPoolExecutor(max_workers=a.workers, initializer=set_grids, initargs=grids) as pool:
         C, M = raw_grid(path, a.reuse_grid, pool)
         Cp, Mp, Ap, edge = profile_alpha(C, M)

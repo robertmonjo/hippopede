@@ -26,7 +26,7 @@ def load_alpha_high():
     """alpha_high fitted to CC + binned Pantheon+ by fit_alpha_high.py (run that script first)."""
     import json
     from pathlib import Path
-    path = Path(__file__).resolve().parents[1] / "figures" / "fit_alpha_high.json"
+    path = Path(__file__).resolve().parents[1] / "json" / "fit_alpha_high.json"
     if not path.exists():
         raise FileNotFoundError(f"{path} not found: run scripts/fit_alpha_high.py first")
     return float(json.loads(path.read_text())["alpha_high"])

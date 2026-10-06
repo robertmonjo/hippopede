@@ -6,12 +6,12 @@ Model: for an observer at small theta_obs the count dipole is D_i = theta_obs f_
 common sky direction u.  f_i is the dipole of quasar_dipole_fit.dipole for a flat p(z) inside
 slice i, with the slice's own count slope x_i, at theta_obs = 1 deg (the dipole is linear in
 theta_obs for small offsets, so the fitted amplitude a is theta_obs in degrees).  Reference t0
-from figures/t0_summary.json plus a grid of values.
+from json/t0_summary.json plus a grid of values.
 Fit: chi2 = sum_i |e_i - a f_i u|^2 / sigma_i^2 (per-component mock errors), minimised
 analytically over a and u.  The same is done for a redshift-independent shape f_i = 1.
 Only slices inside the model tables (z <= 2.1) are used.  With --theta-obs the slice dipoles are also
 computed at those observer sectors (f_theta, |D_i| without the linear approximation).
-Writes figures/quaia_zslice_model.json.
+Writes json/quaia_zslice_model.json.
 """
 
 from __future__ import annotations
@@ -82,7 +82,7 @@ def options():
     if args.alpha_high is not None:
         ah, suffix = args.alpha_high, "_ah" + f"{args.alpha_high:g}".replace(".", "p") + args.out_suffix
     elif args.from_average_fit:
-        ah = json.loads((ROOT / "figures" / "fit_sector_average.json").read_text())["cases"]["high"]["alpha_high"]
+        ah = json.loads((ROOT / "json" / "fit_sector_average.json").read_text())["cases"]["high"]["alpha_high"]
         suffix = "_sector_average_alpha"
     else:
         return None, ""
@@ -100,7 +100,7 @@ def main():
     print(f"no dipole: chi2={chi2_0:.2f} (dof {3 * len(rows)});  constant shape: chi2={c_const:.2f}, amplitude={a_const:.4f}")
     out = {"slices": [{"z": r["z"], "x": r["x"], "excess_amp": r["amp"], "sigma": r["sig"]} for r in rows],
            "chi2_null": chi2_0, "chi2_const": c_const, "amp_const": a_const, "model": {}}
-    t_ref = float(json.loads((ROOT / "figures" / "t0_summary.json").read_text())["figure_t0"])
+    t_ref = float(json.loads((ROOT / "json" / "t0_summary.json").read_text())["figure_t0"])
     out["reference_t0"] = t_ref
     for t0 in (t0_list or sorted({t_ref, 2.5, 3.0, 4.0, 6.0, 10.0})):
         tab = T.e_table(t0)
@@ -115,7 +115,7 @@ def main():
         if THETA_OBS:
             out["theta_obs_grid"] = list(THETA_OBS)
             out["model"][str(t0)]["f_theta"] = [[abs(shape(tab, *r["z"], r["x"], th)) for r in rows] for th in THETA_OBS]
-    (ROOT / "figures" / f"quaia_zslice_model{suffix}.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "json" / f"quaia_zslice_model{suffix}.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

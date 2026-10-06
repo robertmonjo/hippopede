@@ -4,7 +4,7 @@ z_max(theta): largest redshift of the centred history retained after the first m
 (unprojected); the observed reach z_reach solves E_hyp^proj(z) - 1 = z_max.  For the observer
 on the axis the source at z lies in the sector rhat(z)/2 (sector_geometry.py); the directional
 construction holds only up to the redshift z_h at which that sector's reach falls below z.
-Reference t0 from figures/t0_summary.json.  Writes figures/sector_reach.json.
+Reference t0 from json/t0_summary.json.  Writes json/sector_reach.json.
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ def reach(th_deg, t0, n=200000):
 
 
 def main():
-    t0 = float(json.loads((ROOT / "figures" / "t0_summary.json").read_text())["figure_t0"])
+    t0 = float(json.loads((ROOT / "json" / "t0_summary.json").read_text())["figure_t0"])
     rows = []
     for th in (1.0, 5.0, 15.0, 30.0, 45.0, 60.0, 70.0, 75.0, 85.0):
         zm, zr = reach(th, t0)
@@ -53,7 +53,7 @@ def main():
     for r in table:
         print(f"z = {r['z']:7.1f}: source sector {r['sector_deg']:6.2f} deg, observed reach of that sector z = {r['sector_reach']:.3f}")
     print(f"axis observer: directional construction defined up to z_h = {z_h}")
-    (ROOT / "figures" / "sector_reach.json").write_text(json.dumps(
+    (ROOT / "json" / "sector_reach.json").write_text(json.dumps(
         {"t0": t0, "sectors": rows, "axis_observer": {"z_h": z_h, "table": table}}, indent=1))
 
 

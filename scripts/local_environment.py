@@ -11,7 +11,7 @@ in units of the observer's Hubble length,
 and the dipole is q_d,eff(z) = [q_eff(z, +n_ax) - q_eff(z, -n_ax)]/2, to be compared with the
 supernova dipole q_d exp(-z/z_S), q_d = -8.03, z_S = 0.026 (Colin et al. 2019).
 Observers: theta_obs = 1, 2, 5 deg and the value reproducing the quasar excess at the reference
-t0 (quasar_dipole_fit.json).  Writes figures/local_environment.json.
+t0 (quasar_dipole_fit.json).  Writes json/local_environment.json.
 """
 
 from __future__ import annotations
@@ -48,8 +48,8 @@ def q_eff(tab, theta_obs, z, sign):
 
 
 def main():
-    t_ref = float(json.loads((ROOT / "figures" / "t0_summary.json").read_text())["figure_t0"])
-    qf = json.loads((ROOT / "figures" / "quasar_dipole_fit.json").read_text())
+    t_ref = float(json.loads((ROOT / "json" / "t0_summary.json").read_text())["figure_t0"])
+    qf = json.loads((ROOT / "json" / "quasar_dipole_fit.json").read_text())
     run = next(r for r in qf["runs"] if abs(r["t0"] - t_ref) < 1e-9 and r["pz"] == "gamma" and abs(r["x"] - qf["x"]) < 1e-12)
     th_q = run["theta_obs_minus1sigma_best_plus1sigma"][1]
     thetas = sorted({1.0, 2.0, 5.0} | ({round(th_q, 3)} if th_q else set()))
@@ -65,7 +65,7 @@ def main():
         print(f"t0={t_ref} theta_obs={th}: axis crossing at z={zc:.4f}; q_d,eff(z) = "
               + " ".join(f"{x:+.2e}" for x in qd[[0, 2, 4, 6, 9, 12, 14]]))
     print("z columns:", Z[[0, 2, 4, 6, 9, 12, 14]].tolist())
-    (ROOT / "figures" / "local_environment.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "json" / "local_environment.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

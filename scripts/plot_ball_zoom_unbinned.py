@@ -9,11 +9,14 @@ Quaia slice amplitudes.  Light green: CC + SN + CatWISE, minimum and 68/95% regi
 Red dashed: alpha_high of the profile (--alpha-levels); --highlight-alpha is drawn solid and thicker.
 Default window t0 1.4-2.2, theta_obs 0-3 deg; --t0-range, --nt, --theta-max, --theta-step (or an irregular
 --theta-nodes), --alpha-range and --tag change it.  At each (alpha_high, t0) the largest feasible theta_obs
-(every source in a sector <= 70 deg) is located by bisection between the computed nodes.  The figure is drawn
-on a regular grid (--display-theta-step, --nt-fine) by bilinear interpolation in (theta_obs / theta_max(t0),
-ln t0).  --dipole-alphas and --dipole-suffix select the dipole runs (quasar_dipole_fit.py and
+(every sector of the ball tabulated, sector_geometry.THETA_MAX_DEG, and reaching the redshift) is located
+by bisection between the computed nodes; the overview map is run with HIPPOPEDE_THETA_MAX_DEG=90.  The figure is drawn
+on a regular grid (--display-theta-step, --nt-fine) by monotone piecewise-cubic (PCHIP) interpolation in
+(theta_obs / theta_max(t0), ln t0); the CatWISE and Quaia chi2 are formed at every point of that grid from the
+interpolated dipole amplitudes.  --best-all-json takes the minimum with the Quaia slices from
+refine_overview_minimum.py.  --dipole-alphas and --dipole-suffix select the dipole runs (quasar_dipole_fit.py and
 quaia_zslice_model.py with --out-suffix); Quaia runs made with --theta-obs are used without the linear
-approximation.  Writes figures/ball_zoom_unbinned<tag>.json and figures/hippopede_ball_zoom_unbinned<tag>.(png|pdf).
+approximation.  Writes json/ball_zoom_unbinned<tag>.json and figures/hippopede_ball_zoom_unbinned<tag>.(png|pdf).
 """
 
 from __future__ import annotations
@@ -29,6 +32,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
+from scipy.interpolate import PchipInterpolator  # noqa: E402
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT = SCRIPT_DIR.parent
@@ -38,6 +42,7 @@ import fit_ball_unbinned as F  # noqa: E402
 import fit_observer_ball as OB  # noqa: E402
 
 FIG = ROOT / "figures"
+JSON = ROOT / "json"   # numerical outputs; figures/ holds the png/pdf
 GREEN = "#1a9641"   # CatWISE: neither of the colours of the chi2 scale
 LIGHT = "#7CFC7C"   # CC + SN + CatWISE region
 QUAIA = "#F2A900"   # Quaia line (yellow-orange) and band (yellow)
@@ -123,7 +128,7 @@ def _quaia_runs():
     if _QZ is None:
         _QZ = {}
         for a in F.DIPOLE_ALPHAS:
-            qz = json.loads((FIG / ("quaia_zslice_model_ah" + f"{a:g}".replace(".", "p") + F.DIPOLE_SUFFIX + ".json")).read_text())
+            qz = json.loads((JSON / ("quaia_zslice_model_ah" + f"{a:g}".replace(".", "p") + F.DIPOLE_SUFFIX + ".json")).read_text())
             amp = np.array([x["excess_amp"] for x in qz["slices"]])
             sig = np.array([x["sigma"] for x in qz["slices"]])
             tq = sorted((float(k), v) for k, v in qz["model"].items())
@@ -167,6 +172,77 @@ def quaia_chi2(ah, t0, theta):
     return float(np.sum(((d - amp) / sig) ** 2))
 
 
+def pchip(x, y, xq, clamp=False):
+    """Monotone piecewise-cubic interpolation of y(x) at xq (linear for two nodes); outside [x0, xn] the
+    end values with clamp, NaN otherwise."""
+    x, y, xq = np.asarray(x, float), np.asarray(y, float), np.asarray(xq, float)
+    m = np.isfinite(y)
+    x, y = x[m], y[m]
+    if len(x) < 2:
+        return np.full(xq.shape, np.nan)
+    xe = np.clip(xq, x[0], x[-1])
+    v = np.interp(xe, x, y) if len(x) == 2 else PchipInterpolator(x, y, extrapolate=False)(xe)
+    return v if clamp else np.where((xq >= x[0]) & (xq <= x[-1]), v, np.nan)
+
+
+def _run_fine(lt, f, g, TF, THF):
+    """Field f[t0, theta] of one dipole run on the display grid: PCHIP in theta_obs at each t0 of the run,
+    then in ln t0 at each theta_obs.  NaN where the run has no value."""
+    tmp = np.full((len(lt), len(THF)), np.nan)
+    for n in range(len(lt)):
+        m = np.isfinite(f[n])
+        if m.sum() >= 2:
+            tmp[n] = pchip(g[m], f[n, m], THF)
+    out = np.full((len(THF), len(TF)), np.nan)
+    x = np.log(TF)
+    for i in range(len(THF)):
+        m = np.isfinite(tmp[:, i])
+        if m.sum() >= 2:
+            out[i] = pchip(lt[m], tmp[m, i], x)
+    return out
+
+
+def _alpha_mix(fields_by_alpha, Af):
+    """sum_k w_k(alpha) field_k with the linear weights of alpha between the dipole runs; NaN outside."""
+    al = np.array(F.DIPOLE_ALPHAS)
+    acc, bad = np.zeros_like(Af), ~((Af >= al[0]) & (Af <= al[-1]))
+    for k, fk in enumerate(fields_by_alpha):
+        lo = al[k - 1] if k > 0 else al[k]
+        hi = al[k + 1] if k < len(al) - 1 else al[k]
+        w = np.zeros_like(Af)
+        if k > 0:
+            s = (Af >= lo) & (Af <= al[k])
+            w[s] = (Af[s] - lo) / (al[k] - lo)
+        if k < len(al) - 1:
+            s = (Af >= al[k]) & (Af <= hi)
+            w[s] = (hi - Af[s]) / (hi - al[k])
+        use = w > 0
+        bad |= use & ~np.isfinite(fk)
+        acc += np.where(use, w * np.nan_to_num(fk), 0.0)
+    acc[bad] = np.nan
+    return acc
+
+
+def dipole_chi2_fine(TF, THF, Af):
+    """CatWISE and Quaia chi2 on the display grid at alpha_high = Af (the CC + SN profile, interpolated):
+    |D| of every dipole run interpolated to each point, mixed in alpha_high, then squared."""
+    F.catwise_chi2(F.DIPOLE_ALPHAS[0], 2.0, 1.0)   # loads the CatWISE runs
+    cw_runs, q_runs = [], []
+    for a in F.DIPOLE_ALPHAS:
+        lt, Dabs, g, dgeo, sig = F._DIP[a]
+        cw_runs.append(_run_fine(lt, Dabs, g, TF, THF))
+        lq, f, amp, qsig, qg = _quaia_runs()[a]
+        if qg is None:   # f_i at 1 deg, linear in theta_obs (valid up to 35 deg)
+            fs = [np.where(THF[:, None] <= 35.0, THF[:, None] * pchip(lq, f[:, j], np.log(TF))[None, :], np.nan)
+                  for j in range(f.shape[1])]
+        else:
+            fs = [_run_fine(lq, f[:, :, j], qg, TF, THF) for j in range(f.shape[2])]
+        q_runs.append(fs)
+    cw = ((_alpha_mix(cw_runs, Af) - dgeo) / sig) ** 2
+    q = sum(((_alpha_mix([r[j] for r in q_runs], Af) - amp[j]) / qsig[j]) ** 2 for j in range(len(amp)))
+    return cw, q
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--workers", type=int, default=20)
@@ -182,6 +258,14 @@ def main():
     ap.add_argument("--alpha-levels", nargs="+", type=float, default=(0.32, 0.34, 0.36, 0.38, 0.40))
     ap.add_argument("--highlight-alpha", type=float, default=None)
     ap.add_argument("--hatch-unresolved", action="store_true", help="hatch where alpha_high is at an end of its feasible range")
+    ap.add_argument("--no-title", action="store_true", help="no title inside the figure (it goes in the caption)")
+    ap.add_argument("--plot-t0-max", type=float, default=None, help="right edge of the figure (the grid is not cut)")
+    ap.add_argument("--markers-json", default=None,
+                    help="json file of a finer map (this script, e.g. ball_zoom_unbinned_wide.json) whose CC + SN and "
+                         "CC + SN + CatWISE minima replace the ones of this grid in the figure")
+    ap.add_argument("--best-all-json", default=None,
+                    help="json file (refine_overview_minimum.py) whose continuous minimum with the Quaia slices replaces the "
+                         "grid one in the figure; drawn only inside the window")
     ap.add_argument("--dipole-alphas", nargs="+", type=float, default=None)
     ap.add_argument("--dipole-suffix", default="")
     ap.add_argument("--tag", default="")
@@ -190,7 +274,7 @@ def main():
     dip = (a.dipole_alphas, a.dipole_suffix) if a.dipole_alphas else None
     grids = (a.t0_range, a.nt, [float(x) for x in nodes], a.alpha_range, dip)
     set_grids(*grids)
-    path = FIG / f"ball_zoom_unbinned{a.tag}.json"
+    path = JSON / f"ball_zoom_unbinned{a.tag}.json"
     EDGE = None
     if a.reuse and path.exists():
         d = json.loads(path.read_text())
@@ -266,7 +350,7 @@ def main():
     # Display only: the fields are interpolated in ln t0 onto TF, and the edge of the allowed region,
     # the largest theta_obs with a finite chi2 at each computed t0, is interpolated between the columns,
     # so that the white region has a continuous edge instead of one step per column.
-    TF = np.geomspace(T_GRID[0], T_GRID[-1], a.nt_fine)
+    TF = np.geomspace(T_GRID[0], min(T_GRID[-1], a.plot_t0_max or np.inf), a.nt_fine)   # display grid in t0
     THF = TH_GRID if a.display_theta_step is None else np.round(np.arange(0.0, TH_GRID[-1] + 1e-9, a.display_theta_step), 4)
     fin = np.isfinite(P)
     thmax = np.array([TH_GRID[fin[:, c]].max() if fin[:, c].any() else np.nan for c in range(len(T_GRID))])
@@ -280,30 +364,37 @@ def main():
 
     def fine(Z, fill=None):
         """Interpolation aligned with the edge: at each computed t0 the field is written as a function of
-        u = theta_obs / theta_max(t0), interpolated in ln t0 at fixed u, and mapped back to theta_obs."""
+        u = theta_obs / theta_max(t0), interpolated in ln t0 at fixed u, and mapped back to theta_obs.
+        Each step is a monotone piecewise-cubic (PCHIP) interpolation, continuous in value and slope."""
         Zu = np.full((len(U), len(T_GRID)), np.nan)
         for c in range(len(T_GRID)):
             m = np.isfinite(Z[:, c])
             if okc[c] and m.sum() >= 2:
-                Zu[:, c] = np.interp(U * thmax[c], TH_GRID[m], Z[m, c])
+                Zu[:, c] = pchip(TH_GRID[m], Z[m, c], U * thmax[c], clamp=True)
         Zuf = np.full((len(U), len(TF)), np.nan)
         for r in range(len(U)):
             m = np.isfinite(Zu[r])
             if m.sum() >= 2:
-                Zuf[r] = np.interp(np.log(TF), np.log(T_GRID[m]), Zu[r, m], left=np.nan, right=np.nan)
+                Zuf[r] = pchip(np.log(T_GRID[m]), Zu[r, m], np.log(TF))
         out = np.full((len(THF), len(TF)), np.nan)
         for c in range(len(TF)):
             if np.isfinite(thmax_f[c]) and np.isfinite(Zuf[:, c]).sum() >= 2:
                 m = np.isfinite(Zuf[:, c])
-                out[:, c] = np.interp(THF, U[m] * thmax_f[c], Zuf[m, c], right=np.nan)
+                out[:, c] = pchip(U[m] * thmax_f[c], Zuf[m, c], THF)
         out[~(THF[:, None] <= thmax_f[None, :])] = np.nan
         return out if fill is None else np.where(np.isfinite(out), out, fill)
 
-    Df, CWf = fine(D), fine(cw_on_profile, 1e9)
+    Df = fine(D)
     PPf, TZf = fine(P - np.nanmin(P), 1e9), fine(PJ - np.nanmin(PJ), 1e9)
+    # CatWISE and Quaia on the fine grid: the dipole amplitudes of the runs are interpolated to every point
+    # (alpha_high of the CC + SN profile there), and the chi2 is formed afterwards, so that the edges of the
+    # bands are not the interpolation of a squared quantity between the nodes
+    CWf, QGf = dipole_chi2_fine(TF, THF, fine(A))
+    outside = ~(THF[:, None] <= thmax_f[None, :])
+    CWf[outside], QGf[outside] = np.nan, np.nan
+    CWf = np.where(np.isfinite(CWf), CWf, 1e9)
     # Quaia and the summary region on the fine grid: the minimum over theta_obs of the Quaia chi2 is
     # taken at every fine t0, and the extent of the summary region is measured there
-    QGf = fine(QG)
     hasf = np.isfinite(QGf).any(axis=0)
     qminf = np.where(hasf, np.nanmin(np.where(np.isfinite(QGf), QGf, np.inf), axis=0), np.nan)
     DQf = QGf - qminf[None, :]
@@ -373,22 +464,37 @@ def main():
     # a minimum on the edge of the window is not a minimum of the model: it is then named, not drawn
     edge = lambda a, b: a in (0, len(TH_GRID) - 1) or b in (0, len(T_GRID) - 1)
     ax.plot([], [], color=LIGHT, lw=1.6, label="CC + SN + CatWISE: 68% and 95%")
-    if not edge(ij, jj):
+    mk = json.loads((JSON / a.markers_json).read_text()) if a.markers_json else None
+    if mk:
+        b2 = mk["best_cc_sn_catwise"]
+        ax.plot(b2["t0"], b2["theta_obs"], marker="D", color=LIGHT, mec="k", ms=7, ls="none", zorder=8,
+                label="CC + SN + CatWISE minimum")
+    elif not edge(ij, jj):
         ax.plot(T_GRID[jj], TH_GRID[ij], marker="D", color=LIGHT, mec="k", ms=7, ls="none", zorder=8,
                 label="CC + SN + CatWISE minimum")
-    if not edge(iq, jq):
+    if a.best_all_json:
+        cb4 = json.loads((JSON / a.best_all_json).read_text())["continuous_best"]
+        if T_GRID[0] <= cb4["t0"] <= T_GRID[-1] and cb4["theta_obs"] <= TH_GRID[-1]:
+            ax.plot(cb4["t0"], cb4["theta_obs"], marker="p", color=QUAIA, mec="k", ms=10, ls="none", zorder=9,
+                    label="CC + SN + CatWISE + Quaia minimum")
+    elif not edge(iq, jq):
         ax.plot(T_GRID[jq], TH_GRID[iq], marker="p", color=QUAIA, mec="k", ms=10, ls="none", zorder=9,
                 label="CC + SN + CatWISE + Quaia minimum")
-    if not edge(i, j):
+    if mk:
+        b1 = mk["best_cc_sn"]
+        ax.plot(b1["t0"], b1["theta_obs"], marker="*", color="white", mec="k", ms=13, ls="none", zorder=9,
+                label=rf"CC + SN minimum ($\Delta\chi^2={b1['dchi2']:+.2f}$)")
+    elif not edge(i, j):
         ax.plot(T_GRID[j], TH_GRID[i], marker="*", color="white", mec="k", ms=13, ls="none", zorder=9,
                 label=rf"CC + SN minimum ($\Delta\chi^2={P[i, j] - c_l:+.2f}$)")
     ax.set_xscale("log")
-    ticks = (1.4, 1.5, 1.6, 1.8, 2.0, 2.2, 2.5, 3.0, 3.5, 4.0) if T_GRID[-1] <= 5 else (1.4, 2, 3, 4, 5, 7, 10, 15, 20)
-    ticks = [t for t in ticks if T_GRID[0] - 1e-9 <= t <= T_GRID[-1] + 1e-9]
+    ticks = (1.4, 1.5, 1.6, 1.8, 2.0, 2.2, 2.5, 3.0, 3.5, 4.0) if TF[-1] <= 5 else (1.4, 2, 3, 4, 5, 7, 10, 15, 20)
+    ticks = [t for t in ticks if TF[0] - 1e-9 <= t <= TF[-1] + 1e-9]
     ax.set_xticks(ticks); ax.set_xticklabels([f"{t:g}" for t in ticks]); ax.minorticks_off()
-    ax.set_xlim(T_GRID[0], T_GRID[-1]); ax.set_ylim(0, TH_GRID[-1])
+    ax.set_xlim(TF[0], TF[-1]); ax.set_ylim(0, TH_GRID[-1])
     ax.set_xlabel(r"Present time $t_0$"); ax.set_ylabel(r"Observer sector $\vartheta_{\rm obs}$ [deg]")
-    ax.set_title("Light-cone ball, unbinned supernovae, axis opposite to the CatWISE excess", fontsize=10)
+    if not a.no_title:
+        ax.set_title("Light-cone ball, unbinned supernovae, axis opposite to the CatWISE excess", fontsize=10)
     # legend in three blocks, lines, areas and points, each ordered by the data combined
     order = ["CC + SN: 68%", "fitted", "CC + SN + CatWISE: 68%", "Quaia slices: best fit", "all compatible",
              "CatWISE excess", "Quaia slices within", r"$\alpha_{\rm high}$ at the end",

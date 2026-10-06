@@ -6,7 +6,7 @@ sqrt(1-(1-b)^2)/[b(2b-1)], b = sqrt(1-x^2)), and H = (d rhat/dz)^(-1) by numeric
 differentiation.  The ratio to the double-precision module is printed at z = 1e3, 3e8, 4e9,
 for constant alpha = 1/2 and for the running index.  Also prints the local slope
 n_eff = d ln H / d ln(1+z) for alpha = 1/2 between z = 1e3 and 4e9.
-Requires mpmath.  Writes figures/verify_high_z.json.
+Requires mpmath.  Writes json/verify_high_z.json.
 """
 
 from __future__ import annotations
@@ -73,7 +73,7 @@ def main():
     n_eff = 1 + PH.q_of_z(zz, PH.alpha_const(0.5))
     out["n_eff_alpha_half"] = dict(zip(map(str, zz), n_eff.tolist()))
     print("n_eff (alpha=1/2) over 1e3-4e9:", np.round(n_eff, 4).tolist())
-    (ROOT / "figures" / "verify_high_z.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "json" / "verify_high_z.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

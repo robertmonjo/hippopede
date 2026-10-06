@@ -6,13 +6,13 @@ likelihood.py (H0 and the SN amplitude minimised analytically; full SN covarianc
 band of Fig. 2 is a reconstruction from these same data and is not fitted.
 
 Models: flat LCDM (Omega_m free); projected hyperconical history with constant alpha = alpha_low
-and with alpha(z); sectors at the reference t0 (figures/t0_summary.json, 'figure_t0') and with
+and with alpha(z); sectors at the reference t0 (json/t0_summary.json, 'figure_t0') and with
 t0 free.  For each projected oblique sector the lower bounds on t0 at Delta chi2 = 1 and 4
 relative to t0 -> infinity (where every sector reduces to the axial history) are reported.
 Delta AIC = Delta chi2 + 2 Delta k, with k counting H0, the SN amplitude, alpha_high when the
 projection uses the fitted running index (it is fitted to these same data), Omega_m for LCDM and t0
 when free.
-Writes figures/fit_cc_pantheon.json.
+Writes json/fit_cc_pantheon.json.
 """
 
 from __future__ import annotations
@@ -75,7 +75,7 @@ def t0_bounds(level):
 
 
 def main():
-    t0_fig = float(json.loads((ROOT / "figures" / "t0_summary.json").read_text())["figure_t0"])
+    t0_fig = float(json.loads((ROOT / "json" / "t0_summary.json").read_text())["figure_t0"])
     rows = []
     res = minimize_scalar(lambda om: chi2_tot(L.e_lcdm(om)), bounds=(0.05, 0.8), method="bounded")
     rows.append(row("LCDM", L.e_lcdm(res.x), 3, {"Omega_m": float(res.x)}))
@@ -97,7 +97,7 @@ def main():
         r["dAIC"] = None if r["chi2"] is None else r["chi2"] + 2 * r["k"] - ref
     out = {"N_CC": len(L.CC[0]), "N_SN_bins": len(L.Z_SN), "figure_t0": t0_fig, "rows": rows,
            "t0_lower_bound_1sigma": t0_bounds(1.0), "t0_lower_bound_2sigma": t0_bounds(4.0)}
-    (ROOT / "figures" / "fit_cc_pantheon.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "json" / "fit_cc_pantheon.json").write_text(json.dumps(out, indent=1))
     print(f"N_CC={out['N_CC']}  N_SN={out['N_SN_bins']}  reference t0={t0_fig}")
     for r in rows:
         ex = {k: round(v, 3) for k, v in r.items() if k in ("Omega_m", "t0")}

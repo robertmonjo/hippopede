@@ -18,7 +18,7 @@ redshift distribution p(z) (z^2 exp(-z/0.4), mean 1.2 before truncation, or flat
 0.1 <= z <= 2.1.  The slope follows from D_kin = [2 + x(1 + alpha)] beta with alpha = 1.26 and
 beta = 369.82/299792.458, which gives x = 1.63; results are also given for x = 1.5 and 1.8.
 Sector rates in common units (pantheon_offaxis_test.e_table).  Neglects source evolution,
-magnification and the null geodesics of the model.  Writes figures/quasar_dipole_fit.json.
+magnification and the null geodesics of the model.  Writes json/quasar_dipole_fit.json.
 """
 
 from __future__ import annotations
@@ -109,7 +109,7 @@ def options():
     if args.alpha_high is not None:
         ah, suffix = args.alpha_high, "_ah" + f"{args.alpha_high:g}".replace(".", "p") + args.out_suffix
     elif args.from_average_fit:
-        ah = json.loads((ROOT / "figures" / "fit_sector_average.json").read_text())["cases"]["high"]["alpha_high"]
+        ah = json.loads((ROOT / "json" / "fit_sector_average.json").read_text())["cases"]["high"]["alpha_high"]
         suffix = "_sector_average_alpha"
     else:
         return None, ""
@@ -120,7 +120,7 @@ def options():
 def main():
     t0_list, suffix = options()
     _, d_geo, lb_geo = excess_vector()
-    t_ref = float(json.loads((ROOT / "figures" / "t0_summary.json").read_text())["figure_t0"])
+    t_ref = float(json.loads((ROOT / "json" / "t0_summary.json").read_text())["figure_t0"])
     print(f"x = {X_SLOPE:.3f}; D_geo = {d_geo:.4f} +- {SIG_GEO:.4f} towards (l,b) = ({lb_geo[0]:.1f}, {lb_geo[1]:.1f})")
     out = {"x": X_SLOPE, "D_geo": d_geo, "sigma": SIG_GEO, "excess_lb": lb_geo, "theta_obs_grid": THETA_OBS,
            "reference_t0": t_ref, "runs": []}
@@ -137,7 +137,7 @@ def main():
                 if x == X_SLOPE:
                     print(f"t0={t0:5.2f} p(z)={kind:5s}: theta_obs for D_geo (-1s, best, +1s) = "
                           f"{[None if s is None else round(s, 2) for s in sol]}")
-    (ROOT / "figures" / f"quasar_dipole_fit{suffix}.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "json" / f"quasar_dipole_fit{suffix}.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

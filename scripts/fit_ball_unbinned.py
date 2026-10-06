@@ -17,7 +17,7 @@ References with the same data: flat LCDM (Omega_m free) and the hyperconical mod
 alpha_high free; it does not depend on t0).
 
 Steps: grid in (alpha_high, t0, theta_obs), Nelder-Mead refinement from the best grid point, free-axis
-check at the minimum (2000 random axes).  Writes figures/fit_ball_unbinned.json.
+check at the minimum (2000 random axes).  Writes json/fit_ball_unbinned.json.
 """
 
 from __future__ import annotations
@@ -39,7 +39,7 @@ import likelihood as L  # noqa: E402
 import pantheon_catwise_axis as PCA  # noqa: E402
 import pantheon_offaxis_test as T  # noqa: E402
 
-FIG = ROOT / "figures"
+JSON = ROOT / "json"   # numerical outputs; figures/ holds the png/pdf
 A_GRID = np.round(np.arange(0.30, 0.4301, 0.01), 3)
 T_GRID = np.round(np.geomspace(1.5, 8.0, 22), 4)
 TH_GRID = np.array([0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0, 11.0, 15.0, 20.0, 25.0])
@@ -144,7 +144,7 @@ def catwise_chi2(ah, t0, theta):
     if _DIP is None:
         _DIP = {}
         for a in DIPOLE_ALPHAS:
-            qd = json.loads((FIG / ("quasar_dipole_fit_ah" + f"{a:g}".replace(".", "p") + DIPOLE_SUFFIX + ".json")).read_text())
+            qd = json.loads((JSON / ("quasar_dipole_fit_ah" + f"{a:g}".replace(".", "p") + DIPOLE_SUFFIX + ".json")).read_text())
             runs = sorted((r for r in qd["runs"] if r["pz"] == "gamma" and abs(r["x"] - qd["x"]) < 1e-12), key=lambda r: r["t0"])
             _DIP[a] = (np.log([r["t0"] for r in runs]), np.abs(np.array([r["D"] for r in runs], float)),
                        np.array(qd["theta_obs_grid"], float), qd["D_geo"], qd["sigma"])
@@ -281,7 +281,7 @@ def main():
                             "angle_best_to_fixed_deg": ang}
         print(f"free axis at that point: fixed {c_fix:.3f}, best of 2000 random {cs[k]:.3f} (angle {ang:.0f} deg), "
               f"fraction of random axes below the fixed one {np.mean(cs < c_fix):.3f}", flush=True)
-    (FIG / "fit_ball_unbinned.json").write_text(json.dumps(out, indent=1))
+    (JSON / "fit_ball_unbinned.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

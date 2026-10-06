@@ -10,7 +10,7 @@ delta_i = (H_i - H_fit)/H_fit, are fitted as delta = A mu_i, mu_i = <v_i> . n_C,
 covariance; n_C is the CatWISE excess axis (quasar_dipole_fit.excess_vector).  The significance is
 calibrated with random axes, and a dipole of free direction is also fitted.  The prediction of the
 model is the relative difference of E(z) between the lines of sight towards and away from the axis.
-Writes figures/cc_direction_test.json.
+Writes json/cc_direction_test.json.
 """
 
 from __future__ import annotations
@@ -128,7 +128,7 @@ def main():
         print(f"{name:6s}: A = {a:+.3f} +- {sa:.3f}; random axes with larger Delta chi2: {np.mean(null >= dchi):.2f}; "
               f"free dipole |D| = {np.linalg.norm(dv):.3f}, Delta chi2 = {dv @ fm @ dv:.2f} (3 dof)")
     out["prediction"] = predicted_amplitude()
-    (ROOT / "figures" / "cc_direction_test.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "json" / "cc_direction_test.json").write_text(json.dumps(out, indent=1))
 
 
 def predicted_amplitude(configs=((0.3347, 1.7412, 1.0), (0.4034, 3.935, 15.0)), zs=(0.5, 1.0, 1.5)):

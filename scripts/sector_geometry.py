@@ -17,6 +17,8 @@ The volume element of the lobe is proportional to sin^2(chi) d chi = 2 sin^2(2 t
 
 from __future__ import annotations
 
+import os
+
 import numpy as np
 
 
@@ -30,8 +32,10 @@ def source_sector_deg(theta_obs_deg, rhat, cospsi):
 # Largest sector angle used in the analysis.  At the reference t0 = 2.6 the observed redshift reach
 # of a projected sector (sector_reach.py) is z = 2.35 at theta = 60 deg, 2.07 at 70 deg, 1.97 at
 # 75 deg and 1.87 at 85 deg: the sectors up to 70 deg are those whose history covers z <= 2, the
-# range of the data and of Fig. 2.
-THETA_MAX_DEG = 70.0
+# range of the data and of Fig. 2.  The environment variable HIPPOPEDE_THETA_MAX_DEG replaces it; with
+# 90 the whole lobe is tabulated and a model is limited only by the reach of each sector (the tables are
+# NaN beyond it), as in the overview map of plot_ball_zoom_unbinned.py.
+THETA_MAX_DEG = float(os.environ.get("HIPPOPEDE_THETA_MAX_DEG", "70"))
 
 # Largest observer sector for the directional analyses.  A source at angular distance rhat from
 # the observer lies at central angle chi_s <= 2 theta_obs + rhat, so every source up to z = 2.1

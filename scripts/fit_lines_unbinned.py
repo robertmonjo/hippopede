@@ -14,7 +14,7 @@ Statistics:
 Dipoles at each fit (alpha_high, t0), from the runs of quasar_dipole_fit.py / quaia_zslice_model.py:
   theta_obs required by the CatWISE excess and the chi2 (amplitude) of the three Quaia slices at their
   best theta_obs (scalar amplitudes along the axis); for the axis line the observer is on the axis and
-  there is no dipole.  Writes figures/fit_lines_unbinned.json.
+  there is no dipole.  Writes json/fit_lines_unbinned.json.
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ import compare_ball_curves as C  # noqa: E402
 import fit_ball_unbinned as F  # noqa: E402
 import fit_observer_ball as OB  # noqa: E402
 
-FIG = ROOT / "figures"
+JSON = ROOT / "json"   # numerical outputs; figures/ holds the png/pdf
 THETA_OBS = 1.0
 REGIONS = ((0.0, 0.1), (0.1, 0.4), (0.4, 0.8), (0.8, 3.0))
 _REG = None
@@ -126,7 +126,7 @@ def dipoles(ah, t0):
     out = {"catwise_theta_obs": None if i is None else float(th[i]), "catwise_chi2": None if i is None else float(cw[i])}
     qa = []
     for a in F.DIPOLE_ALPHAS:
-        qz = json.loads((FIG / ("quaia_zslice_model_ah" + f"{a:g}".replace(".", "p") + ".json")).read_text())
+        qz = json.loads((JSON / ("quaia_zslice_model_ah" + f"{a:g}".replace(".", "p") + ".json")).read_text())
         amp = np.array([s["excess_amp"] for s in qz["slices"]]); sig = np.array([s["sigma"] for s in qz["slices"]])
         tq = sorted((float(k), v["f_1deg"]) for k, v in qz["model"].items())
         f = np.array([np.interp(np.log(t0), np.log([x[0] for x in tq]), [x[1][j] for x in tq]) for j in range(3)])
@@ -162,7 +162,7 @@ def main():
         print(f"{which:4s} {kind:6s}: alpha_high={ah:.4f} t0={t0 if t0 is None else round(t0, 3)}  "
               f"delta vs LCDM = {row['delta_vs_lcdm']:+.3f}  " + ("" if kind == "axis" else
               f"CatWISE theta={row['catwise_theta_obs']} chi2={row['catwise_chi2']};  Quaia theta={row.get('quaia_theta_obs')} chi2={row.get('quaia_chi2')}"), flush=True)
-    (FIG / "fit_lines_unbinned.json").write_text(json.dumps(out, indent=1))
+    (JSON / "fit_lines_unbinned.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

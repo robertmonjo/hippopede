@@ -13,7 +13,7 @@ alpha_high minimises chi2 at fixed t0, and t0 minimises the band mismatch M at f
 reaches rhat(1.97)/2 = 33 deg at most.  Compared with the option of one observer's sky (fit_observer_sky.py).
 
 Usage: python scripts/fit_lightcone_ball.py [--plot]
-Writes figures/fit_lightcone_ball.json and, with --plot, figures/hippopede_lightcone_ball_bands.(png|pdf).
+Writes json/fit_lightcone_ball.json and, with --plot, figures/hippopede_lightcone_ball_bands.(png|pdf).
 """
 
 from __future__ import annotations
@@ -36,6 +36,7 @@ import projected_hyperconical as PH  # noqa: E402
 import t0_dispersion_match as DM  # noqa: E402
 
 FIG = ROOT / "figures"
+JSON = ROOT / "json"   # numerical outputs; figures/ holds the png/pdf
 THETA_MAX_BALL = 40.0  # the ball never exceeds rhat(1.97)/2 = 33 deg, so larger sectors are not needed
 SEL = DM.THETA <= THETA_MAX_BALL
 THETA = DM.THETA[SEL]
@@ -137,8 +138,8 @@ def plot(ah, t0, chi_lcdm, out_name="hippopede_lightcone_ball_bands", title=None
     E, Q, w, _, _ = model(ah, t0)
     e0 = (w[:, 0] * E[:, 0]).sum()
     bands = {"q": quantile_bands(Q, w), "E": quantile_bands(E / e0, w)}
-    lc = json.loads((FIG / "fit_cc_pantheon.json").read_text())["rows"][0]
-    g = json.loads((FIG / DM.DEFAULT_GAPP).read_text())
+    lc = json.loads((JSON / "fit_cc_pantheon.json").read_text())["rows"][0]
+    g = json.loads((JSON / DM.DEFAULT_GAPP).read_text())
     gm = {"q": (np.interp(ZW, g["z"], g["q"]), np.interp(ZW, g["z"], g["q_sigma"])),
           "E": (np.interp(ZW, g["z"], g["e"]), np.interp(ZW, g["z"], g["e_sigma"]))}
     zz = 1.0 + ZW
@@ -195,7 +196,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--plot", action="store_true")
     args = ap.parse_args()
-    chi_lcdm = json.loads((FIG / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
+    chi_lcdm = json.loads((JSON / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
     ah, t0 = fit()
     c = chi2(ah, t0)
     M, ratio = mismatch(ah, t0)
@@ -203,7 +204,7 @@ def main():
            "z_nodes": DM.Z_NODES.tolist()}
     print(f"best: alpha_high={ah:.4f} t0={t0:.3f} dchi2={c - chi_lcdm:+.2f} M={M:.2f}")
     print("h1/sigma_G at z_nodes:", np.round(ratio, 2).tolist())
-    (FIG / "fit_lightcone_ball.json").write_text(json.dumps(out, indent=1))
+    (JSON / "fit_lightcone_ball.json").write_text(json.dumps(out, indent=1))
     if args.plot:
         plot(ah, t0, chi_lcdm)
 

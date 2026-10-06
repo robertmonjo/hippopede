@@ -1,7 +1,7 @@
 """Fig. 2: q(z) and E(z) of the hippopede sectors, centred (left) and projected (right).
 
 Sectors theta = 0, 15, 30, 45, 60 deg at the present time t0 given on the command line
-(default: the value recorded in figures/t0_summary.json by t0_summary.py, key 'figure_t0').
+(default: the value recorded in json/t0_summary.json by t0_summary.py, key 'figure_t0').
 Each sector is drawn as an independent history (hippopede_model.py).  The projection uses
 the running index with alpha_high from fit_alpha_high.py, or the value given with --alpha-high
 (for instance the fit to the sector-averaged history, fit_sector_average.py).
@@ -12,7 +12,7 @@ points used by that reconstruction, normalised by the same H0; present decelerat
 (Myrzakulov et al. 2025, Nucl. Phys. B 1016, 116916: q0 = -0.364 +- 0.032, z_t = 0.597 +- 0.214;
 Gao et al. 2024, MNRAS 527, 7861: q0 = -0.50 +- 0.20; Hu et al. 2025, MNRAS 542, 1063:
 z_t = 0.64 +- 0.16) and the tangents E = 1 + (1 + q0) z; flat LCDM + radiation with
-Omega_m from the flat-LCDM fit of fit_cc_pantheon.py (figures/fit_cc_pantheon.json, run it first)
+Omega_m from the flat-LCDM fit of fit_cc_pantheon.py (json/fit_cc_pantheon.json, run it first)
 and Omega_r = 9e-5, as a visual reference.
 """
 
@@ -38,6 +38,7 @@ import gapp_reconstruction as GR  # noqa: E402
 import hippopede_model as HM  # noqa: E402
 
 OUTDIR = ROOT / "figures"
+JSON = ROOT / "json"   # numerical outputs; figures/ holds the png/pdf
 THETAS = [0, 15, 30, 45, 60]
 COLOURS = ["#c6dbef", "#9ecae1", "#6baed6", "#3182bd", "#08519c"]
 Q0_POINTS = [
@@ -48,7 +49,7 @@ ZT_POINTS = [
     {"z": 0.597, "err": 0.214, "marker": "o", "color": "#f16913", "label": r"Observed $z_t$ (CC+Pantheon+SH0ES+BAO; Myrzakulov et al. 2025)"},
     {"z": 0.64, "err": 0.16, "marker": "^", "color": "#fd8d3c", "label": r"Observed $z_t$ ($H(z)$ compilation; Hu et al. 2025)"},
 ]
-OM_REF = round(json.loads((ROOT / "figures" / "fit_cc_pantheon.json").read_text())["rows"][0]["Omega_m"], 3)
+OM_REF = round(json.loads((ROOT / "json" / "fit_cc_pantheon.json").read_text())["rows"][0]["Omega_m"], 3)
 OR_REF = 9.0e-5
 
 
@@ -140,10 +141,10 @@ def legends(fig):
 
 
 def default_t0():
-    p = OUTDIR / "t0_summary.json"
+    p = JSON / "t0_summary.json"
     if p.exists():
         return float(json.loads(p.read_text())["figure_t0"])
-    raise FileNotFoundError("figures/t0_summary.json not found: run scripts/t0_summary.py or pass --t0")
+    raise FileNotFoundError("json/t0_summary.json not found: run scripts/t0_summary.py or pass --t0")
 
 
 def main():
@@ -158,11 +159,11 @@ def main():
                     help="take t0 and alpha_high from the fit to the sector-averaged history (fit_sector_average.py)")
     args = ap.parse_args()
     if args.from_average_fit:
-        fit = json.loads((OUTDIR / "fit_sector_average.json").read_text())["cases"]["high"]
+        fit = json.loads((JSON / "fit_sector_average.json").read_text())["cases"]["high"]
         args.t0, args.alpha_high = fit["t0"], fit["alpha_high"]
     t0 = default_t0() if args.t0 is None else args.t0
     g = {k: (np.array(v) if isinstance(v, list) else v)
-         for k, v in json.loads((OUTDIR / args.gapp).read_text()).items()}
+         for k, v in json.loads((JSON / args.gapp).read_text()).items()}
     cz, ch, sp, sm = GR.load_cc_points(g["options"]["cc"])
     cc = (cz, ch, sp, sm, g["H0"])
     plt.rcParams.update({"font.size": 11, "axes.labelsize": 12, "legend.fontsize": 10.4,

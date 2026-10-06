@@ -1,6 +1,6 @@
 """Comparison of an off-axis observer with reported directional anomalies.
 
-At the reference t0 (figures/t0_summary.json) and for observers at sector angle theta_obs:
+At the reference t0 (json/t0_summary.json) and for observers at sector angle theta_obs:
   1. distance asymmetry along the projected axis,
      delta(z) = [D_C(z, +n_ax) - D_C(z, -n_ax)] / [D_C(z, +n_ax) + D_C(z, -n_ax)];
   2. apparent H0 anisotropy between opposite directions, Delta H0/H0 = 2|delta| (from
@@ -10,7 +10,7 @@ At the reference t0 (figures/t0_summary.json) and for observers at sector angle 
   4. the configuration that reproduces the quasar dipole excess (quasar_dipole_fit.py) at the
      reference t0: its unbinned Pantheon+ chi2 with the axis along the excess direction, relative
      to the axis observer, and the distance-modulus difference between opposite directions at z = 1.
-Writes figures/directional_anomalies.json.
+Writes json/directional_anomalies.json.
 """
 
 from __future__ import annotations
@@ -43,8 +43,8 @@ def asymmetry(tab, theta_obs, z):
 
 
 def main():
-    t0 = float(json.loads((ROOT / "figures" / "t0_summary.json").read_text())["figure_t0"])
-    qf = json.loads((ROOT / "figures" / "quasar_dipole_fit.json").read_text())
+    t0 = float(json.loads((ROOT / "json" / "t0_summary.json").read_text())["figure_t0"])
+    qf = json.loads((ROOT / "json" / "quasar_dipole_fit.json").read_text())
     tab = T.e_table(t0)
     delta = {th: asymmetry(tab, th, Z_EVAL) for th in THETA_OBS}
     print(f"t0 = {t0}; |delta| [%] at z = {Z_EVAL.tolist()}")
@@ -77,7 +77,7 @@ def main():
         print(f"Secrest configuration: theta_obs = {th_q:.2f} deg, excess towards (l,b) = ({lb[0]:.1f}, {lb[1]:.1f}); "
               f"Pantheon+ dchi2 = {c_q - c_ax:+.2f}; Delta mu(z=1) = {out['secrest']['dmu_z1']:.4f} mag; "
               f"Migkas fractions {[round(100 * f, 3) for f in out['secrest']['migkas_fraction']]} %")
-    (ROOT / "figures" / "directional_anomalies.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "json" / "directional_anomalies.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 
 The observer is placed where the light-cone ball model (fit_observer_ball.py) reproduces the CatWISE
 quasar-dipole excess: for a set of t0, theta_obs on the CatWISE curve at the fitted alpha_high
-(figures/fit_observer_ball_landscape_joint_wide.json, from plot_observer_ball_landscape.py).  At each
+(json/fit_observer_ball_landscape_joint_wide.json, from plot_observer_ball_landscape.py).  At each
 point the unbinned Pantheon+ chi2 (pantheon_offaxis_test.py: line-of-sight sector path, full STAT+SYS
 covariance, M minimised analytically) is computed for
   - the axis observer (theta_obs = 0, isotropic),
@@ -10,7 +10,7 @@ covariance, M minimised analytically) is computed for
   - N_RANDOM random axis directions, which calibrate how special n_C is (fraction of random axes with a
     lower chi2 than n_C).
 No parameter is fitted to the supernovae: (alpha_high, t0, theta_obs) come from CC + SN binned +
-CatWISE and the axis from the quasar dipole.  Writes figures/pantheon_catwise_axis.json.
+CatWISE and the axis from the quasar dipole.  Writes json/pantheon_catwise_axis.json.
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ sys.path.insert(0, str(SCRIPT_DIR))
 import pantheon_offaxis_test as T  # noqa: E402
 import quasar_dipole_fit as QD  # noqa: E402
 
-FIG = ROOT / "figures"
+JSON = ROOT / "json"   # numerical outputs; figures/ holds the png/pdf
 T0_POINTS = (1.6, 1.8, 2.2, 2.7, 3.3, 3.9, 4.5)
 N_RANDOM = 2000
 
@@ -45,7 +45,7 @@ def catwise_axis_icrs():
 
 def points():
     """(t0, theta_obs, alpha_high) on the CatWISE curve at the fitted alpha_high."""
-    d = json.loads((FIG / "fit_observer_ball_landscape_joint_wide.json").read_text())
+    d = json.loads((JSON / "fit_observer_ball_landscape_joint_wide.json").read_text())
     cw = d["catwise_theta_obs"]
     t, th = np.array(cw["t0"], float), np.array(cw["best"], float)
     ok = np.isfinite(th)
@@ -95,7 +95,7 @@ def main():
         print(f"{r['t0']:5.2f}  {r['theta_obs']:5.2f}  {r['alpha_high']:.3f}   {ca - r['chi2_lcdm']:+7.2f}        "
               f"{r['chi2_catwise_plus'] - ca:+6.2f}   {r['chi2_catwise_minus'] - ca:+6.2f}   [{mn:+6.2f}, {md:+6.2f}, {mx:+6.2f}]"
               f"     {r['frac_random_below_plus']:.3f}, {r['frac_random_below_minus']:.3f}")
-    (FIG / "pantheon_catwise_axis.json").write_text(json.dumps({"catwise_axis_lb": lb, "n_random": N_RANDOM, "rows": rows}, indent=1))
+    (JSON / "pantheon_catwise_axis.json").write_text(json.dumps({"catwise_axis_lb": lb, "n_random": N_RANDOM, "rows": rows}, indent=1))
 
 
 if __name__ == "__main__":

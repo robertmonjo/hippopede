@@ -15,7 +15,7 @@ Options (the defaults reproduce the reconstruction of the manuscript):
          shoes        73.2 km/s/Mpc (Riess et al. 2024)
 Chronometer errors are symmetrised as the mean of the upper and lower values; the chronometers
 enter as d'(z_i) = H0 / H_i with errors H0 sigma_i / H_i^2.
-Writes figures/gapp_reconstruction_<cc>_<sn>_<h0>.json.
+Writes json/gapp_reconstruction_<cc>_<sn>_<h0>.json.
 """
 
 from __future__ import annotations
@@ -101,7 +101,7 @@ def reconstruct(cc="compilation", sn="gls", h0="cc", zmin=-0.5, zmax=2.36, nstar
 
 
 def output_path(cc, sn, h0):
-    return ROOT / "figures" / f"gapp_reconstruction_{cc}_{sn}_{h0}.json"
+    return ROOT / "json" / f"gapp_reconstruction_{cc}_{sn}_{h0}.json"
 
 
 def main():

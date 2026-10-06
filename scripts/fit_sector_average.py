@@ -19,8 +19,8 @@ Fit, alternating until t0 changes by less than 1e-3:
      the joint 1- and 2-sigma band match of q(z) at z_j = 0.1, ..., 1.2 (option --z-nodes ZMIN ZMAX
      changes the range and adds the suffix _z<ZMIN>-<ZMAX> to the output).
 Reported: parameters, chi2, Delta chi2 and Delta AIC relative to flat LCDM
-(figures/fit_cc_pantheon.json), and the offset of the weighted median of q and E from the GaPP
-median in units of sigma_G, with E normalised to the sector-averaged present rate.  Writes figures/fit_sector_average.json.
+(json/fit_cc_pantheon.json), and the offset of the weighted median of q and E from the GaPP
+median in units of sigma_G, with E normalised to the sector-averaged present rate.  Writes json/fit_sector_average.json.
 """
 
 from __future__ import annotations
@@ -44,7 +44,7 @@ import t0_dispersion_match as DM  # noqa: E402
 Z_TOP = float(np.ceil(max(L.CC[0].max(), L.Z_SN.max()) * 100) / 100)  # highest data redshift, 1.97
 ZW = np.linspace(0.0, Z_TOP, 4001)  # starts exactly at z = 0, as required by D_C
 W = DM.W / DM.W.sum()
-GAPP = json.loads((ROOT / "figures" / DM.DEFAULT_GAPP).read_text())
+GAPP = json.loads((ROOT / "json" / DM.DEFAULT_GAPP).read_text())
 NODES = DM.Z_NODES
 G_MED = {"q": np.interp(NODES, GAPP["z"], GAPP["q"]), "E": np.interp(NODES, GAPP["z"], GAPP["e"])}
 G_SIG = {"q": np.interp(NODES, GAPP["z"], GAPP["q_sigma"]), "E": np.interp(NODES, GAPP["z"], GAPP["e_sigma"])}
@@ -138,12 +138,12 @@ def main():
     args = ap.parse_args()
     set_nodes(*args.z_nodes)
     sfx = DM.node_suffix(*args.z_nodes)
-    lcdm = json.loads((ROOT / "figures" / "fit_cc_pantheon.json").read_text())["rows"][0]
+    lcdm = json.loads((ROOT / "json" / "fit_cc_pantheon.json").read_text())["rows"][0]
     out = {"lcdm_chi2": lcdm["chi2"], "lcdm_k": lcdm["k"], "cases": {}}
     om = lcdm["Omega_m"]
     q_lcdm = 1.5 * om * (1 + NODES) ** 3 / (om * (1 + NODES) ** 3 + 1 - om) - 1.0
     out["lcdm_median_offset_q_sigma"] = ((q_lcdm - G_MED["q"]) / G_SIG["q"]).tolist()
-    t_ref = float(json.loads((ROOT / "figures" / "t0_summary.json").read_text())["figure_t0"])
+    t_ref = float(json.loads((ROOT / "json" / "t0_summary.json").read_text())["figure_t0"])
     base = (PH.ALPHA_LOW, PH.load_alpha_high(), t_ref)
     for case, params in (("axial_alpha", base), ("high", None)):
         al, ah, t0 = params if params else fit(case)
@@ -164,7 +164,7 @@ def main():
         print("   q median offset/sigma_G:", np.round(r["median_offset_q_sigma"], 2).tolist())
         print("   E median offset/sigma_G:", np.round(r["median_offset_E_sigma"], 2).tolist())
     out["z_nodes"] = NODES.tolist()
-    (ROOT / "figures" / f"fit_sector_average{sfx}.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "json" / f"fit_sector_average{sfx}.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

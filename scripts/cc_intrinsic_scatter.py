@@ -6,7 +6,7 @@ than their covariance allows.  The 38 chronometers (likelihood.py, full covarian
 flat LCDM and with a cubic polynomial in z; the residuals of the subsets z < 0.5, z > 0.5 and z > 1
 are then described by the covariance block plus sigma_int^2 on the diagonal, and sigma_int is found by
 maximum likelihood with its 95 per cent upper limit (Delta(-2 ln L) = 3.84).
-Writes figures/cc_intrinsic_scatter.json.
+Writes json/cc_intrinsic_scatter.json.
 """
 
 from __future__ import annotations
@@ -73,15 +73,15 @@ def main():
             print(f"  {s:6s} N={d['N']:2d} chi2/N={d['chi2'] / d['N']:.2f} sigma_int={d['sigma_int_ml']:.2f} "
                   f"(<{d['sigma_int_95']:.2f} at 95%) Delta(-2lnL) at 0 = {d['dm2lnL_at_zero']:.2f}")
     out["sector_spread"] = sector_spread(out["flat_lcdm"]["params"][0])
-    (ROOT / "figures" / "cc_intrinsic_scatter.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "json" / "cc_intrinsic_scatter.json").write_text(json.dumps(out, indent=1))
 
 
 def sector_spread(h0, zs=(0.5, 0.8, 1.0, 1.3, 1.6, 1.9)):
     """1-sigma half-width of H(z) across the sectors 0 < theta < 70 deg, weighted by their volume on the
-    lobe (t0_dispersion_match.py), at the reference t0 of the paper (figures/t0_summary.json), in km/s/Mpc
+    lobe (t0_dispersion_match.py), at the reference t0 of the paper (json/t0_summary.json), in km/s/Mpc
     with H0 of flat LCDM fitted to the chronometers."""
     import t0_dispersion_match as DM
-    t0 = float(json.loads((ROOT / "figures" / "t0_summary.json").read_text())["figure_t0"])
+    t0 = float(json.loads((ROOT / "json" / "t0_summary.json").read_text())["figure_t0"])
     DM.Z_NODES = np.array(zs)
     E = DM.sector_values(t0)["E"]
     hw = [0.5 * (DM.weighted_quantile(E[:, j], DM.W, 0.84134) - DM.weighted_quantile(E[:, j], DM.W, 0.15866)) * h0

@@ -14,7 +14,7 @@ excluded, m_b_corr with the full STAT+SYS covariance (download_pantheon_plus.py)
 analytically.  For each t0 the axis observer is compared with observers at theta_obs up to
 THETA_OBS_MAX_DEG = 35 deg and 192 axis directions; sector tables cover 0 <= theta <= THETA_MAX_DEG = 70 deg
 (sector_geometry.py).  Also writes the volume-weighted spread of mu across sectors at the
-reference t0 (figures/t0_summary.json).  Writes figures/pantheon_offaxis_test.json.
+reference t0 (json/t0_summary.json).  Writes json/pantheon_offaxis_test.json.
 """
 
 from __future__ import annotations
@@ -163,7 +163,7 @@ def main():
     edges = np.array([0.01, 0.05, 0.1, 0.2, 0.35, 0.5, 0.7, 1.0, 2.1])
     rms = [{"z": [float(lo), float(hi)], "N": int(((z >= lo) & (z < hi)).sum()),
             "rms_resid": float(np.std(resid[(z >= lo) & (z < hi)]))} for lo, hi in zip(edges[:-1], edges[1:])]
-    t_ref = float(json.loads((ROOT / "figures" / "t0_summary.json").read_text())["figure_t0"])
+    t_ref = float(json.loads((ROOT / "json" / "t0_summary.json").read_text())["figure_t0"])
     z_nodes = np.array([0.1, 0.3, 0.5, 0.8, 1.0, 1.3])
     sp, cover = mu_spread(t_ref, z_nodes)
     print(f"mu spread across sectors at t0 = {t_ref}: {dict(zip(z_nodes.tolist(), np.round(sp, 4).tolist()))} "
@@ -190,7 +190,7 @@ def main():
     out = {"N": int(len(z)), "lcdm": {"Omega_m": om_best, "chi2": c_lcdm}, "rms_residuals": rms,
            "mu_spread": {"t0": t_ref, "z": z_nodes.tolist(), "spread_mag": sp.tolist(), "coverage": cover.tolist()},
            "grid": rows}
-    (ROOT / "figures" / "pantheon_offaxis_test.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "json" / "pantheon_offaxis_test.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

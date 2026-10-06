@@ -7,7 +7,7 @@ source sector is expressed in the observer's units by the factor H_c,theta(t0)/H
 Likelihood: likelihood.py (CC compilation + binned Pantheon+ with full covariance; H0 and the SN
 amplitude minimised).  Free parameter of the model: t0.  Output: chi2 profile, best t0, the
 Delta chi2 = 1 and 4 intervals (one-sided when the profile is flat up to the upper edge of the
-grid, where the history tends to the axial one), chi2_nu.  Writes figures/fit_t0_axis_observer.json.
+grid, where the history tends to the axial one), chi2_nu.  Writes json/fit_t0_axis_observer.json.
 """
 
 from __future__ import annotations
@@ -70,7 +70,7 @@ def main():
     out = {"t0_best": t_best, "chi2_min": c_min, "dof": dof, "chi2_nu": c_min / dof, "interval": interval,
            "minimum_at_grid_edge": bool(i == len(grid) - 1), "plateau_to_axial_limit": plateau,
            "chi2_axial_limit": float(c[-1]), "profile": {"t0": grid.tolist(), "chi2": c.tolist()}}
-    (ROOT / "figures" / "fit_t0_axis_observer.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "json" / "fit_t0_axis_observer.json").write_text(json.dumps(out, indent=1))
     print(f"t0 best = {t_best:.3f}  chi2 = {c_min:.2f}  chi2_nu = {c_min / dof:.3f}  intervals: {interval}  "
           f"edge = {out['minimum_at_grid_edge']}  plateau = {plateau} (chi2 at t0={T_MAX:g}: {c[-1]:.4f})")
 

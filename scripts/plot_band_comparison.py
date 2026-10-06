@@ -1,12 +1,12 @@
 """Spread of the projected sector histories compared with the GaPP band, for q(z) and E(z).
 
-At the reference t0 (figures/t0_summary.json) the sectors of the lobe form, at each redshift, a
+At the reference t0 (json/t0_summary.json) the sectors of the lobe form, at each redshift, a
 distribution weighted by the volume of the lobe, w(theta) ~ sin^2(2 theta) (sector_geometry.py);
 E is expressed in common units through H_c,theta(t0)/H_c,0(t0) and normalised to the
 sector-averaged present rate, the value of H0 an observer measures.
 
 Top row: weighted median and the 1- and 2-sigma quantile bands of that distribution, flat
-LCDM + radiation with Omega_m from fit_cc_pantheon.py (figures/fit_cc_pantheon.json) and
+LCDM + radiation with Omega_m from fit_cc_pantheon.py (json/fit_cc_pantheon.json) and
 Omega_r = 9e-5,
 (16-84 and 2.3-97.7 per cent) over the GaPP reconstruction (median, 1 and 2 sigma) used for the
 estimate of t0; the outline of a second reconstruction is drawn for comparison.
@@ -15,7 +15,7 @@ for both reconstructions; the shaded interval is the redshift range used by
 t0_dispersion_match.py.
 
 Options: --gapp (reconstruction used for t0) and --gapp-alt (outline, default none), files written by
-gapp_reconstruction.py; --t0 and --alpha-high (defaults: figures/t0_summary.json and
+gapp_reconstruction.py; --t0 and --alpha-high (defaults: json/t0_summary.json and
 fit_alpha_high.py), or --from-average-fit to take both from fit_sector_average.py; --suffix for
 the output name.  All bands are semi-transparent so that the
 overlap of model and reconstruction is visible.  Writes figures/hippopede_band_comparison<suffix>.(png|pdf).
@@ -45,6 +45,7 @@ import projected_hyperconical as PH  # noqa: E402
 import t0_dispersion_match as DM  # noqa: E402
 
 FIG = ROOT / "figures"
+JSON = ROOT / "json"   # numerical outputs; figures/ holds the png/pdf
 Z = np.round(np.arange(0.02, 2.001, 0.02), 3)
 Z_FIT = (float(DM.Z_NODES[0]), float(DM.Z_NODES[-1]))
 BLUE, BLUE_1S, BLUE_2S = "#08519c", "#6baed6", "#c6dbef"
@@ -84,7 +85,7 @@ def sector_distribution(t0, alpha_high=None):
 
 
 def load_gapp(fname):
-    g = json.loads((FIG / fname).read_text())
+    g = json.loads((JSON / fname).read_text())
     return {"q": (np.interp(Z, g["z"], g["q"]), np.interp(Z, g["z"], g["q_sigma"])),
             "E": (np.interp(Z, g["z"], g["e"]), np.interp(Z, g["z"], g["e_sigma"])),
             "N_CC": g["N_CC"]}
@@ -101,13 +102,13 @@ def main():
                     help="take t0 and alpha_high from the fit to the sector-averaged history (fit_sector_average.py)")
     args = ap.parse_args()
     if args.from_average_fit:
-        fit = json.loads((FIG / "fit_sector_average.json").read_text())["cases"]["high"]
+        fit = json.loads((JSON / "fit_sector_average.json").read_text())["cases"]["high"]
         args.t0, args.alpha_high = fit["t0"], fit["alpha_high"]
-    t0 = float(json.loads((FIG / "t0_summary.json").read_text())["figure_t0"]) if args.t0 is None else args.t0
+    t0 = float(json.loads((JSON / "t0_summary.json").read_text())["figure_t0"]) if args.t0 is None else args.t0
     model = sector_distribution(t0, args.alpha_high)
     g = load_gapp(args.gapp)
     ga = None if args.gapp_alt == "none" else load_gapp(args.gapp_alt)
-    om = round(json.loads((FIG / "fit_cc_pantheon.json").read_text())["rows"][0]["Omega_m"], 3)
+    om = round(json.loads((JSON / "fit_cc_pantheon.json").read_text())["rows"][0]["Omega_m"], 3)
     std = lcdm(om)
 
     plt.rcParams.update({"font.size": 11, "axes.labelsize": 12, "legend.fontsize": 10,

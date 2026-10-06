@@ -12,7 +12,7 @@ calibrators excluded, corrected magnitudes m_b_corr with the full STAT+SYS covar
 (download_pantheon_plus.py).  Likelihood, with the absolute magnitude M minimised analytically:
     -2 ln L(t0) = r^T (C + S)^-1 r + ln det(C + S),  r = m_b_corr - mu_bar - M,  S = diag(s^2).
 The limit t0 -> infinity has no scatter and reduces to the axial history.  Output: profile,
-best t0 and the Delta(-2 ln L) = 1 and 4 intervals.  Writes figures/fit_t0_intrinsic_scatter.json.
+best t0 and the Delta(-2 ln L) = 1 and 4 intervals.  Writes json/fit_t0_intrinsic_scatter.json.
 """
 
 from __future__ import annotations
@@ -106,7 +106,7 @@ def main():
            "minimum_at_grid_edge": bool(i in (0, len(grid) - 1)),
            "profile": {"t0": grid.tolist(), "neg2lnL": c.tolist(), "max_scatter_mag": [v[1] for v in vals],
                        "min_weight_coverage": [v[2] for v in vals]}}
-    (ROOT / "figures" / "fit_t0_intrinsic_scatter.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "json" / "fit_t0_intrinsic_scatter.json").write_text(json.dumps(out, indent=1))
     print(f"t0 best = {t_best:.3f}  -2lnL = {c_min:.2f}  intervals: {interval}  edge = {out['minimum_at_grid_edge']}")
     for t, v in zip(grid[::5], vals[::5]):
         print(f"  t0={t:7.2f}  -2lnL={v[0]:.2f}  max scatter={v[1]:.4f} mag  coverage={v[2]:.2f}")

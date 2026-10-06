@@ -4,7 +4,7 @@ Model: the projected hyperconical history (the axial sector of the hippopede, in
 t0) with alpha(z) = alpha_high - (alpha_high - alpha_low)/sqrt(1+z), alpha_low = 0.283
 (Monjo 2018).  Likelihood: likelihood.py (H0 and SN amplitude minimised analytically).
 Output: best alpha_high, 1-sigma interval (Delta chi2 = 1), chi2 and chi2_nu; the constant
-index alpha = alpha_low is reported for comparison.  Writes figures/fit_alpha_high.json,
+index alpha = alpha_low is reported for comparison.  Writes json/fit_alpha_high.json,
 which every other script reads through projected_hyperconical.load_alpha_high().
 """
 
@@ -45,7 +45,7 @@ def main():
     out = {"alpha_low": PH.ALPHA_LOW, "alpha_high": ah, "alpha_high_1sigma": [lo, hi], "chi2": cmin,
            "dof": dof, "chi2_nu": cmin / dof, "chi2_constant_alpha_low": float(c_const),
            "N_CC": len(L.CC[0]), "N_SN_bins": len(L.Z_SN), "profile": {"alpha_high": grid.tolist(), "chi2": c.tolist()}}
-    (ROOT / "figures" / "fit_alpha_high.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "json" / "fit_alpha_high.json").write_text(json.dumps(out, indent=1))
     print(f"alpha_high = {ah:.4f}  1sigma = [{lo}, {hi}]  chi2 = {cmin:.2f}  dof = {dof}  chi2_nu = {cmin / dof:.3f}  "
           f"(constant alpha = {PH.ALPHA_LOW}: chi2 = {c_const:.2f})")
 

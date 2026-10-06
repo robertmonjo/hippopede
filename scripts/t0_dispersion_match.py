@@ -10,7 +10,7 @@ For X = q or E and each node z_j the model bands are the weighted quantiles of X
     1-sigma half-width  w_1 = [Q(0.8413) - Q(0.1587)] / 2,
     2-sigma half-width  w_2 = [Q(0.9772) - Q(0.0228)] / 2,
 and the GaPP bands are sigma_G(z_j) and 2 sigma_G(z_j) (gapp_reconstruction.py; option --gapp
-selects one or more reconstructions, default figures/gapp_reconstruction_compilation_gls_cc.json).  t0 minimises
+selects one or more reconstructions, default json/gapp_reconstruction_compilation_gls_cc.json).  t0 minimises
     S_k(t0) = sum_j [ln w_k(z_j; t0) - ln(k sigma_G(z_j))]^2,   k = 1, 2,
 and S_1 + S_2 for the joint match, over the nodes z_j = 0.1, ..., 1.2 (the range of the binned
 supernovae; option --z-nodes ZMIN ZMAX changes the range, steps of 0.1, and adds the suffix
@@ -19,8 +19,8 @@ is larger than the node range), so S is not a chi-square.  The uncertainty is qu
 the 16-84 per cent range of the single-node solutions w_k(z_j; t0) = k sigma_G(z_j), and the
 jackknife standard error over nodes.  The offset of the weighted median of the model from the
 GaPP median is reported in units of sigma_G.
-Writes figures/t0_dispersion_match.json (default reconstruction) or
-figures/t0_dispersion_match_<reconstruction>.json.
+Writes json/t0_dispersion_match.json (default reconstruction) or
+json/t0_dispersion_match_<reconstruction>.json.
 """
 
 from __future__ import annotations
@@ -135,7 +135,7 @@ def main():
     tab = band_table()
     all_nodes = np.arange(len(Z_NODES))
     for gfile in args.gapp:
-        g = json.loads((ROOT / "figures" / gfile).read_text())
+        g = json.loads((ROOT / "json" / gfile).read_text())
         gapp = {"q": (np.interp(Z_NODES, g["z"], g["q"]), np.interp(Z_NODES, g["z"], g["q_sigma"])),
                 "E": (np.interp(Z_NODES, g["z"], g["e"]), np.interp(Z_NODES, g["z"], g["e_sigma"]))}
         res = {"gapp": gfile, "z_nodes": Z_NODES.tolist(), "t0_grid": [float(T_GRID[0]), float(T_GRID[-1])]}
@@ -171,7 +171,7 @@ def main():
             res[name] = out
         fname = ("t0_dispersion_match.json" if gfile == DEFAULT_GAPP else "t0_dispersion_match_" + gfile.replace("gapp_reconstruction_", ""))
         fname = fname.replace(".json", sfx + ".json")
-        (ROOT / "figures" / fname).write_text(json.dumps(res, indent=1))
+        (ROOT / "json" / fname).write_text(json.dumps(res, indent=1))
 
 
 if __name__ == "__main__":

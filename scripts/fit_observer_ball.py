@@ -17,7 +17,7 @@ Usage:
     python scripts/fit_observer_ball.py --profile             chi2 profile in theta_obs
     python scripts/fit_observer_ball.py --plot-joint          bands at the joint minimum of
                                                               plot_observer_ball_landscape.py and at theta_obs = 1 deg
-Writes figures/fit_observer_ball_scan.json, figures/fit_observer_ball_best.json and
+Writes json/fit_observer_ball_scan.json, json/fit_observer_ball_best.json and
 figures/hippopede_observer_ball_bands.(png|pdf).
 """
 
@@ -43,10 +43,10 @@ import projected_hyperconical as PH  # noqa: E402
 import sector_geometry as G  # noqa: E402
 import t0_dispersion_match as DM  # noqa: E402
 
-FIG = ROOT / "figures"
-# sectors computed directly every 0.05 deg up to the cut of the analysis, G.THETA_MAX_DEG = 70 deg.  The
-# ball reaches theta_obs + rhat(z)/2; a ball that needs sectors beyond the cut is not evaluated
-# (chi2 = inf), as the sectors beyond it are excluded from every analysis.
+JSON = ROOT / "json"   # numerical outputs; figures/ holds the png/pdf
+# sectors computed directly every 0.05 deg up to the cut of the analysis, G.THETA_MAX_DEG (70 deg, or 90 deg,
+# the whole lobe, with HIPPOPEDE_THETA_MAX_DEG=90).  The ball reaches theta_obs + rhat(z)/2; a ball that needs
+# sectors beyond the cut, or a sector that does not reach the redshift, is not evaluated (chi2 = inf).
 THETA_STEP_DEG, THETA_TOP_DEG = 0.05, G.THETA_MAX_DEG
 THETA = np.round(np.arange(THETA_STEP_DEG / 2, THETA_TOP_DEG, THETA_STEP_DEG), 4)
 ZW = F.ZW
@@ -284,7 +284,7 @@ def mismatch_at(ah, t0, theta_obs):
 
 
 def scan():
-    lc = json.loads((FIG / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
+    lc = json.loads((JSON / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
     out = {"alpha_high": 0.36, "grid": []}
     for th in (0.0, 5.0, 10.0, 15.0, 20.0, 25.0):
         for t0 in (1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.2):
@@ -293,12 +293,12 @@ def scan():
             out["grid"].append({"theta_obs": th, "t0": t0, "dchi2": c - lc, "M": M, "h1_over_sigma": r})
             rr = np.round(np.array(r)[[2, 5, 8, 11]], 2).tolist() if r else None
             print(f"theta_obs={th:4.1f} t0={t0:3.1f}  dchi2={c - lc:+7.2f}  M={M:8.2f}  h1/sigma(z=0.3,0.6,0.9,1.2)={rr}", flush=True)
-    (FIG / "fit_observer_ball_scan.json").write_text(json.dumps(out, indent=1))
+    (JSON / "fit_observer_ball_scan.json").write_text(json.dumps(out, indent=1))
 
 
 def profile(thetas, name):
     """chi2 minimised over alpha_high and t0 for each theta_obs (profile likelihood of theta_obs)."""
-    lc = json.loads((FIG / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
+    lc = json.loads((JSON / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
     t_grid = np.round(np.geomspace(1.4, 3.6, 17), 3)
     out = {"lcdm_chi2": lc, "t0_grid": t_grid.tolist(), "rows": []}
     for th in thetas:
@@ -315,16 +315,16 @@ def profile(thetas, name):
                             "t0_at_lower_edge_of_feasible_grid": bool(t0 == min(t for t in t_grid if np.isfinite(chi2(ah, t, th))))})
         print(f"theta_obs={th:4.1f}: t0={t0:.3f} alpha_high={ah:.4f} dchi2={c - lc:+.3f} M={M:.1f} "
               f"h1/sigma(z=0.3,0.6,0.9,1.2)={np.round(np.array(ratio)[[2, 5, 8, 11]], 2).tolist()}", flush=True)
-    (FIG / f"{name}.json").write_text(json.dumps(out, indent=1))
+    (JSON / f"{name}.json").write_text(json.dumps(out, indent=1))
 
 
 def best(t0, theta_obs):
-    lc = json.loads((FIG / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
+    lc = json.loads((JSON / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
     ah = float(minimize_scalar(lambda a: chi2(a, t0, theta_obs), bounds=(0.25, 0.55), method="bounded", options={"xatol": 1e-4}).x)
     c = chi2(ah, t0, theta_obs)
     M, r = mismatch(ah, t0, theta_obs)
     out = {"t0": t0, "theta_obs": theta_obs, "alpha_high": ah, "dchi2": c - lc, "M": M, "h1_over_sigma": r}
-    (FIG / "fit_observer_ball_best.json").write_text(json.dumps(out, indent=1))
+    (JSON / "fit_observer_ball_best.json").write_text(json.dumps(out, indent=1))
     print(f"theta_obs={theta_obs} t0={t0}: alpha_high={ah:.4f} dchi2={c - lc:+.2f} M={M:.2f}")
     print("h1/sigma at z_nodes:", np.round(r, 2).tolist())
     return ah
@@ -350,7 +350,7 @@ def plot(ah, t0, theta_obs, out_name="hippopede_observer_ball_bands", title=None
         B.model = lambda a, t: model(a, t, theta_obs)
         B.chi2 = lambda a, t: chi2(a, t, theta_obs)
         B.mismatch = lambda a, t: mismatch(a, t, theta_obs)
-        lc = json.loads((FIG / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
+        lc = json.loads((JSON / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
         B.plot(ah, t0, lc, out_name=out_name,
                title=title or rf"Ball $\rho\leq\hat r(z)$ around an observer at $\vartheta_{{\rm obs}}={round(theta_obs, 2):g}^\circ$")
     finally:
@@ -370,8 +370,8 @@ def joint_fit(theta_obs, t0_start, ah_start):
 
 def plot_joint(theta_other):
     """Bands at the joint minimum of the landscape and at theta_obs = theta_other."""
-    js = json.loads((FIG / "fit_observer_ball_landscape_joint.json").read_text())["best"]
-    lc = json.loads((FIG / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
+    js = json.loads((JSON / "fit_observer_ball_landscape_joint.json").read_text())["best"]
+    lc = json.loads((JSON / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
     th0 = js["theta_obs"]
     out = {}
     for th, name, title in ((th0, "hippopede_lightcone_ball_bands",
@@ -383,7 +383,7 @@ def plot_joint(theta_other):
         out[name] = {"theta_obs": th, "t0": t0, "alpha_high": ah, "dchi2": c - lc, "M": M, "h1_over_sigma": r}
         print(f"{name}: theta_obs={th} t0={t0:.4f} alpha_high={ah:.4f} dchi2={c - lc:+.3f} M={M:.1f}", flush=True)
         plot(ah, t0, th, out_name=name, title=title)
-    (FIG / "fit_observer_ball_joint_bands.json").write_text(json.dumps(out, indent=1))
+    (JSON / "fit_observer_ball_joint_bands.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":
@@ -393,7 +393,7 @@ if __name__ == "__main__":
     ap.add_argument("--profile", nargs="*", type=float, metavar="THETA_OBS",
                     help="chi2 profile at these theta_obs (alpha_high and t0 minimised)")
     ap.add_argument("--plot-joint", action="store_true",
-                    help="bands at the joint minimum of figures/fit_observer_ball_landscape_joint.json "
+                    help="bands at the joint minimum of json/fit_observer_ball_landscape_joint.json "
                          "(hippopede_lightcone_ball_bands) and at --plot-joint-theta (hippopede_observer_ball_bands), "
                          "with alpha_high and t0 refitted at each theta_obs")
     ap.add_argument("--plot-joint-theta", type=float, default=1.0)

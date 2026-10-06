@@ -1,6 +1,6 @@
 """Kinematic numbers of the hippopede sectors, each taken as an independent history.
 
-At the reference t0 (figures/t0_summary.json) and for theta = 0, 15, 30, 45, 60 deg:
+At the reference t0 (json/t0_summary.json) and for theta = 0, 15, 30, 45, 60 deg:
   * q0 of the centred history, unprojected and projected with the running index;
   * transition redshifts of the projected histories (sign change of q for 0 < z < 2);
   * maximum redshift of the unprojected branches;
@@ -8,9 +8,9 @@ At the reference t0 (figures/t0_summary.json) and for theta = 0, 15, 30, 45, 60 
     the sign of q, with no asymptotic expansion);
   * spread of the projected E(z) across sectors, (max - min)/mean, at z = 0.1, 0.5, 1;
 and the sector of a source at redshift z for an observer on the axis, theta = rhat(z)/2
-(sector_geometry.py).  Writes figures/sector_kinematics.json.  With --from-average-fit, t0 and
+(sector_geometry.py).  Writes json/sector_kinematics.json.  With --from-average-fit, t0 and
 alpha_high are those of the fit to the sector-averaged history (fit_sector_average.py), and the
-output is figures/sector_kinematics_sector_average_alpha.json.
+output is json/sector_kinematics_sector_average_alpha.json.
 """
 
 from __future__ import annotations
@@ -38,10 +38,10 @@ def main():
     ap.add_argument("--from-average-fit", action="store_true")
     args = ap.parse_args()
     if args.from_average_fit:
-        fit = json.loads((ROOT / "figures" / "fit_sector_average.json").read_text())["cases"]["high"]
+        fit = json.loads((ROOT / "json" / "fit_sector_average.json").read_text())["cases"]["high"]
         t0, ah, name = fit["t0"], fit["alpha_high"], "sector_kinematics_sector_average_alpha.json"
     else:
-        t0 = float(json.loads((ROOT / "figures" / "t0_summary.json").read_text())["figure_t0"])
+        t0 = float(json.loads((ROOT / "json" / "t0_summary.json").read_text())["figure_t0"])
         ah, name = PH.load_alpha_high(), "sector_kinematics.json"
     zw = HM.Z_WORK
     rows, E = [], {}
@@ -67,7 +67,7 @@ def main():
     print("E spread across sectors (max-min)/mean [%]:", {k: round(100 * v, 2) for k, v in spread.items()})
     print("axis observer: sector theta = rhat(z)/2 [deg] at z =", zs.tolist(), "->", np.round(th_z, 2).tolist())
     out = {"t0": t0, "alpha_high": ah, "sectors": rows, "E_spread": spread, "axis_observer_sector_deg": dict(zip(map(str, zs), th_z.tolist()))}
-    (ROOT / "figures" / name).write_text(json.dumps(out, indent=1))
+    (ROOT / "json" / name).write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

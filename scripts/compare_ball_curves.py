@@ -1,13 +1,13 @@
 """Which single expansion history of the light-cone ball model fits CC + binned Pantheon+ best?
 
 Three curves, each with alpha_high and t0 fitted (Nelder-Mead), H0 and the SN amplitude minimised
-analytically (likelihood.py), compared with flat LCDM (figures/fit_cc_pantheon.json):
+analytically (likelihood.py), compared with flat LCDM (json/fit_cc_pantheon.json):
   axis    the history of the sector theta = 0 alone (first row of fit_observer_ball.THETA);
   mean    the weighted mean over the ball, <E>(z) and <D_C>(z) (fit_observer_ball.chi2);
   median  the weighted median of E over the ball at every z, the central line of
           figures/hippopede_observer_ball_bands.png, with D_C = int dz / E_median.
 The ball curves use the observer sector theta_obs = THETA_OBS (default 1 deg, on the CatWISE curve).
-Writes figures/compare_ball_curves.json.
+Writes json/compare_ball_curves.json.
 """
 
 from __future__ import annotations
@@ -28,7 +28,7 @@ sys.path.insert(0, str(SCRIPT_DIR))
 import fit_observer_ball as OB  # noqa: E402
 import likelihood as L  # noqa: E402
 
-FIG = ROOT / "figures"
+JSON = ROOT / "json"   # numerical outputs; figures/ holds the png/pdf
 ZW = OB.ZW
 
 
@@ -81,7 +81,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--theta-obs", type=float, default=1.0)
     a = ap.parse_args()
-    lc = json.loads((FIG / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
+    lc = json.loads((JSON / "fit_cc_pantheon.json").read_text())["rows"][0]["chi2"]
     starts = [[0.335, 1.75], [0.36, 2.4], [0.40, 3.5]]
     jobs = [(k, a.theta_obs, starts) for k in ("axis", "mean", "median")]
     with ProcessPoolExecutor(max_workers=3) as ex:
@@ -90,7 +90,7 @@ def main():
     for kind, ah, t0, c in res:
         out["rows"].append({"curve": kind, "alpha_high": ah, "t0": t0, "chi2": c, "dchi2_vs_lcdm": c - lc})
         print(f"{kind:7s}: alpha_high = {ah:.4f}, t0 = {t0:.3f}, chi2 = {c:.3f}, dchi2 vs LCDM = {c - lc:+.3f}", flush=True)
-    (FIG / "compare_ball_curves.json").write_text(json.dumps(out, indent=1))
+    (JSON / "compare_ball_curves.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

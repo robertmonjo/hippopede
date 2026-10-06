@@ -3,7 +3,7 @@
 (b) 50 GLS bins, model compressed exactly like the data (mu space);
 (c) 55 GLS bins: the last bin (z 0.73-1.91, 60 SNe) split into 6 bins of 10;
 (d) unbinned.
-An overall magnitude offset is minimised analytically in every case.  Writes figures/binning_resolution_test.json."""
+An overall magnitude offset is minimised analytically in every case.  Writes json/binning_resolution_test.json."""
 import json
 import sys
 from pathlib import Path
@@ -80,4 +80,4 @@ out = {"columns": ["bins_at_zb", "bins_exact_50", "bins_exact_55", "unbinned"],
        "dchi2_vs_lcdm": {k: [r[n] - ref[n] for n in range(4)] for k, r in res.items()},
        "last_bin": {"n": int(len(last)), "z_min": float(z[last].min()), "z_max": float(z[last].max())}}
 from pathlib import Path
-(Path(__file__).resolve().parents[1] / "figures" / "binning_resolution_test.json").write_text(json.dumps(out, indent=1))
+(Path(__file__).resolve().parents[1] / "json" / "binning_resolution_test.json").write_text(json.dumps(out, indent=1))

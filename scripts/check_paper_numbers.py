@@ -1,7 +1,7 @@
 """Compare the numbers quoted in main-hippopede-epjc.tex with the outputs of the analysis scripts.
 
 Each check pairs a value as printed in the paper with the quantity computed from the JSON files in
-figures/ (and dipole_zslices/results.json), and passes when they agree to half a unit of the last
+json/ (and dipole_zslices/results.json), and passes when they agree to half a unit of the last
 printed digit.  Run after the full pipeline (REPRODUCIBILITY.md).  Exit status 1 if any check fails.
 """
 
@@ -14,11 +14,11 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-FIG = ROOT / "figures"
+JSON = ROOT / "json"   # numerical outputs; figures/ holds the png/pdf
 
 
 def load(name):
-    return json.loads((FIG / f"{name}.json").read_text())
+    return json.loads((JSON / f"{name}.json").read_text())
 
 
 def row(fit, model):
@@ -33,12 +33,13 @@ def tol(printed):
 
 EXTENDED_OUTPUTS = ("cc_intrinsic_scatter", "cc_direction_test", "pantheon_catwise_axis", "fit_ball_unbinned",
                     "ball_zoom_unbinned_wide", "fit_observer_ball_landscape_joint_wide", "binning_resolution_test",
-                    "quasar_dipole_fit_ah0p34", "quaia_zslice_model_ah0p34")
+                    "quasar_dipole_fit_ah0p34", "quaia_zslice_model_ah0p34", "refine_overview_minimum",
+                    "ball_zoom_unbinned_overview")
 
 
 def extended_checks():
     """Numbers of Sects. 3.3, 3.5 and 3.6, produced by run_all.py --extended; None if those outputs are missing."""
-    if not all((FIG / f"{n}.json").exists() for n in EXTENDED_OUTPUTS):
+    if not all((JSON / f"{n}.json").exists() for n in EXTENDED_OUTPUTS):
         return None
     cis = load("cc_intrinsic_scatter")
     cdt = load("cc_direction_test")
@@ -46,6 +47,8 @@ def extended_checks():
     spread = dict(zip(cis["sector_spread"]["z"], cis["sector_spread"]["half_width_1sigma"]))
     fbu = load("fit_ball_unbinned")
     bz = load("ball_zoom_unbinned_wide")
+    rom = load("refine_overview_minimum")["continuous_best"]
+    ov = load("ball_zoom_unbinned_overview")["summary_all_within_1sigma"]   # Fig. ball
     owl = load("fit_observer_ball_landscape_joint_wide")
     brt = load("binning_resolution_test")
     qdf = load("quasar_dipole_fit_ah0p34")
@@ -97,15 +100,16 @@ def extended_checks():
         ("CC + SN + CatWISE minimum: alpha_high", "0.381", bz["best_cc_sn_catwise"]["alpha_high"]),
         ("CC + SN + CatWISE minimum: dchi2 of CC + SN", "-0.11", bz["best_cc_sn_catwise"]["dchi2_cc_sn"]),
         ("random orientations above the quasar axis (%)", "94", 100 * (1 - fbu["free_axis"]["frac_random_below_fixed"])),
-        ("with Quaia: t0", "3.9", bz["best_cc_sn_catwise_quaia"]["t0"]),
-        ("with Quaia: theta_obs", "15", bz["best_cc_sn_catwise_quaia"]["theta_obs"]),
-        ("with Quaia: alpha_high", "0.40", bz["best_cc_sn_catwise_quaia"]["alpha_high"]),
-        ("with Quaia: chi2 of the slices", "11.6", bz["best_cc_sn_catwise_quaia"]["chi2_quaia"]),
-        ("all within 1 sigma: smallest t0", "1.53", bz["summary_all_within_1sigma"]["t0"][0]),
-        ("all within 1 sigma: smallest theta_obs", "0.6", bz["summary_all_within_1sigma"]["theta_obs"][0]),
-        ("all within 1 sigma: theta_obs at t0 = 4", "16.6", bz["summary_all_within_1sigma"]["theta_obs"][1]),
-        ("all within 1 sigma: Quaia chi2, min", "11.3", bz["summary_all_within_1sigma"]["quaia_chi2_range"][0]),
-        ("all within 1 sigma: Quaia chi2, max", "17.5", bz["summary_all_within_1sigma"]["quaia_chi2_range"][1]),
+        ("with Quaia: t0", "4.5", rom["t0"]),
+        ("with Quaia: theta_obs", "21", rom["theta_obs"]),
+        ("with Quaia: alpha_high", "0.405", rom["alpha_high"]),
+        ("with Quaia: chi2 of the slices", "11.6", rom["chi2_quaia"]),
+        ("all within 1 sigma: smallest t0", "1.54", ov["t0"][0]),
+        ("all within 1 sigma: smallest theta_obs", "0.8", ov["theta_obs"][0]),
+        ("all within 1 sigma: largest theta_obs", "45", ov["theta_obs"][1]),
+        ("all within 1 sigma: t0 where theta_obs = 45 deg", "6.1", ov["t0"][1]),
+        ("all within 1 sigma: Quaia chi2, min", "11.3", ov["quaia_chi2_range"][0]),
+        ("all within 1 sigma: Quaia chi2, max", "17.1", ov["quaia_chi2_range"][1]),
         ("Quaia amplitudes, constant", "1.8", q_const),
         ("Quaia amplitudes, none", "25.2", q_none),
         ("binned supernovae: t0 of the minimum", "1.74", owl["best"]["t0"]),
