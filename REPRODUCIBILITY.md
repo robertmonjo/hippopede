@@ -57,12 +57,40 @@ comparison, and not in the paper.
 | Effective q0 dipole and axis crossing (Sect. 5) | `local_environment.py` | `figures/local_environment.json` |
 | Every number quoted in the paper | `check_paper_numbers.py` | printed report |
 
+## Light-cone average, dipoles and unbinned supernovae
+
+These analyses use the average over the light-cone ball of the observer (reading (iv) of the
+statistical analysis, Sects. 3.3, 3.5 and 3.6) and are run with `python scripts/run_all.py --extended`
+after the main pipeline. They are computationally heavy: the grids of the last two steps take of the
+order of an hour on 28 cores and several gigabytes of memory per hundred values of theta_obs if the
+caches of `fit_observer_ball.py` are kept, which the scripts avoid.
+
+| Result | Script | Output |
+|---|---|---|
+| Intrinsic scatter of the chronometers and spread of H across sectors (Sect. 3.3) | `cc_intrinsic_scatter.py` | `figures/cc_intrinsic_scatter.json` |
+| Direction dependence of the chronometers about the CatWISE axis, and the model prediction (Sect. 3.5) | `cc_direction_test.py` | `figures/cc_direction_test.json` |
+| Band match and sector-averaged fit with the nodes z = 0.5, ..., 1.9 | `t0_dispersion_match.py --z-nodes 0.5 1.9`, `fit_sector_average.py --z-nodes 0.5 1.9` | `figures/t0_dispersion_match_z0p5-1p9.json`, `figures/fit_sector_average_z0p5-1p9.json` |
+| Count dipoles at alpha_high = 0.30, ..., 0.44 for 1 <= t0 <= 10 (input of the next steps) | `quasar_dipole_fit.py --alpha-high A --t0-range 1 10 --t0-n 30`, `quaia_zslice_model.py --alpha-high A --t0-range 1 10 --t0-n 30` | `figures/quasar_dipole_fit_ah<A>.json`, `figures/quaia_zslice_model_ah<A>.json` |
+| Pantheon+ with the axis fixed by the CatWISE excess, random-axis calibration (Sect. 3.5) | `pantheon_catwise_axis.py` | `figures/pantheon_catwise_axis.json` |
+| Landscape of the light-cone average with binned supernovae, joint fit with the dipoles (Sect. 3.6) | `plot_observer_ball_landscape.py --t0-range 1 10 --nt 80 --theta-max 45 --theta-step 0.25 --alpha-range 0.27 0.47 --tag joint_wide --dipole-alphas 0.30 0.32 0.34 0.36 0.38 0.40 0.42 0.44` | `figures/fit_observer_ball_landscape_joint_wide.json`, `figures/hippopede_observer_ball_landscape_joint_wide.png` |
+| Single lines of the ball model (sector 0, mean, median) with binned supernovae | `compare_ball_curves.py` | `figures/compare_ball_curves.json` |
+| Joint fit with the unbinned supernovae, isotropic and directional, with CatWISE, free-axis check | `fit_ball_unbinned.py` | `figures/fit_ball_unbinned.json` |
+| Single lines with the unbinned supernovae, plain and region-weighted statistic, dipoles at each fit | `fit_lines_unbinned.py` | `figures/fit_lines_unbinned.json` |
+| Effect of the binning of the supernovae on model comparisons | `binning_resolution_test.py` | printed report |
+| Map of the light-cone average with the unbinned supernovae, CatWISE and Quaia bands, region compatible with all data within 1 sigma | `plot_ball_zoom_unbinned.py --t0-range 1.4 4.0 --nt 60 --theta-max 20 --theta-step 0.05 --tag _wide` | `figures/ball_zoom_unbinned_wide.json`, `figures/hippopede_ball_zoom_unbinned_wide.png` |
+
+The map is computed on the grid given by the options; the figure interpolates the fields bilinearly
+(in ln t0 and in theta_obs relative to the largest allowed theta_obs at each t0) onto a finer display
+grid, and the bands and the summary region are evaluated there. `check_paper_numbers.py` covers the
+numbers of Sects. 3.3 and 3.5.
+
 ## Modules
 
 `sector_geometry.py` (sector of a source, volume weight of a sector, the limits
 THETA_MAX_DEG = 70 deg and THETA_OBS_MAX_DEG = 35 deg), `hippopede_model.py` (centred sector
 histories and their projection), `projected_hyperconical.py` (distorted projection with running
 index, stable to z ~ 1e10), `data_loaders.py` and `likelihood.py` (data and chi-square with full
-covariances).
+covariances), `fit_observer_ball.py` (average over the light-cone ball of an observer, used by the
+analyses of Sects. 3.5 and 3.6) and `fit_lightcone_ball.py` (its band figure).
 
 `scripts/archive/` holds earlier scripts that the paper does not use.

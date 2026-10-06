@@ -1,0 +1,121 @@
+{
+ "catwise_axis_lb": [
+  226.06467898702869,
+  13.192982900679226
+ ],
+ "n_random": 2000,
+ "rows": [
+  {
+   "t0": 1.6,
+   "theta_obs": 0.8705660091327752,
+   "alpha_high": 0.31938,
+   "chi2_lcdm": 1386.2921695465452,
+   "chi2_axis_observer": 1388.0595370850474,
+   "chi2_catwise_plus": 1388.4238659344492,
+   "chi2_catwise_minus": 1387.731944915408,
+   "frac_random_below_plus": 0.869,
+   "frac_random_below_minus": 0.092,
+   "random_chi2_min_median_max": [
+    1387.6543109598497,
+    1388.095482943333,
+    1388.547610586363
+   ]
+  },
+  {
+   "t0": 1.8,
+   "theta_obs": 1.5773674062763399,
+   "alpha_high": 0.33916,
+   "chi2_lcdm": 1386.2921695465452,
+   "chi2_axis_observer": 1387.3191100275433,
+   "chi2_catwise_plus": 1387.8358449238494,
+   "chi2_catwise_minus": 1386.8775138154156,
+   "frac_random_below_plus": 0.89,
+   "frac_random_below_minus": 0.069,
+   "random_chi2_min_median_max": [
+    1386.797576476078,
+    1387.3785506329527,
+    1387.9779095653387
+   ]
+  },
+  {
+   "t0": 2.2,
+   "theta_obs": 3.5975571313506807,
+   "alpha_high": 0.36512,
+   "chi2_lcdm": 1386.2921695465452,
+   "chi2_axis_observer": 1386.8122712057216,
+   "chi2_catwise_plus": 1387.5910345486009,
+   "chi2_catwise_minus": 1386.1991907513288,
+   "frac_random_below_plus": 0.875,
+   "frac_random_below_minus": 0.068,
+   "random_chi2_min_median_max": [
+    1386.083139237292,
+    1386.925011887476,
+    1387.8503506293089
+   ]
+  },
+  {
+   "t0": 2.7,
+   "theta_obs": 6.573777625463246,
+   "alpha_high": 0.3817,
+   "chi2_lcdm": 1386.2921695465452,
+   "chi2_axis_observer": 1386.6277818107196,
+   "chi2_catwise_plus": 1387.5565071685553,
+   "chi2_catwise_minus": 1385.9267923233126,
+   "frac_random_below_plus": 0.859,
+   "frac_random_below_minus": 0.074,
+   "random_chi2_min_median_max": [
+    1385.7835809281712,
+    1386.7806817958965,
+    1387.9194146634306
+   ]
+  },
+  {
+   "t0": 3.3,
+   "theta_obs": 10.924879454290025,
+   "alpha_high": 0.39207,
+   "chi2_lcdm": 1386.2921695465452,
+   "chi2_axis_observer": 1386.551450605896,
+   "chi2_catwise_plus": 1387.55792447065,
+   "chi2_catwise_minus": 1385.803022238477,
+   "frac_random_below_plus": 0.852,
+   "frac_random_below_minus": 0.0785,
+   "random_chi2_min_median_max": [
+    1385.641229380215,
+    1386.731292153284,
+    1387.9928076768742
+   ]
+  },
+  {
+   "t0": 3.9,
+   "theta_obs": 16.430077961265535,
+   "alpha_high": 0.3976,
+   "chi2_lcdm": 1386.2921695465452,
+   "chi2_axis_observer": 1386.5250058150311,
+   "chi2_catwise_plus": 1387.565369879366,
+   "chi2_catwise_minus": 1385.749630942569,
+   "frac_random_below_plus": 0.847,
+   "frac_random_below_minus": 0.0815,
+   "random_chi2_min_median_max": [
+    1385.5766617797726,
+    1386.7090654807957,
+    1388.0387138126716
+   ]
+  },
+  {
+   "t0": 4.5,
+   "theta_obs": 23.546586839128402,
+   "alpha_high": 0.40022,
+   "chi2_lcdm": 1386.2921695465452,
+   "chi2_axis_observer": 1386.5271626704805,
+   "chi2_catwise_plus": 1387.566277134648,
+   "chi2_catwise_minus": 1385.7307172392814,
+   "frac_random_below_plus": 0.845,
+   "frac_random_below_minus": 0.0825,
+   "random_chi2_min_median_max": [
+    1385.5524539013154,
+    1386.699381647487,
+    1388.0583244520321
+   ]
+  }
+ ]
+}

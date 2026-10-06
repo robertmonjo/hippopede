@@ -31,6 +31,90 @@ def tol(printed):
     return 0.5 * 10 ** (-len(d))
 
 
+EXTENDED_OUTPUTS = ("cc_intrinsic_scatter", "cc_direction_test", "pantheon_catwise_axis", "fit_ball_unbinned",
+                    "ball_zoom_unbinned_wide", "fit_observer_ball_landscape_joint_wide", "binning_resolution_test",
+                    "quasar_dipole_fit_ah0p34", "quaia_zslice_model_ah0p34")
+
+
+def extended_checks():
+    """Numbers of Sects. 3.3, 3.5 and 3.6, produced by run_all.py --extended; None if those outputs are missing."""
+    if not all((FIG / f"{n}.json").exists() for n in EXTENDED_OUTPUTS):
+        return None
+    cis = load("cc_intrinsic_scatter")
+    cdt = load("cc_direction_test")
+    pca = load("pantheon_catwise_axis")
+    spread = dict(zip(cis["sector_spread"]["z"], cis["sector_spread"]["half_width_1sigma"]))
+    fbu = load("fit_ball_unbinned")
+    bz = load("ball_zoom_unbinned_wide")
+    owl = load("fit_observer_ball_landscape_joint_wide")
+    brt = load("binning_resolution_test")
+    qdf = load("quasar_dipole_fit_ah0p34")
+    qzs = load("quaia_zslice_model_ah0p34")["slices"]
+    amp = np.array([x["excess_amp"] for x in qzs]); sig = np.array([x["sigma"] for x in qzs])
+    q_const = float(np.sum(((amp - np.sum(amp / sig**2) / np.sum(1 / sig**2)) / sig) ** 2))
+    q_none = float(np.sum((amp / sig) ** 2))
+    return [
+        # Sect. 3.3: scatter of the chronometers (cc_intrinsic_scatter.py)
+        ("CC-only flat LCDM chi2", "23.4", cis["flat_lcdm"]["chi2"]),
+        ("CC-only degrees of freedom", "36", cis["flat_lcdm"]["dof"]),
+        ("sigma_int 95% upper limit, z < 0.5", "6.8", cis["flat_lcdm"]["subsets"]["z<0.5"]["sigma_int_95"]),
+        ("sigma_int maximum likelihood, z > 0.5", "8", cis["flat_lcdm"]["subsets"]["z>0.5"]["sigma_int_ml"]),
+        ("sigma_int 95% upper limit, z > 0.5", "20", cis["flat_lcdm"]["subsets"]["z>0.5"]["sigma_int_95"]),
+        ("Delta(-2 ln L) at no scatter, z > 0.5", "1.0", cis["flat_lcdm"]["subsets"]["z>0.5"]["dm2lnL_at_zero"]),
+        ("H spread across sectors, z = 0.5", "2.6", spread[0.5]),
+        ("H spread across sectors, z = 1", "6.0", spread[1.0]),
+        ("H spread across sectors, z = 1.6", "17", spread[1.6]),
+        ("H spread across sectors, z = 1.9", "29", spread[1.9]),
+        # Sect. 3.5: direction tests (cc_direction_test.py, pantheon_catwise_axis.py)
+        ("CC amplitude A along the CatWISE axis", "0.04", cdt["fits"]["all"]["A"]),
+        ("CC amplitude A, uncertainty", "0.15", cdt["fits"]["all"]["sigma_A"]),
+        ("predicted |A| min (%)", "0.2", 100 * min(min(r["A"]) for r in cdt["prediction"])),
+        ("predicted |A| max (%)", "2.4", 100 * max(max(r["A"]) for r in cdt["prediction"])),
+        ("CatWISE curve, smallest t0", "1.6", min(r["t0"] for r in pca["rows"])),
+        ("CatWISE curve, largest t0", "4.5", max(r["t0"] for r in pca["rows"])),
+        ("CatWISE curve, smallest theta_obs", "0.9", min(r["theta_obs"] for r in pca["rows"])),
+        ("CatWISE curve, largest theta_obs", "24", max(r["theta_obs"] for r in pca["rows"])),
+        ("SN dchi2 with the quasar orientation, smallest change", "-0.33", max(r["chi2_catwise_minus"] - r["chi2_axis_observer"] for r in pca["rows"])),
+        ("SN dchi2 with the quasar orientation, largest change", "-0.80", min(r["chi2_catwise_minus"] - r["chi2_axis_observer"] for r in pca["rows"])),
+        ("SN dchi2 with the opposite orientation, min", "0.36", min(r["chi2_catwise_plus"] - r["chi2_axis_observer"] for r in pca["rows"])),
+        ("SN dchi2 with the opposite orientation, max", "1.04", max(r["chi2_catwise_plus"] - r["chi2_axis_observer"] for r in pca["rows"])),
+        ("random orientations with lower chi2, min (%)", "7", 100 * min(r["frac_random_below_minus"] for r in pca["rows"])),
+        ("random orientations with lower chi2, max (%)", "9", 100 * max(r["frac_random_below_minus"] for r in pca["rows"])),
+        ("number of random orientations", "2000", pca["n_random"]),
+        # Sect. 3.6: light-cone average with the unbinned supernovae (fit_ball_unbinned.py, plot_ball_zoom_unbinned.py)
+        ("unbinned supernovae", "1579", 1579),
+        ("ball, observer on the axis: alpha_high", "0.361", fbu["isotropic"]["alpha_high"]),
+        ("ball, observer on the axis: t0", "2.23", fbu["isotropic"]["t0"]),
+        ("ball, observer on the axis: dchi2", "0.02", fbu["isotropic"]["dchi2_vs_lcdm"]),
+        ("projected axial sector, unbinned: dchi2", "0.28", fbu["hyperconical"]["dchi2_vs_lcdm"]),
+        ("CC + SN minimum: t0", "2.18", bz["best_cc_sn"]["t0"]),
+        ("CC + SN minimum: theta_obs", "13.0", bz["best_cc_sn"]["theta_obs"]),
+        ("CC + SN minimum: alpha_high", "0.349", bz["best_cc_sn"]["alpha_high"]),
+        ("CC + SN minimum: dchi2", "-0.68", bz["best_cc_sn"]["dchi2"]),
+        ("count dipole / CatWISE excess near that minimum", "4", (qdf["D_geo"] + qdf["sigma"] * fbu["fits"]["cc_sn"]["chi2_catwise"] ** 0.5) / qdf["D_geo"]),
+        ("CC + SN + CatWISE minimum: t0", "2.80", bz["best_cc_sn_catwise"]["t0"]),
+        ("CC + SN + CatWISE minimum: theta_obs", "7.2", bz["best_cc_sn_catwise"]["theta_obs"]),
+        ("CC + SN + CatWISE minimum: alpha_high", "0.381", bz["best_cc_sn_catwise"]["alpha_high"]),
+        ("CC + SN + CatWISE minimum: dchi2 of CC + SN", "-0.11", bz["best_cc_sn_catwise"]["dchi2_cc_sn"]),
+        ("random orientations above the quasar axis (%)", "94", 100 * (1 - fbu["free_axis"]["frac_random_below_fixed"])),
+        ("with Quaia: t0", "3.9", bz["best_cc_sn_catwise_quaia"]["t0"]),
+        ("with Quaia: theta_obs", "15", bz["best_cc_sn_catwise_quaia"]["theta_obs"]),
+        ("with Quaia: alpha_high", "0.40", bz["best_cc_sn_catwise_quaia"]["alpha_high"]),
+        ("with Quaia: chi2 of the slices", "11.6", bz["best_cc_sn_catwise_quaia"]["chi2_quaia"]),
+        ("all within 1 sigma: smallest t0", "1.53", bz["summary_all_within_1sigma"]["t0"][0]),
+        ("all within 1 sigma: smallest theta_obs", "0.6", bz["summary_all_within_1sigma"]["theta_obs"][0]),
+        ("all within 1 sigma: theta_obs at t0 = 4", "16.6", bz["summary_all_within_1sigma"]["theta_obs"][1]),
+        ("all within 1 sigma: Quaia chi2, min", "11.3", bz["summary_all_within_1sigma"]["quaia_chi2_range"][0]),
+        ("all within 1 sigma: Quaia chi2, max", "17.5", bz["summary_all_within_1sigma"]["quaia_chi2_range"][1]),
+        ("Quaia amplitudes, constant", "1.8", q_const),
+        ("Quaia amplitudes, none", "25.2", q_none),
+        ("binned supernovae: t0 of the minimum", "1.74", owl["best"]["t0"]),
+        ("binned supernovae: dchi2 of the minimum", "-0.80", owl["best"]["dchi2"]),
+        ("lowest redshift of the last bin", "0.80", brt["last_bin"]["z_min"]),
+        ("random orientations below, smallest (%)", "6", 100 * min(fbu["free_axis"]["frac_random_below_fixed"], min(r["frac_random_below_minus"] for r in pca["rows"]))),
+    ]
+
+
 def main():
     fit = load("fit_cc_pantheon")
     ah = load("fit_alpha_high")
@@ -184,6 +268,11 @@ def main():
         ("q_d,eff per degree", "1.3e-3", loc["observers"]["1.0"]["q_d_eff"][0]),
         ("high-z agreement with 50 digits at z = 4e9", "3e-7", max(abs(hz_4e9["alpha_half"] - 1), abs(hz_4e9["running"] - 1))),
     ]
+    ext = extended_checks()
+    if ext is None:
+        print("numbers of Sects. 3.3, 3.5 and 3.6 not checked: run scripts/run_all.py --extended first")
+    else:
+        checks += ext
     failed = 0
     for name, printed, value in checks:
         ok = abs(float(printed) - float(value)) <= (tol(printed.split("e")[0]) * (10 ** int(printed.split("e")[1]) if "e" in printed else 1)) + 1e-12

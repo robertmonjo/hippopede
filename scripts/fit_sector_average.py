@@ -16,7 +16,8 @@ Fit, alternating until t0 changes by less than 1e-3:
      fit() also accepts case 'both', alpha_low free, which is not used: lower alpha_high shortens
      the reach of the sectors near THETA_MAX_DEG below the highest data redshift);
   2. at fixed alpha, t0 minimises S(t0) = sum_k sum_j [ln w_k(z_j) - ln(k sigma_G(z_j))]^2, k = 1, 2,
-     the joint 1- and 2-sigma band match of q(z) at z_j = 0.1, ..., 1.2.
+     the joint 1- and 2-sigma band match of q(z) at z_j = 0.1, ..., 1.2 (option --z-nodes ZMIN ZMAX
+     changes the range and adds the suffix _z<ZMIN>-<ZMAX> to the output).
 Reported: parameters, chi2, Delta chi2 and Delta AIC relative to flat LCDM
 (figures/fit_cc_pantheon.json), and the offset of the weighted median of q and E from the GaPP
 median in units of sigma_G, with E normalised to the sector-averaged present rate.  Writes figures/fit_sector_average.json.
@@ -47,6 +48,15 @@ GAPP = json.loads((ROOT / "figures" / DM.DEFAULT_GAPP).read_text())
 NODES = DM.Z_NODES
 G_MED = {"q": np.interp(NODES, GAPP["z"], GAPP["q"]), "E": np.interp(NODES, GAPP["z"], GAPP["e"])}
 G_SIG = {"q": np.interp(NODES, GAPP["z"], GAPP["q_sigma"]), "E": np.interp(NODES, GAPP["z"], GAPP["e_sigma"])}
+
+
+def set_nodes(zmin, zmax):
+    """Band-match nodes z = zmin, ..., zmax (steps of 0.1) and the GaPP median and width there."""
+    global NODES, G_MED, G_SIG
+    DM.set_nodes(zmin, zmax)
+    NODES = DM.Z_NODES
+    G_MED = {"q": np.interp(NODES, GAPP["z"], GAPP["q"]), "E": np.interp(NODES, GAPP["z"], GAPP["e"])}
+    G_SIG = {"q": np.interp(NODES, GAPP["z"], GAPP["q_sigma"]), "E": np.interp(NODES, GAPP["z"], GAPP["e_sigma"])}
 
 
 def sector_table(al, ah, t0):
@@ -122,6 +132,12 @@ def fit(case, t0_start=2.6):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--z-nodes", nargs=2, type=float, default=(0.1, 1.2), metavar=("ZMIN", "ZMAX"))
+    args = ap.parse_args()
+    set_nodes(*args.z_nodes)
+    sfx = DM.node_suffix(*args.z_nodes)
     lcdm = json.loads((ROOT / "figures" / "fit_cc_pantheon.json").read_text())["rows"][0]
     out = {"lcdm_chi2": lcdm["chi2"], "lcdm_k": lcdm["k"], "cases": {}}
     om = lcdm["Omega_m"]
@@ -147,7 +163,8 @@ def main():
               f"dchi2={r['dchi2']:+.2f} dAIC={r['dAIC']:+.2f} S={r['band_S']:.3f}")
         print("   q median offset/sigma_G:", np.round(r["median_offset_q_sigma"], 2).tolist())
         print("   E median offset/sigma_G:", np.round(r["median_offset_E_sigma"], 2).tolist())
-    (ROOT / "figures" / "fit_sector_average.json").write_text(json.dumps(out, indent=1))
+    out["z_nodes"] = NODES.tolist()
+    (ROOT / "figures" / f"fit_sector_average{sfx}.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

@@ -33,7 +33,14 @@ import hippopede_model as HM  # noqa: E402
 import projected_hyperconical as PH  # noqa: E402
 import sector_geometry as G  # noqa: E402
 
-RUN = lambda z: PH.alpha_sqrt(z, PH.ALPHA_LOW, PH.load_alpha_high())
+AH = None  # asymptotic projection index; None = fit to the axial sector (fit_alpha_high.py)
+RUN = lambda z: PH.alpha_sqrt(z, PH.ALPHA_LOW, PH.load_alpha_high() if AH is None else AH)
+
+
+def set_alpha_high(ah):
+    """Use alpha_high = ah in e_table and rhat(z) of every Sky built afterwards."""
+    global AH
+    AH = ah
 Z_MIN, Z_MAX = 0.01, 2.1
 Z_TAB = np.linspace(0.0, 2.15, 431)
 TH_TAB = np.arange(0.0, G.THETA_MAX_DEG + 0.01, 1.0)
@@ -59,7 +66,7 @@ def e_table(t0):
     tab = np.empty((len(TH_TAB), len(Z_TAB)))
     h_ax = h0_sector(0.0, t0)
     for i, a in enumerate(TH_TAB):
-        e = HM.projected_sector(a, t0)[0]
+        e = HM.projected_sector(a, t0, AH)[0]
         tab[i] = np.interp(Z_TAB, HM.Z_WORK, e, left=np.nan, right=np.nan) * h0_sector(np.radians(a), t0) / h_ax
     return tab
 

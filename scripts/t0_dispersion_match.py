@@ -13,7 +13,8 @@ and the GaPP bands are sigma_G(z_j) and 2 sigma_G(z_j) (gapp_reconstruction.py; 
 selects one or more reconstructions, default figures/gapp_reconstruction_compilation_gls_cc.json).  t0 minimises
     S_k(t0) = sum_j [ln w_k(z_j; t0) - ln(k sigma_G(z_j))]^2,   k = 1, 2,
 and S_1 + S_2 for the joint match, over the nodes z_j = 0.1, ..., 1.2 (the range of the binned
-supernovae).  The bands are computed on a grid of t0 and interpolated linearly in ln t0.  The GaPP band is strongly correlated between nodes (the trained correlation length
+supernovae; option --z-nodes ZMIN ZMAX changes the range, steps of 0.1, and adds the suffix
+_z<ZMIN>-<ZMAX> to the output).  The bands are computed on a grid of t0 and interpolated linearly in ln t0.  The GaPP band is strongly correlated between nodes (the trained correlation length
 is larger than the node range), so S is not a chi-square.  The uncertainty is quoted in two ways:
 the 16-84 per cent range of the single-node solutions w_k(z_j; t0) = k sigma_G(z_j), and the
 jackknife standard error over nodes.  The offset of the weighted median of the model from the
@@ -39,6 +40,16 @@ import hippopede_model as HM  # noqa: E402
 import sector_geometry as G  # noqa: E402
 
 Z_NODES = np.round(np.arange(0.1, 1.21, 0.1), 2)
+
+
+def set_nodes(zmin, zmax):
+    """Band-match nodes z = zmin, zmin + 0.1, ..., zmax."""
+    global Z_NODES
+    Z_NODES = np.round(np.arange(zmin, zmax + 1e-9, 0.1), 2)
+
+
+def node_suffix(zmin, zmax):
+    return "" if (abs(zmin - 0.1) < 1e-9 and abs(zmax - 1.2) < 1e-9) else f"_z{zmin:g}-{zmax:g}".replace(".", "p")
 THETA = np.arange(0.25, G.THETA_MAX_DEG, 0.5)
 W = G.lobe_volume_weight(THETA)
 W /= W.sum()
@@ -48,10 +59,15 @@ T_FINE = np.geomspace(1.2, 40.0, 20001)
 
 
 def weighted_quantile(x, w, p):
-    """Quantile p of the discrete distribution x with weights w (linear interpolation of the CDF)."""
-    ok = np.isfinite(x)
-    if ok.sum() < 2:
+    """Quantile p of the discrete distribution x with weights w (linear interpolation of the CDF).
+
+    Points with zero weight are not part of the distribution and are ignored; a single weighted
+    point returns its value."""
+    ok = np.isfinite(x) & (np.asarray(w) > 0)
+    if ok.sum() == 0:
         return np.nan
+    if ok.sum() == 1:
+        return float(x[ok][0])
     o = np.argsort(x[ok])
     xs, ws = x[ok][o], w[ok][o]
     cdf = (np.cumsum(ws) - 0.5 * ws) / ws.sum()
@@ -112,7 +128,10 @@ DEFAULT_GAPP = "gapp_reconstruction_compilation_gls_cc.json"
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--gapp", nargs="+", default=[DEFAULT_GAPP], help="reconstruction files in figures/")
+    ap.add_argument("--z-nodes", nargs=2, type=float, default=(0.1, 1.2), metavar=("ZMIN", "ZMAX"))
     args = ap.parse_args()
+    set_nodes(*args.z_nodes)
+    sfx = node_suffix(*args.z_nodes)
     tab = band_table()
     all_nodes = np.arange(len(Z_NODES))
     for gfile in args.gapp:
@@ -150,7 +169,8 @@ def main():
                     print("   model/GaPP 1s:", np.round(w1 / sig, 2).tolist())
                     print("   model/GaPP 2s:", np.round(w2 / (2 * sig), 2).tolist())
             res[name] = out
-        fname = "t0_dispersion_match.json" if gfile == DEFAULT_GAPP else             "t0_dispersion_match_" + gfile.replace("gapp_reconstruction_", "")
+        fname = ("t0_dispersion_match.json" if gfile == DEFAULT_GAPP else "t0_dispersion_match_" + gfile.replace("gapp_reconstruction_", ""))
+        fname = fname.replace(".json", sfx + ".json")
         (ROOT / "figures" / fname).write_text(json.dumps(res, indent=1))
 
 

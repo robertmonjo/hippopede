@@ -14,6 +14,7 @@ Only slices inside the model tables (z <= 2.1) are used.  Writes figures/quaia_z
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -60,7 +61,29 @@ def fit(e, sig, f):
     return chi2, a, S / np.linalg.norm(S)
 
 
+def options():
+    """--from-average-fit: alpha_high of fit_sector_average.py, a dense grid of t0 and outputs with the
+    suffix _sector_average_alpha (used by plot_observer_sky.py --landscape)."""
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--from-average-fit", action="store_true")
+    ap.add_argument("--alpha-high", type=float, default=None, help="any alpha_high; outputs get the suffix _ah<value>")
+    ap.add_argument("--t0-range", nargs=2, type=float, default=(2.4, 6.0), metavar=("MIN", "MAX"),
+                    help="range of the t0 grid (geometric) with --alpha-high or --from-average-fit")
+    ap.add_argument("--t0-n", type=int, default=10, help="number of t0 values in that grid")
+    args = ap.parse_args()
+    if args.alpha_high is not None:
+        ah, suffix = args.alpha_high, "_ah" + f"{args.alpha_high:g}".replace(".", "p")
+    elif args.from_average_fit:
+        ah = json.loads((ROOT / "figures" / "fit_sector_average.json").read_text())["cases"]["high"]["alpha_high"]
+        suffix = "_sector_average_alpha"
+    else:
+        return None, ""
+    T.set_alpha_high(ah)
+    return [float(t) for t in np.round(np.geomspace(*args.t0_range, args.t0_n), 3)], suffix
+
+
 def main():
+    t0_list, suffix = options()
     rows = load_slices()
     e = np.array([r["e"] for r in rows]); sig = np.array([r["sig"] for r in rows])
     print("slices:", [r["z"] for r in rows], " excess amplitudes:", [round(r["amp"], 4) for r in rows])
@@ -71,7 +94,7 @@ def main():
            "chi2_null": chi2_0, "chi2_const": c_const, "amp_const": a_const, "model": {}}
     t_ref = float(json.loads((ROOT / "figures" / "t0_summary.json").read_text())["figure_t0"])
     out["reference_t0"] = t_ref
-    for t0 in sorted({t_ref, 2.5, 3.0, 4.0, 6.0, 10.0}):
+    for t0 in (t0_list or sorted({t_ref, 2.5, 3.0, 4.0, 6.0, 10.0})):
         tab = T.e_table(t0)
         f = np.array([shape(tab, *r["z"], r["x"]) for r in rows])
         c, a, u = fit(e, sig, np.abs(f))
@@ -81,7 +104,7 @@ def main():
               + ("" if a <= G.THETA_OBS_MAX_DEG else f"  [theta_obs beyond {G.THETA_OBS_MAX_DEG:g} deg]"))
         out["model"][str(t0)] = {"f_1deg": np.abs(f).tolist(), "theta_obs": a, "pred": pred.tolist(), "chi2": c,
                                  "within_observer_range": bool(a <= G.THETA_OBS_MAX_DEG)}
-    (ROOT / "figures" / "quaia_zslice_model.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "figures" / f"quaia_zslice_model{suffix}.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

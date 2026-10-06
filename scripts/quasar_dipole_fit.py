@@ -23,6 +23,7 @@ magnification and the null geodesics of the model.  Writes figures/quasar_dipole
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -91,13 +92,35 @@ def solve_theta(d_abs, target):
     return None
 
 
+def options():
+    """--from-average-fit: alpha_high of fit_sector_average.py, a dense grid of t0 and outputs with the
+    suffix _sector_average_alpha (used by plot_observer_sky.py --landscape)."""
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--from-average-fit", action="store_true")
+    ap.add_argument("--alpha-high", type=float, default=None, help="any alpha_high; outputs get the suffix _ah<value>")
+    ap.add_argument("--t0-range", nargs=2, type=float, default=(2.4, 6.0), metavar=("MIN", "MAX"),
+                    help="range of the t0 grid (geometric) with --alpha-high or --from-average-fit")
+    ap.add_argument("--t0-n", type=int, default=10, help="number of t0 values in that grid")
+    args = ap.parse_args()
+    if args.alpha_high is not None:
+        ah, suffix = args.alpha_high, "_ah" + f"{args.alpha_high:g}".replace(".", "p")
+    elif args.from_average_fit:
+        ah = json.loads((ROOT / "figures" / "fit_sector_average.json").read_text())["cases"]["high"]["alpha_high"]
+        suffix = "_sector_average_alpha"
+    else:
+        return None, ""
+    T.set_alpha_high(ah)
+    return [float(t) for t in np.round(np.geomspace(*args.t0_range, args.t0_n), 3)], suffix
+
+
 def main():
+    t0_list, suffix = options()
     _, d_geo, lb_geo = excess_vector()
     t_ref = float(json.loads((ROOT / "figures" / "t0_summary.json").read_text())["figure_t0"])
     print(f"x = {X_SLOPE:.3f}; D_geo = {d_geo:.4f} +- {SIG_GEO:.4f} towards (l,b) = ({lb_geo[0]:.1f}, {lb_geo[1]:.1f})")
     out = {"x": X_SLOPE, "D_geo": d_geo, "sigma": SIG_GEO, "excess_lb": lb_geo, "theta_obs_grid": THETA_OBS,
            "reference_t0": t_ref, "runs": []}
-    for t0 in sorted({t_ref, 2.5, 3.0, 4.0, 6.0, 10.0}):
+    for t0 in (t0_list or sorted({t_ref, 2.5, 3.0, 4.0, 6.0, 10.0})):
         tab = T.e_table(t0)
         for kind in ("gamma", "flat"):
             for x in (X_SLOPE, 1.5, 1.8):
@@ -110,7 +133,7 @@ def main():
                 if x == X_SLOPE:
                     print(f"t0={t0:5.2f} p(z)={kind:5s}: theta_obs for D_geo (-1s, best, +1s) = "
                           f"{[None if s is None else round(s, 2) for s in sol]}")
-    (ROOT / "figures" / "quasar_dipole_fit.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "figures" / f"quasar_dipole_fit{suffix}.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":
