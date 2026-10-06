@@ -44,6 +44,7 @@ A_GRID = np.round(np.arange(0.30, 0.4301, 0.01), 3)
 T_GRID = np.round(np.geomspace(1.5, 8.0, 22), 4)
 TH_GRID = np.array([0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0, 11.0, 15.0, 20.0, 25.0])
 DIPOLE_ALPHAS = (0.30, 0.32, 0.34, 0.36, 0.38, 0.40, 0.42, 0.44)
+DIPOLE_SUFFIX = ""   # suffix of the dipole runs after _ah<value> (set_dipole_runs)
 Z_AVG = np.linspace(0.01, 1.92, 60)          # redshifts of the sky average of D_los
 U_PSI, W_PSI = np.polynomial.legendre.leggauss(24)   # cos(psi) nodes for that average
 
@@ -131,13 +132,19 @@ def axis_opposite_catwise():
 _DIP = None
 
 
+def set_dipole_runs(alphas, suffix=""):
+    """Use the dipole runs quasar_dipole_fit_ah<alpha><suffix>.json for these alpha_high values."""
+    global DIPOLE_ALPHAS, DIPOLE_SUFFIX, _DIP
+    DIPOLE_ALPHAS, DIPOLE_SUFFIX, _DIP = tuple(alphas), suffix, None
+
+
 def catwise_chi2(ah, t0, theta):
     """CatWISE amplitude chi2 interpolated between the dipole runs (alpha_high, ln t0, theta_obs)."""
     global _DIP
     if _DIP is None:
         _DIP = {}
         for a in DIPOLE_ALPHAS:
-            qd = json.loads((FIG / ("quasar_dipole_fit_ah" + f"{a:g}".replace(".", "p") + ".json")).read_text())
+            qd = json.loads((FIG / ("quasar_dipole_fit_ah" + f"{a:g}".replace(".", "p") + DIPOLE_SUFFIX + ".json")).read_text())
             runs = sorted((r for r in qd["runs"] if r["pz"] == "gamma" and abs(r["x"] - qd["x"]) < 1e-12), key=lambda r: r["t0"])
             _DIP[a] = (np.log([r["t0"] for r in runs]), np.abs(np.array([r["D"] for r in runs], float)),
                        np.array(qd["theta_obs_grid"], float), qd["D_geo"], qd["sigma"])
@@ -150,7 +157,7 @@ def catwise_chi2(ah, t0, theta):
     for a in (al[k], al[k + 1]):
         lt, D, g, dgeo, sig = _DIP[a]
         x = np.log(t0)
-        n = int(np.searchsorted(lt, x, side="right")) - 1
+        n = min(int(np.searchsorted(lt, x, side="right")) - 1, len(lt) - 2) if x <= lt[-1] + 1e-12 else len(lt)
         if not 0 <= n < len(lt) - 1:
             return np.nan
         f = (x - lt[n]) / (lt[n + 1] - lt[n])

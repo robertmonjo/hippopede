@@ -101,9 +101,13 @@ def options():
     ap.add_argument("--t0-range", nargs=2, type=float, default=(2.4, 6.0), metavar=("MIN", "MAX"),
                     help="range of the t0 grid (geometric) with --alpha-high or --from-average-fit")
     ap.add_argument("--t0-n", type=int, default=10, help="number of t0 values in that grid")
+    ap.add_argument("--theta-obs", nargs="+", type=float, default=None, help="observer sectors [deg] (default THETA_OBS)")
+    ap.add_argument("--out-suffix", default="", help="appended to the output suffix, e.g. _wide")
     args = ap.parse_args()
+    if args.theta_obs is not None:
+        THETA_OBS[:] = args.theta_obs
     if args.alpha_high is not None:
-        ah, suffix = args.alpha_high, "_ah" + f"{args.alpha_high:g}".replace(".", "p")
+        ah, suffix = args.alpha_high, "_ah" + f"{args.alpha_high:g}".replace(".", "p") + args.out_suffix
     elif args.from_average_fit:
         ah = json.loads((ROOT / "figures" / "fit_sector_average.json").read_text())["cases"]["high"]["alpha_high"]
         suffix = "_sector_average_alpha"

@@ -9,7 +9,9 @@ theta_obs for small offsets, so the fitted amplitude a is theta_obs in degrees).
 from figures/t0_summary.json plus a grid of values.
 Fit: chi2 = sum_i |e_i - a f_i u|^2 / sigma_i^2 (per-component mock errors), minimised
 analytically over a and u.  The same is done for a redshift-independent shape f_i = 1.
-Only slices inside the model tables (z <= 2.1) are used.  Writes figures/quaia_zslice_model.json.
+Only slices inside the model tables (z <= 2.1) are used.  With --theta-obs the slice dipoles are also
+computed at those observer sectors (f_theta, |D_i| without the linear approximation).
+Writes figures/quaia_zslice_model.json.
 """
 
 from __future__ import annotations
@@ -29,6 +31,8 @@ import pantheon_offaxis_test as T  # noqa: E402
 import sector_geometry as G  # noqa: E402
 import quasar_dipole_fit as Q  # noqa: E402
 
+THETA_OBS: list[float] = []   # optional observer sectors [deg] for f_theta
+
 
 def load_slices():
     r = json.loads((ROOT / "dipole_zslices" / "results.json").read_text())
@@ -45,11 +49,11 @@ def load_slices():
     return rows
 
 
-def shape(tab, zlo, zhi, x):
+def shape(tab, zlo, zhi, x, theta=1.0):
     zq = Q.Z_Q
     p = ((zq >= zlo) & (zq <= zhi)).astype(float)
     p /= np.trapezoid(p, zq)
-    return Q.dipole(tab, 1.0, x, p)[0]
+    return Q.dipole(tab, theta, x, p)[0]
 
 
 def fit(e, sig, f):
@@ -70,9 +74,13 @@ def options():
     ap.add_argument("--t0-range", nargs=2, type=float, default=(2.4, 6.0), metavar=("MIN", "MAX"),
                     help="range of the t0 grid (geometric) with --alpha-high or --from-average-fit")
     ap.add_argument("--t0-n", type=int, default=10, help="number of t0 values in that grid")
+    ap.add_argument("--theta-obs", nargs="+", type=float, default=None, help="observer sectors [deg] (default THETA_OBS)")
+    ap.add_argument("--out-suffix", default="", help="appended to the output suffix, e.g. _wide")
     args = ap.parse_args()
+    if args.theta_obs is not None:
+        THETA_OBS[:] = args.theta_obs
     if args.alpha_high is not None:
-        ah, suffix = args.alpha_high, "_ah" + f"{args.alpha_high:g}".replace(".", "p")
+        ah, suffix = args.alpha_high, "_ah" + f"{args.alpha_high:g}".replace(".", "p") + args.out_suffix
     elif args.from_average_fit:
         ah = json.loads((ROOT / "figures" / "fit_sector_average.json").read_text())["cases"]["high"]["alpha_high"]
         suffix = "_sector_average_alpha"
@@ -104,6 +112,9 @@ def main():
               + ("" if a <= G.THETA_OBS_MAX_DEG else f"  [theta_obs beyond {G.THETA_OBS_MAX_DEG:g} deg]"))
         out["model"][str(t0)] = {"f_1deg": np.abs(f).tolist(), "theta_obs": a, "pred": pred.tolist(), "chi2": c,
                                  "within_observer_range": bool(a <= G.THETA_OBS_MAX_DEG)}
+        if THETA_OBS:
+            out["theta_obs_grid"] = list(THETA_OBS)
+            out["model"][str(t0)]["f_theta"] = [[abs(shape(tab, *r["z"], r["x"], th)) for r in rows] for th in THETA_OBS]
     (ROOT / "figures" / f"quaia_zslice_model{suffix}.json").write_text(json.dumps(out, indent=1))
 
 

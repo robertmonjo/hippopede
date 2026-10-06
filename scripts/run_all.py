@@ -57,6 +57,9 @@ STEPS = [
 
 
 DIPOLE_ALPHAS = ["0.30", "0.32", "0.34", "0.36", "0.38", "0.40", "0.42", "0.44"]
+OVERVIEW_DIPOLE_ALPHAS = [f"{0.30 + 0.02 * k:.2f}" for k in range(21)]   # 0.30 ... 0.70
+OVERVIEW_DIPOLE_THETA = ["0", "0.5", "1", "2", "3", "5", "7", "10", "15", "20", "25", "30", "35", "40", "45"]
+OVERVIEW_THETA = ["0", "0.25", "0.5", "1", "1.5", "2", "2.5", "3"] + [str(k) for k in range(4, 46)]
 EXTENDED = [
     ["scripts/cc_intrinsic_scatter.py"],
     ["scripts/cc_direction_test.py"],
@@ -73,6 +76,15 @@ EXTENDED = [
     ["scripts/fit_lines_unbinned.py"],
     ["scripts/binning_resolution_test.py"],
     ["scripts/plot_ball_zoom_unbinned.py", "--t0-range", "1.4", "4.0", "--nt", "60", "--theta-max", "20", "--theta-step", "0.05", "--tag", "_wide"],
+    # overview of the (t0, theta_obs) plane: dipole runs up to alpha_high 0.70, t0 20 and theta_obs 45 deg
+    *[["scripts/quasar_dipole_fit.py", "--alpha-high", a, "--t0-range", "1", "20", "--t0-n", "40",
+       "--theta-obs", *OVERVIEW_DIPOLE_THETA, "--out-suffix", "_wide"] for a in OVERVIEW_DIPOLE_ALPHAS],
+    *[["scripts/quaia_zslice_model.py", "--alpha-high", a, "--t0-range", "1", "20", "--t0-n", "40",
+       "--theta-obs", *OVERVIEW_DIPOLE_THETA, "--out-suffix", "_wide"] for a in OVERVIEW_DIPOLE_ALPHAS],
+    ["scripts/plot_ball_zoom_unbinned.py", "--t0-range", "1.4", "20", "--nt", "40", "--theta-nodes", *OVERVIEW_THETA,
+     "--alpha-range", "0.29", "0.71", "--display-theta-step", "0.05", "--nt-fine", "1100",
+     "--alpha-levels", "0.35", "0.40", "0.45", "0.55", "0.60", "--highlight-alpha", "0.50", "--hatch-unresolved",
+     "--dipole-alphas", *OVERVIEW_DIPOLE_ALPHAS, "--dipole-suffix", "_wide", "--tag", "_overview"],
     ["scripts/check_paper_numbers.py"],
 ]
 

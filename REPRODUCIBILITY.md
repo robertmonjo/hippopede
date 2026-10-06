@@ -78,10 +78,14 @@ caches of `fit_observer_ball.py` are kept, which the scripts avoid.
 | Single lines with the unbinned supernovae, plain and region-weighted statistic, dipoles at each fit | `fit_lines_unbinned.py` | `figures/fit_lines_unbinned.json` |
 | Effect of the binning of the supernovae on model comparisons | `binning_resolution_test.py` | printed report |
 | Map of the light-cone average with the unbinned supernovae, CatWISE and Quaia bands, region compatible with all data within 1 sigma | `plot_ball_zoom_unbinned.py --t0-range 1.4 4.0 --nt 60 --theta-max 20 --theta-step 0.05 --tag _wide` | `figures/ball_zoom_unbinned_wide.json`, `figures/hippopede_ball_zoom_unbinned_wide.png` |
+| Count dipoles at alpha_high = 0.30, ..., 0.70 for 1 <= t0 <= 20 and theta_obs <= 45 deg (input of the next step; the Quaia slices are computed at each theta_obs) | `quasar_dipole_fit.py --alpha-high A --t0-range 1 20 --t0-n 40 --theta-obs 0 0.5 1 2 3 5 7 10 15 20 25 30 35 40 45 --out-suffix _wide`, the same with `quaia_zslice_model.py` | `figures/quasar_dipole_fit_ah<A>_wide.json`, `figures/quaia_zslice_model_ah<A>_wide.json` |
+| Overview map, 1.4 <= t0 <= 20 and theta_obs <= 45 deg, with the contour alpha_high = 0.50 and the region where alpha_high is at an end of its allowed range | `plot_ball_zoom_unbinned.py --t0-range 1.4 20 --nt 40 --theta-nodes 0 0.25 0.5 1 1.5 2 2.5 3 4 5 ... 45 --alpha-range 0.29 0.71 --display-theta-step 0.05 --nt-fine 1100 --alpha-levels 0.35 0.40 0.45 0.55 0.60 --highlight-alpha 0.50 --hatch-unresolved --dipole-alphas 0.30 0.32 ... 0.70 --dipole-suffix _wide --tag _overview` | `figures/ball_zoom_unbinned_overview.json`, `figures/hippopede_ball_zoom_unbinned_overview.png` |
 
 The map is computed on the grid given by the options; the figure interpolates the fields bilinearly
 (in ln t0 and in theta_obs relative to the largest allowed theta_obs at each t0) onto a finer display
-grid, and the bands and the summary region are evaluated there. `check_paper_numbers.py` covers the
+grid, and the bands and the summary region are evaluated there. With irregular theta_obs nodes the largest
+allowed theta_obs at each (alpha_high, t0) is located by bisection, so the edge does not depend on the node
+spacing. `check_paper_numbers.py` covers the
 numbers of Sects. 3.3 and 3.5.
 
 ## Modules
