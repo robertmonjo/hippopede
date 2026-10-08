@@ -59,9 +59,9 @@
    "k": 2,
    "daic_vs_lcdm": -50.863123081708544,
    "dbic_vs_lcdm": -45.47232455997287,
-   "k_axis": 2,
-   "daic_vs_lcdm_axis": -50.863123081708544,
-   "dbic_vs_lcdm_axis": -45.47232455997287,
+   "k_axis": 4,
+   "daic_vs_lcdm_axis": -46.863123081708544,
+   "dbic_vs_lcdm_axis": -30.690727516501514,
    "parameters": {
     "A": 0.011247174263845465
    }
@@ -76,9 +76,9 @@
    "k": 3,
    "daic_vs_lcdm": -51.66964249817832,
    "dbic_vs_lcdm": -40.88804545470697,
-   "k_axis": 3,
-   "daic_vs_lcdm_axis": -51.66964249817832,
-   "dbic_vs_lcdm_axis": -40.88804545470697,
+   "k_axis": 5,
+   "daic_vs_lcdm_axis": -47.66964249817832,
+   "dbic_vs_lcdm_axis": -26.106448411235615,
    "parameters": {
     "A_CatWISE": 0.009902154194786622,
     "A_Quaia": 0.016240309374328504

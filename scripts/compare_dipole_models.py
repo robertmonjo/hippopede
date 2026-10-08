@@ -10,8 +10,9 @@ Models (the chronometers and supernovae, 38 CC + 1579 unbinned SN, from fit_ball
   LCDM + two dipoles      one amplitude for CatWISE and one, redshift-independent, for Quaia;
   light-cone ball         amplitudes predicted by the geometry (refine_overview_minimum.json).
 Parameters counted beyond the nuisance ones (H0, M): Omega_m or alpha_high, the dipole amplitudes, and t0 and
-theta_obs for the ball (k); the dipole direction is not compared for any model, but the ball uses an axis on the
-sky (fixed by the CatWISE excess) to modulate the supernova distances, which k_axis adds (2 parameters).
+theta_obs for the ball (k).  Every model with a dipole also has a direction on the sky (2 parameters): the
+phenomenological dipoles need it although only amplitudes are compared, and the ball uses it as its axis (fixed by
+the CatWISE excess); k_axis adds it to every model with a dipole, which leaves their differences unchanged.
 AIC = chi2 + 2k and BIC = chi2 + k ln N with N = 38 + 1579 + 1 + 3 data, both relative to LCDM.
 Writes json/compare_dipole_models.json.
 """
@@ -63,7 +64,7 @@ def main():
           f" {'k_axis':>6s} {'dAIC':>7s} {'dBIC':>7s}")
     for name, cs, cw, q, k, par in rows:
         tot = cs + cw + q
-        ka = k + (2 if name == "light-cone ball" else 0)
+        ka = k + (0 if name in ("LCDM", "hyperconical") else 2)
         r = {"model": name, "dchi2_cc_sn": cs, "chi2_catwise": cw, "chi2_quaia": q, "total": tot,
              "dchi2_vs_lcdm": tot - ref, "k": k, "daic_vs_lcdm": tot - ref + 2 * (k - 1),
              "dbic_vs_lcdm": tot - ref + (k - 1) * np.log(n_data), "k_axis": ka,
