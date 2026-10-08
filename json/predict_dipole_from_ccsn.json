@@ -1,0 +1,65 @@
+{
+ "lcdm_chi2_dipoles": 57.499755383002196,
+ "catwise": {
+  "D_geo": 0.009902154194786622,
+  "sigma": 0.0017428571428571426
+ },
+ "best_cc_sn": {
+  "alpha_high": 0.35,
+  "t0": 2.2564,
+  "theta_obs": 14.0,
+  "dchi2_cc_sn": -0.6762018250799429,
+  "catwise_amplitude": 0.04044793933289848,
+  "chi2_catwise": 307.1701457637805,
+  "chi2_quaia": 205.50758447010872
+ },
+ "priors": {
+  "theta_uniform": {
+   "catwise_amplitude_median": 0.004461544697033984,
+   "catwise_amplitude_68": [
+    0.0006872536518867256,
+    0.024472697240597915
+   ],
+   "catwise_amplitude_95": [
+    0.00010528060472467648,
+    0.05291069564959607
+   ],
+   "prob_amplitude_above_measured": 0.3439978306926168,
+   "chi2_pred_catwise": 4.783552145735602,
+   "chi2_pred_dipoles": 17.269056311238028,
+   "dchi2_pred_vs_lcdm": -40.230699071764164
+  },
+  "theta_volume": {
+   "catwise_amplitude_median": 0.006271440607121579,
+   "catwise_amplitude_68": [
+    0.0011040405201742062,
+    0.02871795046748594
+   ],
+   "catwise_amplitude_95": [
+    0.0005092807633138916,
+    0.05619215233368952
+   ],
+   "prob_amplitude_above_measured": 0.4015623573906864,
+   "chi2_pred_catwise": 4.607502300613386,
+   "chi2_pred_dipoles": 17.034168447049844,
+   "dchi2_pred_vs_lcdm": -40.46558693595235
+  }
+ },
+ "lcdm_ad_hoc": {
+  "0.02": {
+   "chi2_pred_dipoles": 7.917691930452647,
+   "dchi2_pred_vs_lcdm": -49.58206345254955,
+   "chi2_pred_catwise": 3.042535875330842
+  },
+  "0.05": {
+   "chi2_pred_dipoles": 9.750273394200956,
+   "dchi2_pred_vs_lcdm": -47.749481988801236,
+   "chi2_pred_catwise": 4.875117339079153
+  },
+  "0.1": {
+   "chi2_pred_dipoles": 11.136567755320847,
+   "dchi2_pred_vs_lcdm": -46.36318762768135,
+   "chi2_pred_catwise": 6.261411700199043
+  }
+ }
+}

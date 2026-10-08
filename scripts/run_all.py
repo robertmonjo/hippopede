@@ -96,6 +96,7 @@ EXTENDED = [
     (OVERVIEW_MAP + ["--reuse", "--best-all-json", "refine_overview_minimum.json", "--markers-json", "ball_zoom_unbinned_wide.json",
                      "--no-title", "--plot-t0-max", "10"], WHOLE_LOBE),
     ["scripts/compare_dipole_models.py"],
+    (["scripts/predict_dipole_from_ccsn.py"], WHOLE_LOBE),
     ["scripts/check_paper_numbers.py"],
 ]
 
