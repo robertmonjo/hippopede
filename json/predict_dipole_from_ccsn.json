@@ -61,5 +61,24 @@
    "dchi2_pred_vs_lcdm": -46.36318762768135,
    "chi2_pred_catwise": 6.261411700199043
   }
+ },
+ "quaia_given_cc_sn_catwise": {
+  "lcdm_or_hyperconical_no_dipole": 25.219587234862,
+  "lcdm_ad_hoc_catwise_amplitude": {
+   "best": 5.3926352645281,
+   "predictive": 4.875156055022744
+  },
+  "ball_best_cc_sn_catwise": {
+   "alpha_high": 0.38,
+   "theta_obs": 7.0,
+   "t0": 2.7686,
+   "dchi2_cc_sn": -0.11640182507994723,
+   "chi2_catwise": 0.005288064998629089,
+   "chi2_quaia": 13.181741907228034
+  },
+  "ball_predictive": {
+   "theta_uniform": 12.485504165502425,
+   "theta_volume": 12.426666146436457
+  }
  }
 }

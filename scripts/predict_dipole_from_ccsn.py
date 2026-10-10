@@ -125,6 +125,27 @@ def main():
         out["lcdm_ad_hoc"][str(a_max)] = {"chi2_pred_dipoles": float(-2 * np.log(L)), "dchi2_pred_vs_lcdm": float(-2 * np.log(L) - chi2_lcdm_dip),
                                           "chi2_pred_catwise": float(-2 * np.log(L_cat))}
     print("LCDM + ad hoc amplitude:", out["lcdm_ad_hoc"], flush=True)
+
+    # Quaia predicted by every model fitted to CC + SN + CatWISE (Quaia not used in the fit)
+    q_none = float(np.sum((q_amp / q_sig) ** 2))
+    ag = np.linspace(d_geo - 6 * s_geo, d_geo + 6 * s_geo, 4001)   # ad hoc amplitude: posterior N(D_geo, sigma)
+    pa = np.exp(-0.5 * ((ag - d_geo) / s_geo) ** 2)
+    pa /= pa.sum()
+    chi2_q_adhoc = np.sum(((ag[:, None] - q_amp[None, :]) / q_sig[None, :]) ** 2, axis=1)
+    ijk = np.unravel_index(np.nanargmin(np.where(ok, C + cw, np.inf)), C.shape)
+    b2 = {"alpha_high": float(A[ijk[0]]), "theta_obs": float(TH[ijk[1]]), "t0": float(T[ijk[2]]),
+          "dchi2_cc_sn": float(C[ijk] - c_l), "chi2_catwise": float(cw[ijk]), "chi2_quaia": float(qw[ijk])}
+    qp = {"lcdm_or_hyperconical_no_dipole": q_none,
+          "lcdm_ad_hoc_catwise_amplitude": {"best": float(np.sum(((d_geo - q_amp) / q_sig) ** 2)),
+                                            "predictive": float(-2 * np.log(np.sum(pa * np.exp(-0.5 * chi2_q_adhoc))))},
+          "ball_best_cc_sn_catwise": b2, "ball_predictive": {}}
+    for name, pth in priors.items():
+        w = np.where(ok, np.exp(-0.5 * (C + cw - np.nanmin(np.where(ok, C + cw, np.inf)))), 0.0) \
+            * (pth * wth)[None, :, None] * wt[None, None, :]
+        w /= w.sum()
+        qp["ball_predictive"][name] = float(-2 * np.log(np.sum(w[ok] * np.exp(-0.5 * qw[ok]))))
+    out["quaia_given_cc_sn_catwise"] = qp
+    print("Quaia predicted from CC + SN + CatWISE:", json.dumps(qp), flush=True)
     (JSON / "predict_dipole_from_ccsn.json").write_text(json.dumps(out, indent=1))
 
 
