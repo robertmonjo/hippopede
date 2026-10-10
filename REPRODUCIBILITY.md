@@ -83,6 +83,7 @@ caches of `fit_observer_ball.py` are kept, which the scripts avoid.
 | Profile along t0 of the CC + SN + CatWISE + Quaia chi2 and its continuous minimum (Nelder-Mead, CC + SN recomputed at each point) | `HIPPOPEDE_THETA_MAX_DEG=90 refine_overview_minimum.py` | `json/refine_overview_minimum.json` |
 | Joint chi2 of CC + SN + CatWISE + Quaia for LCDM, the hyperconical model, LCDM with a phenomenological dipole (one common amplitude, or one for CatWISE and one for Quaia) and the light-cone ball | `compare_dipole_models.py` | `json/compare_dipole_models.json` |
 | Blind prediction of the quasar dipoles by the light-cone ball fitted to CC + SN only (predictive distribution of the CatWISE amplitude, predictive likelihood against LCDM and LCDM with an ad hoc amplitude) | `HIPPOPEDE_THETA_MAX_DEG=90 predict_dipole_from_ccsn.py` | `json/predict_dipole_from_ccsn.json` |
+| Chi2 of the quasar dipoles as a function of theta_obs (t0 and alpha_high fitted at each value), with and without CC + SN | `HIPPOPEDE_THETA_MAX_DEG=90 dipole_chi2_vs_theta.py` | `json/dipole_chi2_vs_theta.json`, `figures/hippopede_dipole_chi2_vs_theta.png` |
 
 The map is computed on the grid given by the options; the figure interpolates the chi2 of the chronometers
 and supernovae and the fitted alpha_high with monotone piecewise-cubic (PCHIP) interpolation (in ln t0 and in

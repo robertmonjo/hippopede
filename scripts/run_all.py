@@ -97,6 +97,7 @@ EXTENDED = [
                      "--no-title", "--plot-t0-max", "10"], WHOLE_LOBE),
     ["scripts/compare_dipole_models.py"],
     (["scripts/predict_dipole_from_ccsn.py"], WHOLE_LOBE),
+    (["scripts/dipole_chi2_vs_theta.py"], WHOLE_LOBE),
     ["scripts/check_paper_numbers.py"],
 ]
 
