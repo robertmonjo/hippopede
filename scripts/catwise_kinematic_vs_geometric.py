@@ -29,6 +29,22 @@ noise only); the same fits with C_i scaled by the Pearson dispersion of each sub
 Sector tables with HIPPOPEDE_THETA_MAX_DEG = 90.  Writes json/catwise_kinematic_vs_geometric.json and
 figures/hippopede_catwise_cuts.(png|pdf).  --in-suffix S reads json/catwise_cuts_dipoles<S>.json (e.g. _b40, the
 robustness run with |b| > 40 deg) and appends S to the outputs.
+
+Further options (off by default; the default outputs are unchanged):
+  --pz-json J        per-subsample redshift distributions (json/catwise_bins_pz.json, catwise_redshifts.py) in
+                     place of the common gamma p(z): for subsample i, g_i = A_i + B_i x_i with A_i, B_i from
+                     quasar_dipole_fit.dipole with the p(z) of the sources of i matched to the catalogue chosen by
+                     --pz-catalogue (quaia, sdss, or sdss_faint: DR16Q matches with i > 20).  The model covers
+                     0.1 <= z <= 2.1 only; --pz-treatment truncate renormalises p(z) on 0.1-2.1 (sources outside
+                     are assumed to follow the modelled ones), clamp gives the mass above 2.1 (below 0.1) the dipole at z = 2.1 (0.1), which is a
+                     lower bound on |g| of those sources when |g(z)| grows with z.
+  --cov jk           covariance of the stacked dipole vectors of each dataset from the delete-one jackknife of
+                     measure_catwise_cuts.py --jackknife (input json/catwise_cuts_dipoles_jk<S>.json, with
+                     the cross-covariance between subsamples), inverse multiplied by the Hartlap factor
+                     (R - 3n - 2)/(R - 1) (R regions, n subsamples); the block-diagonal version (no cross-
+                     covariance) is fitted as well.  The dispersion-scaled fits are not repeated.
+  --out-suffix S     suffix of json/catwise_kinematic_vs_geometric<S>.json (default: _pz_<catalogue>[_clamp]
+                     and/or _jk, then the input suffix).  No figure is drawn in these modes.
 """
 
 from __future__ import annotations
@@ -78,6 +94,32 @@ def angle(a, b):
     return float(np.degrees(np.arccos(np.clip(np.dot(a, b) / np.linalg.norm(a) / np.linalg.norm(b), -1, 1))))
 
 
+def geo_coefficients_pz(arg):
+    """A_i, B_i of g_i(x) = A_i + B_i x for every subsample p(z) (dict name -> p on Q.Z_Q) at one point."""
+    point, pzs = arg
+    T.set_alpha_high(point["alpha_high"])
+    tab = T.e_table(point["t0"])
+    per = {}
+    for name, p in pzs.items():
+        g0, c0 = Q.dipole(tab, point["theta_obs"], 0.0, p)
+        g1, _ = Q.dipole(tab, point["theta_obs"], 1.0, p)
+        per[name] = {"A": g0, "B": g1 - g0, "coverage": c0}
+    return {**point, "per_subsample": per}
+
+
+def subsample_pz(entry, treatment):
+    """p on Q.Z_Q for one subsample entry of catwise_bins_pz.json (see --pz-treatment)."""
+    p = np.asarray(entry["p_ZQ"], float)
+    f_in = np.trapezoid(p, Q.Z_Q)
+    if treatment == "truncate":
+        return p / f_in
+    h = Q.Z_Q[1] - Q.Z_Q[0]
+    p = p.copy()
+    p[-1] += entry["f_above_2.1"] / (h / 2)
+    p[0] += entry["f_below_0.1"] / (h / 2)
+    return p / np.trapezoid(p, Q.Z_Q)
+
+
 def geo_coefficients(point):
     """A, B of g(x) = A + B x (signed dipole along the model axis) at (alpha_high, t0, theta_obs)."""
     T.set_alpha_high(point["alpha_high"])
@@ -88,6 +130,40 @@ def geo_coefficients(point):
     g163, _ = Q.dipole(tab, point["theta_obs"], Q.X_SLOPE, p)
     return {**point, "A": g0, "B": g1 - g0, "g_x1.63": g163, "coverage": c0,
             "linearity_check": g163 - (g0 + (g1 - g0) * Q.X_SLOPE)}
+
+
+class DataFull:
+    """Stacked dipoles of a dataset with a full (3n x 3n) covariance (jackknife with cross-covariance)."""
+
+    def __init__(self, rows, cov_full, factor=1.0):
+        self.rows = rows
+        self.d = np.array([r["d"] for r in rows])
+        self.n = len(rows)
+        self.Wf = factor * np.linalg.inv(cov_full)
+        blocks = [cov_full[3 * i:3 * i + 3, 3 * i:3 * i + 3] / factor for i in range(self.n)]
+        self.W = np.linalg.inv(np.array(blocks))  # diagonal blocks, used for the projection errors only
+        self.K = np.array([r["K"] for r in rows])
+        self.x = np.array([r["x_eff"] for r in rows])
+
+    def wls(self, fixed, F):
+        r0 = (self.d - fixed).reshape(-1)
+        if F is None or F.shape[2] == 0:
+            return np.zeros(0), float(r0 @ self.Wf @ r0)
+        G = F.reshape(3 * self.n, -1)
+        p = np.linalg.solve(G.T @ self.Wf @ G, G.T @ self.Wf @ r0)
+        r = r0 - G @ p
+        return p, float(r @ self.Wf @ r)
+
+
+def jk_covariance(rows, block_diagonal=False):
+    """(R-1)/R sum_r (D_(r) - <D>)(D_(r) - <D>)^T of the stacked dipole vectors D = (d_1, ..., d_n)."""
+    dj = np.concatenate([np.asarray(r["d_jk"]) for r in rows], axis=1)
+    R = dj.shape[0]
+    dd = dj - dj.mean(0)
+    cov = (R - 1) / R * dd.T @ dd
+    if block_diagonal:
+        cov = cov * np.kron(np.eye(len(rows)), np.ones((3, 3)))
+    return cov, R
 
 
 class Data:
@@ -171,7 +247,8 @@ def fit_models(data, geo_ref, geo_band, x_ref):
         store(name, k, best[0], {**best[2], "theta_obs": best[1]["theta_obs"], "t0": best[1]["t0"],
                                  "alpha_high": best[1]["alpha_high"],
                                  "scan": [{"theta_obs": s[1]["theta_obs"], "chi2": s[0]} for s in scan]}, best[3])
-    shape = (geo_ref["A"] + geo_ref["B"] * data.x) / (geo_ref["A"] + geo_ref["B"] * x_ref)
+    shape = (geo_ref["A"] + geo_ref["B"] * data.x) / (geo_ref.get("A_full", geo_ref["A"]) +
+                                                      geo_ref.get("B_full", geo_ref["B"]) * x_ref)
     F_shape = shape[:, None, None] * eye
     p, c = data.wls(kin_cmb, F_shape)
     store("M2s", 3, c, {"w": float(np.linalg.norm(p)), "lb": vec2lb(p), "shape_at_reference": True},
@@ -191,7 +268,19 @@ def fit_models(data, geo_ref, geo_band, x_ref):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--in-suffix", default="")
-    sfx = ap.parse_args().in_suffix
+    ap.add_argument("--pz-json", default=None, help="per-subsample p(z) (json/catwise_bins_pz.json)")
+    ap.add_argument("--pz-catalogue", default="quaia", choices=("quaia", "sdss", "sdss_faint"))
+    ap.add_argument("--pz-treatment", default="truncate", choices=("truncate", "clamp"))
+    ap.add_argument("--cov", default="mocks", choices=("mocks", "jk"))
+    ap.add_argument("--out-suffix", default=None)
+    args = ap.parse_args()
+    sfx = args.in_suffix
+    if args.pz_json is None and args.cov == "mocks":
+        return main_default(sfx)
+    return main_options(args)
+
+
+def main_default(sfx):
     meas = json.loads((JSON / f"catwise_cuts_dipoles{sfx}.json").read_text())
     rows = meas["subsamples"]
     full = rows[0]
@@ -241,6 +330,93 @@ def main():
            "geo_reference": geo_ref, "geo_band": geo_band, "fits": results}
     (JSON / f"catwise_kinematic_vs_geometric{sfx}.json").write_text(json.dumps(out, indent=1))
     plot(out, rows, sfx)
+
+
+def main_options(args):
+    """Fits with per-subsample p(z) (--pz-json) and/or the jackknife covariance (--cov jk)."""
+    in_sfx = args.in_suffix
+    meas_name = f"catwise_cuts_dipoles{'_jk' if args.cov == 'jk' else ''}{in_sfx}.json"
+    meas = json.loads((JSON / meas_name).read_text())
+    rows = meas["subsamples"]
+    full = rows[0]
+    x_ref = full["x_eff"]
+    band_json = json.loads((JSON / "dipole_chi2_vs_theta_continuous_noquaia.json").read_text())
+    band = [{"alpha_high": r["with_cc_sn"]["alpha_high"], "t0": r["with_cc_sn"]["t0"], "theta_obs": r["theta_obs"]}
+            for r in band_json["rows"] if r["theta_obs"] > 0]
+    points = [REFERENCE] + band
+    workers = int(os.environ.get("WORKERS", "8"))
+    pz_info = None
+    if args.pz_json:
+        pzj = json.loads(Path(args.pz_json).read_text())
+        entries = {e["name"]: e[args.pz_catalogue] for e in pzj["subsamples"]}
+        pzs = {r["name"]: subsample_pz(entries[r["name"]], args.pz_treatment) for r in rows}
+        pzs["__gamma__"] = Q.pz("gamma")
+        with ProcessPoolExecutor(max_workers=workers) as ex:
+            geo = list(ex.map(geo_coefficients_pz, [(p, pzs) for p in points]))
+        pz_info = {"json": args.pz_json, "catalogue": args.pz_catalogue, "treatment": args.pz_treatment,
+                   "per_subsample_reference": {}}
+        ref = geo[0]["per_subsample"]
+        gam = ref["__gamma__"]
+        for r in rows:
+            e, c = entries[r["name"]], ref[r["name"]]
+            pz_info["per_subsample_reference"][r["name"]] = {
+                "x_eff": r["x_eff"], "A": c["A"], "B": c["B"], "coverage": c["coverage"],
+                "g": c["A"] + c["B"] * r["x_eff"], "g_gamma": gam["A"] + gam["B"] * r["x_eff"],
+                "matched_fraction": e["matched_fraction"], "mean_z": e["mean"], "median_z": e["median"],
+                "f_above_2.1": e["f_above_2.1"], "f_below_0.1": e["f_below_0.1"]}
+            print(f"{r['name']:24s} x={r['x_eff']:.3f} <z>={e['mean']:.3f} >2.1:{e['f_above_2.1']:.3f} "
+                  f"g = {c['A']:+.5f} {c['B']:+.5f} x = {c['A'] + c['B'] * r['x_eff']:+.5f} "
+                  f"(gamma {gam['A'] + gam['B'] * r['x_eff']:+.5f})", flush=True)
+    else:
+        with ProcessPoolExecutor(max_workers=workers) as ex:
+            geo = list(ex.map(geo_coefficients, points))
+
+    def geo_view(gc, sub):
+        if "per_subsample" not in gc:
+            return gc
+        per = gc["per_subsample"]
+        return {**{k: v for k, v in gc.items() if k != "per_subsample"},
+                "A": np.array([per[r["name"]]["A"] for r in sub]), "B": np.array([per[r["name"]]["B"] for r in sub]),
+                "A_full": per[full["name"]]["A"], "B_full": per[full["name"]]["B"]}
+
+    u_full = np.asarray(full["d"]) / np.linalg.norm(full["d"])
+    results = {}
+    for ds, kind in DATASETS.items():
+        sub = [r for r in rows if r["kind"] == kind]
+        if args.cov == "jk":
+            variants = []
+            for bd in (False, True):
+                cov, R = jk_covariance(sub, bd)
+                f = (R - 3 * len(sub) - 2) / (R - 1)
+                variants.append((ds + ("_jk_blockdiag" if bd else "_jk"), DataFull(sub, cov, f),
+                                 {"n_regions": R, "hartlap_factor": f, "block_diagonal": bd}))
+        else:
+            variants = [(ds, Data(sub, False), {})]
+        for key, data, cinfo in variants:
+            fits = fit_models(data, geo_view(geo[0], sub), [geo_view(g, sub) for g in geo[1:]], x_ref)
+            proj = data.d @ u_full
+            sig = np.array([np.sqrt(u_full @ np.linalg.inv(W) @ u_full) for W in data.W])
+            results[key] = {"subsamples": [r["name"] for r in sub], "x_eff": data.x.tolist(), "K": data.K.tolist(),
+                            "alpha_eff": [r["alpha_eff"] for r in sub], "proj_full_dir": proj.tolist(),
+                            "proj_sigma": sig.tolist(), "covariance": cinfo or "Poisson mocks", "models": fits}
+            print(f"\n== {key} (n = {data.n}) {cinfo}")
+            for name, m in fits.items():
+                prm = {k: v for k, v in m["params"].items() if k not in ("scan", "g", "point")}
+                print(f"  {name:8s} k={m['k']} chi2={m['chi2']:8.2f} AIC={m['AIC']:8.2f} {prm}")
+
+    out_sfx = args.out_suffix
+    if out_sfx is None:
+        out_sfx = (f"_pz_{args.pz_catalogue}" + ("_clamp" if args.pz_treatment == "clamp" else "")
+                   if args.pz_json else "") + ("_jk" if args.cov == "jk" else "") + in_sfx
+    out = {"input": f"json/{meas_name}", "beta_CMB": BETA_CMB, "cmb_lb": LB_CMB, "x_ref_full_sample": x_ref,
+           "full_sample_direction_lb": vec2lb(u_full),
+           "pz": pz_info or "gamma z^2 exp(-z/0.4) on 0.1-2.1 (quasar_dipole_fit.pz), the same for every subsample",
+           "covariance": "jackknife (full and block-diagonal), Hartlap-corrected" if args.cov == "jk" else
+           "Poisson mocks (block-diagonal)",
+           "theta_max_deg": os.environ["HIPPOPEDE_THETA_MAX_DEG"],
+           "geo_reference": geo[0], "geo_band": geo[1:], "fits": results}
+    (JSON / f"catwise_kinematic_vs_geometric{out_sfx}.json").write_text(json.dumps(out, indent=1))
+    print(f"wrote json/catwise_kinematic_vs_geometric{out_sfx}.json")
 
 
 def plot(out, rows, sfx=""):

@@ -101,12 +101,22 @@ EXTENDED = [
     (["scripts/dipole_chi2_vs_theta.py", "--continuous", "--no-quaia"], WHOLE_LOBE),   # Fig. dipole_theta
     (["scripts/quaia_shape_diagnostics.py"], WHOLE_LOBE),
     # CatWISE in magnitude and colour subsamples: kinematic (x, alpha) against geometric (x) dependence of the dipole
-    ["dipole_zslices/download_catwise.py"],
+    ["dipole_zslices/download_catwise.py", "--sdss"],
     ["dipole_zslices/measure_catwise_cuts.py"],
     ["dipole_zslices/measure_catwise_cuts.py", "--bcut", "40"],
     (["scripts/catwise_kinematic_vs_geometric.py"], WHOLE_LOBE),
     (["scripts/catwise_kinematic_vs_geometric.py", "--in-suffix", "_b40"], WHOLE_LOBE),
     ["scripts/dipole_literature_compilation.py"],
+    # redshift distribution of every CatWISE subsample (cross-match with Quaia and SDSS DR16Q), jackknife covariance,
+    # model comparison with the per-subsample p(z), and direction tests of the colour bins
+    ["dipole_zslices/catwise_redshifts.py"],
+    ["dipole_zslices/measure_catwise_cuts.py", "--jackknife", "4"],
+    ["dipole_zslices/measure_catwise_cuts.py", "--jackknife", "4", "--bcut", "40"],
+    (["scripts/catwise_kinematic_vs_geometric.py", "--pz-json", "json/catwise_bins_pz.json", "--pz-catalogue", "sdss", "--cov", "jk"], WHOLE_LOBE),
+    (["scripts/catwise_kinematic_vs_geometric.py", "--pz-json", "json/catwise_bins_pz.json", "--pz-catalogue", "sdss", "--cov", "jk",
+      "--in-suffix", "_b40"], WHOLE_LOBE),
+    ["dipole_zslices/catwise_direction_tests.py"],
+    ["dipole_zslices/catwise_redshifts.py", "--plot"],
     ["scripts/check_paper_numbers.py"],
 ]
 
