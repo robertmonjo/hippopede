@@ -100,6 +100,13 @@ EXTENDED = [
     (["scripts/dipole_chi2_vs_theta.py", "--continuous"], WHOLE_LOBE),
     (["scripts/dipole_chi2_vs_theta.py", "--continuous", "--no-quaia"], WHOLE_LOBE),   # Fig. dipole_theta
     (["scripts/quaia_shape_diagnostics.py"], WHOLE_LOBE),
+    # CatWISE in magnitude and colour subsamples: kinematic (x, alpha) against geometric (x) dependence of the dipole
+    ["dipole_zslices/download_catwise.py"],
+    ["dipole_zslices/measure_catwise_cuts.py"],
+    ["dipole_zslices/measure_catwise_cuts.py", "--bcut", "40"],
+    (["scripts/catwise_kinematic_vs_geometric.py"], WHOLE_LOBE),
+    (["scripts/catwise_kinematic_vs_geometric.py", "--in-suffix", "_b40"], WHOLE_LOBE),
+    ["scripts/dipole_literature_compilation.py"],
     ["scripts/check_paper_numbers.py"],
 ]
 

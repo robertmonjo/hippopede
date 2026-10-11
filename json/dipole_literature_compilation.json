@@ -1,0 +1,1649 @@
+{
+ "beta_cmb": 0.001233586736861806,
+ "cmb_dipole_lb": [
+  264.021,
+  48.253
+ ],
+ "cmb_aberration": {
+  "planck2013_XXVII": {
+   "ref": "Planck Collaboration 2014, A&A 571, A27 (Planck 2013 results XXVII); arXiv:1303.5087",
+   "where": "Abstract; Sect. 5 and Table 2",
+   "v_parallel_kms": 384,
+   "stat_kms": 78,
+   "syst_kms": 115,
+   "direction_lb_fixed": [
+    264,
+    48
+   ],
+   "in_units_of_369": "1.04 +- 0.21 (stat), syst 0.31 (Sect. 5)",
+   "significance": "no-velocity hypothesis rejected; estimators show velocity effects above ~4 sigma (Sect. 7)"
+  },
+  "ferreira_quartin_2021": {
+   "ref": "Ferreira & Quartin 2021, PRL 127, 101301; arXiv:2011.08385 (pipeline: PRD 104, 063503, arXiv:2107.10846)",
+   "where": "Abstract; Table 1 (aberration and Doppler separately); Table 2 (significances); Table 3 (intrinsic dipole)",
+   "v_SMICA_kms": [
+    300,
+    -93,
+    111
+   ],
+   "lb_SMICA": [
+    [
+     276,
+     33
+    ],
+    [
+     51,
+     19
+    ]
+   ],
+   "v_NILC_kms": [
+    296,
+    -88,
+    111
+   ],
+   "lb_NILC": [
+    [
+     280,
+     33
+    ],
+    [
+     50,
+     20
+    ]
+   ],
+   "aberration_SMICA_kms": "300 +- 99 (stat) +- 13 (syst)",
+   "doppler_SMICA_kms": "390 +- 140 +- 13, (l,b)=(210+-56,-2+-30)",
+   "significance": "aberration 3.5-3.9 sigma, Doppler 2.6-2.9 sigma, aberration+Doppler 4.1-4.6 sigma",
+   "intrinsic_dipole_95CL_mK": {
+    "SMICA": 3.6,
+    "NILC": 3.7,
+    "abstract": 3.7
+   },
+   "total_dipole_mK": 3.36208
+  },
+  "saha_2021": {
+   "ref": "Saha et al. 2021, JCAP 10, 072; arXiv:2106.07666",
+   "where": "Abstract",
+   "result": "BipoSH detection consistent with v=369 km/s, (l,b)=(264,48), at 4.54, 4.97, 5.23 sigma for f_sky = 40.1, 59.1, 72.2%; Bayes factor 7-8 for the canonical value; Bayes factor ~1e-10-1e-11 against the CatWISE-implied velocity"
+  },
+  "derived_intrinsic_fraction": {
+   "definition": "f = 1 - v_aberration/369.82; Gaussian errors (mean of asymmetric errors); stat and syst in quadrature for Planck 2013",
+   "FQ2021_SMICA": {
+    "f": 0.1887945486993673,
+    "sigma": 0.27580985344221515,
+    "f_95_upper": 0.642501757611811
+   },
+   "Planck2013": {
+    "f": -0.038342977664809874,
+    "sigma": 0.37574178743152475,
+    "f_95_upper": 0.5797522626600482
+   },
+   "authors_bound_vs_total": "|Delta_1,int| < 3.6-3.7 mK (95%) vs total 3.36208 mK: the bound does not exclude a fully intrinsic dipole"
+  }
+ },
+ "samples": [
+  {
+   "id": "CatWISE_Secrest21",
+   "tracer": "CatWISE2020 quasars (W1<16.4, |b|>30), N=1,355,352",
+   "band": "IR",
+   "D": 0.01554,
+   "err": [
+    null,
+    null
+   ],
+   "dir": [
+    "gal",
+    238.2,
+    28.8
+   ],
+   "x": 1.7,
+   "alpha": 1.26,
+   "D_kin": 0.007,
+   "z": "mean 1.2 (Sect. II, from SDSS Stripe 82 matches)",
+   "ref": "Secrest et al. 2021, ApJL 908, L51; arXiv:2009.14826",
+   "where": "Sect. IV (D, direction, 4.9 sigma), Sect. II (alpha, z); x=1.7 as quoted for this sample by Dam et al. 2023 (Fig. 2 caption)",
+   "notes": "no amplitude error quoted; significance 4.9 sigma one-sided (p=5e-7)",
+   "fits": [],
+   "K": 5.674509777729706,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    238.2,
+    28.8
+   ],
+   "theta_cmb_deg": 27.790333215363454
+  },
+  {
+   "id": "CatWISE_Secrest22",
+   "tracer": "CatWISE2020 quasars (W1<16.5), N~1.6 million",
+   "band": "IR",
+   "D": 0.0148,
+   "err": [
+    0.0016,
+    0.0016
+   ],
+   "dir": [
+    "gal",
+    238.0,
+    31.0
+   ],
+   "x": 1.89,
+   "alpha": 1.06,
+   "D_kin": 0.0073,
+   "z": "mean 1.2 (Sect. I, for the 1.36M Secrest 2021 catalogue)",
+   "ref": "Secrest et al. 2022, ApJL 937, L31; arXiv:2206.05624",
+   "where": "Sect. III (D, direction), Sect. II.3 (x, alpha, D_kin)",
+   "notes": "4.4 sigma; direction errors (7, 5) deg",
+   "fits": [
+    "core",
+    "ext",
+    "ext_singal",
+    "core_noquaia"
+   ],
+   "K": 5.917703053918122,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    238.0,
+    31.0
+   ],
+   "theta_cmb_deg": 26.21398923079013,
+   "sigma": 0.0016,
+   "D_proj": 0.013277828076132668,
+   "ratio_to_kin": 2.0273972602739727,
+   "ratio_err": 0.21917808219178084,
+   "beta_single_over_cmb": 2.0273972602739727
+  },
+  {
+   "id": "CatWISE_Dam23",
+   "tracer": "CatWISE2020 quasars (Secrest 2021 sample)",
+   "band": "IR",
+   "D": 0.019,
+   "err": [
+    0.002,
+    0.002
+   ],
+   "dir": [
+    "gal",
+    237.2,
+    41.8
+   ],
+   "x": 1.7,
+   "alpha": 1.26,
+   "D_kin": 0.0072,
+   "z": "mean 1.2 (same sample as Secrest 2021)",
+   "ref": "Dam, Lewis & Brewer 2023, MNRAS 525, 231; arXiv:2212.07733",
+   "where": "Sect. 2.4 (model M8, all free) and Sect. 4; x, alpha in Fig. 2 caption",
+   "notes": "D/D_CMB = 2.68 +- 0.23 (M8), 2.46 +- 0.18 with direction fixed to CMB (M7); 5.7 sigma for D > D_CMB",
+   "fits": [],
+   "K": 5.836638628521983,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    237.2,
+    41.8
+   ],
+   "theta_cmb_deg": 19.903861913131788,
+   "sigma": 0.002,
+   "D_proj": 0.017865038462517663,
+   "ratio_to_kin": 2.6388888888888893,
+   "ratio_err": 0.27777777777777785,
+   "beta_single_over_cmb": 2.6388888888888893
+  },
+  {
+   "id": "CatWISE_Wagenveld25",
+   "tracer": "CatWISE2020 AGN (W1<16.5, |b|>30), N=1,567,586",
+   "band": "IR",
+   "D": 0.0151,
+   "err": [
+    0.0016,
+    0.0016
+   ],
+   "dir": [
+    "eq",
+    141.0,
+    -6.0
+   ],
+   "x": 1.9,
+   "alpha": 1.07,
+   "D_kin": 0.0073,
+   "z": "median ~1 for AGN samples (Sect. 5.2)",
+   "ref": "Wagenveld et al. 2025, A&A 697, A112; arXiv:2503.02470",
+   "where": "Table 1; x, alpha, D_kin in Sect. 3.3",
+   "notes": "ecliptic-latitude term fitted",
+   "fits": [],
+   "K": 5.917703053918122,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    238.43269410786039,
+    29.93223749266092
+   ],
+   "theta_cmb_deg": 26.783333075208763,
+   "sigma": 0.0016,
+   "D_proj": 0.013480025758922785,
+   "ratio_to_kin": 2.068493150684932,
+   "ratio_err": 0.21917808219178084,
+   "beta_single_over_cmb": 2.068493150684932
+  },
+  {
+   "id": "Quaia_low_Mittal24corr",
+   "tracer": "Quaia G<20.0 (N=755,850), |b|<40 deg masked",
+   "band": "optical/IR",
+   "D": 0.011,
+   "err": [
+    0.0025510204081632655,
+    0.0030612244897959186
+   ],
+   "dir": null,
+   "x": null,
+   "alpha": 0.48,
+   "D_kin": 0.0048,
+   "z": "median 1.45 (Storey-Fisher et al. 2024, ApJ 964, 69, Conclusions)",
+   "ref": "Mittal, Oayda & Lewis 2024, MNRAS 527, 8497; Correction MNRAS 530, 4763; arXiv:2311.14938v2",
+   "where": "Sect. 6.1 (D x 1e3 = 11 +6/-5, 95% interval); Correction (alpha mean 0.48, D_kin 0.0048, model ranking)",
+   "notes": "1 sigma derived as 95% half-width / 1.96; direction 'consistent with the CMB within ~0.5 sigma' (no numbers); original D_kin 0.0080 used an incorrect alpha; with the corrected D_kin the free-amplitude model is preferred with a narrow prior (ln B46 = 0.7) and 'the question of its amplitude is not as decisive'",
+   "fits": [
+    "core",
+    "ext"
+   ],
+   "K": 3.891092419014655,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": null,
+   "theta_cmb_deg": null,
+   "sigma": 0.002806122448979592,
+   "D_proj": 0.011,
+   "ratio_to_kin": 2.2916666666666665,
+   "ratio_err": 0.584608843537415,
+   "beta_single_over_cmb": 2.2916666666666665
+  },
+  {
+   "id": "Quaia_high_Mittal24",
+   "tracer": "Quaia G<20.5 (N=1,295,502), |b|<40 deg masked",
+   "band": "optical/IR",
+   "D": null,
+   "err": [
+    null,
+    null
+   ],
+   "dir": [
+    "gal",
+    330.0,
+    60.0
+   ],
+   "alpha": 0.41,
+   "D_kin": 0.0043,
+   "z": "median 1.47 (Storey-Fisher et al. 2024, Sect. on redshifts)",
+   "ref": "Mittal, Oayda & Lewis 2024 (+Correction); arXiv:2311.14938v2",
+   "where": "Sect. 6.1, 6.4; Correction",
+   "notes": "direction drifts to (l,b)~(330,60) as the mask grows; 'CMB and inferred dipole amplitudes do not agree with each other within 2 sigma, even with the 40 deg mask'; authors 'reserve drawing further conclusions'",
+   "x": null,
+   "fits": [],
+   "K": 3.4857702920339624,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    330.0,
+    60.0
+   ],
+   "theta_cmb_deg": 38.58740578232234
+  },
+  {
+   "id": "Quaia_Singal24",
+   "tracer": "Quaia G<20.0, |b|>30 deg, N=530,364",
+   "band": "optical/IR",
+   "D": 0.033,
+   "err": [
+    0.005,
+    0.005
+   ],
+   "dir": [
+    "eq",
+    179.0,
+    17.0
+   ],
+   "x": 1.3,
+   "alpha": 0.48,
+   "D_kin": null,
+   "z": "median 1.45 (Storey-Fisher et al. 2024)",
+   "ref": "Singal 2024, MNRAS 532, L1; arXiv:2403.16581",
+   "where": "Table 1 row 4",
+   "notes": "Singal used x=1.3 and alpha~2.4 (the uncorrected Mittal value), K=6.4, p=4.2+-0.6; here K is recomputed with the corrected mean alpha=0.48 (derived); |b|>40: D=0.023+-0.006 (row 5); no selection function applied",
+   "fits": [
+    "ext_singal"
+   ],
+   "K": 3.924,
+   "K_source": "2 + x(1+alpha) (derived)",
+   "D_kin_derived": 0.004840594355445727,
+   "l_b": [
+    248.39201045501528,
+    73.66583957056348
+   ],
+   "theta_cmb_deg": 26.322103317581742,
+   "sigma": 0.005,
+   "D_proj": 0.029578409440618122,
+   "ratio_to_kin": 6.817344643406156,
+   "ratio_err": 1.0329310065766903,
+   "beta_single_over_cmb": 6.817344643406156
+  },
+  {
+   "id": "NVSS_Secrest22",
+   "tracer": "NVSS S>10 mJy, N=508,144",
+   "band": "radio 1.4 GHz",
+   "D": 0.0123,
+   "err": [
+    0.0025,
+    0.0025
+   ],
+   "dir": [
+    "gal",
+    196.0,
+    46.0
+   ],
+   "x": 0.77,
+   "alpha": 0.75,
+   "D_kin": 0.0041,
+   "z": "no redshift quoted",
+   "ref": "Secrest et al. 2022; arXiv:2206.05624",
+   "where": "Sect. III, Sect. II.3",
+   "notes": "2.6 sigma",
+   "fits": [],
+   "K": 3.3236414412416853,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    196.0,
+    46.0
+   ],
+   "theta_cmb_deg": 44.78097985778073,
+   "sigma": 0.0025,
+   "D_proj": 0.008730596711614084,
+   "ratio_to_kin": 3.0,
+   "ratio_err": 0.6097560975609756,
+   "beta_single_over_cmb": 3.0
+  },
+  {
+   "id": "NVSS_Siewert21",
+   "tracer": "NVSS S>15 mJy, mask d, N=328,207",
+   "band": "radio 1.4 GHz",
+   "D": 0.016,
+   "err": [
+    0.003,
+    0.003
+   ],
+   "dir": [
+    "eq",
+    138.9,
+    -2.74
+   ],
+   "x": 1.04,
+   "alpha": 0.75,
+   "D_kin": 0.00472,
+   "z": "not quoted",
+   "ref": "Siewert, Schmidt-Rubart & Schwarz 2021, A&A 653, A9; arXiv:2010.08366",
+   "where": "Table 9 (d), Eq. 45 (x), Table 8 (expected d)",
+   "notes": "",
+   "fits": [],
+   "K": 3.8262408786977447,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    233.96168011606113,
+    30.08171037020779
+   ],
+   "theta_cmb_deg": 29.233234580343215,
+   "sigma": 0.003,
+   "D_proj": 0.013962223136744356,
+   "ratio_to_kin": 3.389830508474576,
+   "ratio_err": 0.635593220338983,
+   "beta_single_over_cmb": 3.389830508474576
+  },
+  {
+   "id": "NVSS_Wagenveld23",
+   "tracer": "NVSS S>15 mJy, N=345,803 (Poisson, Nside 32)",
+   "band": "radio 1.4 GHz",
+   "D": 0.014,
+   "err": [
+    0.0029,
+    0.0029
+   ],
+   "dir": [
+    "eq",
+    146.0,
+    -5.0
+   ],
+   "x": 0.85,
+   "alpha": 0.75,
+   "D_kin": 0.0043,
+   "z": "radio AGN peak z~0.8 (Sect. 2, citing Condon & Ransom 2016)",
+   "ref": "Wagenveld, Kloeckner & Schwarz 2023, A&A 675, A72; arXiv:2305.15335",
+   "where": "Table 3; x, D_kin in Sect. 4.1",
+   "notes": "",
+   "fits": [],
+   "K": 3.4857702920339624,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    241.03489977156693,
+    34.50704442156024
+   ],
+   "theta_cmb_deg": 21.906721143438823,
+   "sigma": 0.0029,
+   "D_proj": 0.012989094912914088,
+   "ratio_to_kin": 3.255813953488372,
+   "ratio_err": 0.6744186046511628,
+   "beta_single_over_cmb": 3.255813953488372
+  },
+  {
+   "id": "NVSS_Wagenveld25",
+   "tracer": "NVSS S>15 mJy, N=352,862",
+   "band": "radio 1.4 GHz",
+   "D": 0.0139,
+   "err": [
+    0.0029,
+    0.0029
+   ],
+   "dir": [
+    "eq",
+    151.0,
+    -9.0
+   ],
+   "x": 0.74,
+   "alpha": 0.75,
+   "D_kin": 0.0041,
+   "z": "median ~1 for AGN samples (Sect. 5.2)",
+   "ref": "Wagenveld et al. 2025; arXiv:2503.02470",
+   "where": "Table 1; Sect. 3.1",
+   "notes": "with 2MRS z<0.02 sources removed: 0.0120+-0.0029 towards (RA,Dec)=(152,-10)",
+   "fits": [
+    "core",
+    "ext",
+    "ext_singal",
+    "core_noquaia"
+   ],
+   "K": 3.3236414412416853,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    248.69198201043474,
+    35.686950427536495
+   ],
+   "theta_cmb_deg": 16.901520777710637,
+   "sigma": 0.0029,
+   "D_proj": 0.013299601561514388,
+   "ratio_to_kin": 3.390243902439024,
+   "ratio_err": 0.7073170731707316,
+   "beta_single_over_cmb": 3.390243902439024
+  },
+  {
+   "id": "NVSS_Boehme25",
+   "tracer": "NVSS S>20 mJy, N=263,125 (negative binomial)",
+   "band": "radio 1.4 GHz",
+   "D": 0.0154,
+   "err": [
+    0.0036,
+    0.0036
+   ],
+   "dir": [
+    "eq",
+    148.1,
+    -9.5
+   ],
+   "x": 0.88,
+   "alpha": 0.73,
+   "D_kin": 0.00435,
+   "z": "not quoted",
+   "ref": "Boehme et al. 2025, PRL 135, 201001; arXiv:2509.16732",
+   "where": "Table III (free), Table II",
+   "notes": "",
+   "fits": [],
+   "K": 3.526302504732031,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    246.80700071345274,
+    33.23175935137814
+   ],
+   "theta_cmb_deg": 19.79982783606719,
+   "sigma": 0.0036,
+   "D_proj": 0.014489579516704437,
+   "ratio_to_kin": 3.540229885057472,
+   "ratio_err": 0.8275862068965517,
+   "beta_single_over_cmb": 3.540229885057472
+  },
+  {
+   "id": "RACSlow_Wagenveld23",
+   "tracer": "RACS-low S>15 mJy, N=451,003 (Poisson, Nside 32)",
+   "band": "radio 887.5 MHz",
+   "D": 0.0141,
+   "err": [
+    0.0024,
+    0.0024
+   ],
+   "dir": [
+    "eq",
+    193.0,
+    4.0
+   ],
+   "x": 0.82,
+   "alpha": 0.75,
+   "D_kin": 0.00424,
+   "z": "not quoted",
+   "ref": "Wagenveld et al. 2023; arXiv:2305.15335",
+   "where": "Table 3; Sect. 4.2",
+   "notes": "",
+   "fits": [],
+   "K": 3.4371316367962788,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    303.28879269027334,
+    66.87136052114288
+   ],
+   "theta_cmb_deg": 27.301002423890875,
+   "sigma": 0.0024,
+   "D_proj": 0.012529389835211055,
+   "ratio_to_kin": 3.3254716981132075,
+   "ratio_err": 0.5660377358490566,
+   "beta_single_over_cmb": 3.3254716981132075
+  },
+  {
+   "id": "RACSlow_Wagenveld25",
+   "tracer": "RACS-low S>15 mJy, N=442,046",
+   "band": "radio 887.5 MHz",
+   "D": 0.0143,
+   "err": [
+    0.0024,
+    0.0024
+   ],
+   "dir": [
+    "eq",
+    190.0,
+    3.0
+   ],
+   "x": 0.72,
+   "alpha": 0.88,
+   "D_kin": 0.0041,
+   "z": "median ~1 for AGN samples (Sect. 5.2)",
+   "ref": "Wagenveld et al. 2025; arXiv:2503.02470",
+   "where": "Table 1; Sect. 3.2",
+   "notes": "with 2MRS sources removed: 0.0134+-0.0024 towards (194, 8)",
+   "fits": [
+    "core",
+    "ext",
+    "ext_singal",
+    "core_noquaia"
+   ],
+   "K": 3.3236414412416853,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    295.97396691546925,
+    65.71710929322079
+   ],
+   "theta_cmb_deg": 24.158567901071482,
+   "sigma": 0.0024,
+   "D_proj": 0.013047553145673489,
+   "ratio_to_kin": 3.48780487804878,
+   "ratio_err": 0.5853658536585364,
+   "beta_single_over_cmb": 3.48780487804878
+  },
+  {
+   "id": "RACSlow_Boehme25",
+   "tracer": "RACS-low S>20 mJy, N=330,540 (negative binomial)",
+   "band": "radio 888 MHz",
+   "D": 0.018,
+   "err": [
+    0.003,
+    0.0028
+   ],
+   "dir": [
+    "eq",
+    191.1,
+    6.0
+   ],
+   "x": 0.85,
+   "alpha": 0.98,
+   "D_kin": 0.00454,
+   "z": "not quoted",
+   "ref": "Boehme et al. 2025; arXiv:2509.16732",
+   "where": "Table III (free), Table II",
+   "notes": "",
+   "fits": [],
+   "K": 3.6803249129846947,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    298.0868727012202,
+    68.80551641285979
+   ],
+   "theta_cmb_deg": 26.486312468628412,
+   "sigma": 0.0029,
+   "D_proj": 0.01611073672866623,
+   "ratio_to_kin": 3.964757709251101,
+   "ratio_err": 0.6387665198237885,
+   "beta_single_over_cmb": 3.964757709251101
+  },
+  {
+   "id": "RACSmid_Boehme25",
+   "tracer": "RACS-mid S>20 mJy, N=237,069, direction fixed to CMB",
+   "band": "radio 1367 MHz",
+   "D": 0.0115,
+   "err": [
+    0.0033,
+    0.0033
+   ],
+   "dir": [
+    "cmb"
+   ],
+   "x": 0.88,
+   "alpha": 0.81,
+   "D_kin": 0.00443,
+   "z": "not quoted",
+   "ref": "Boehme et al. 2025; arXiv:2509.16732",
+   "where": "Table III (CMB), Table II",
+   "fits": [
+    "ext",
+    "ext_singal"
+   ],
+   "notes": "",
+   "K": 3.5911540450489423,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": null,
+   "theta_cmb_deg": null,
+   "sigma": 0.0033,
+   "D_proj": 0.0115,
+   "ratio_to_kin": 2.595936794582393,
+   "ratio_err": 0.744920993227991,
+   "beta_single_over_cmb": 2.595936794582393
+  },
+  {
+   "id": "LoTSSDR2_Boehme25",
+   "tracer": "LoTSS-DR2 S>5 mJy, N=376,658, direction fixed to CMB",
+   "band": "radio 144 MHz",
+   "D": 0.0139,
+   "err": [
+    0.0042,
+    0.0045
+   ],
+   "dir": [
+    "cmb"
+   ],
+   "x": 0.74,
+   "alpha": 0.73,
+   "D_kin": 0.00405,
+   "z": "not quoted",
+   "ref": "Boehme et al. 2025; arXiv:2509.16732",
+   "where": "Table III (CMB, NB), Table II",
+   "notes": "only the projected amplitude is given",
+   "fits": [
+    "core",
+    "ext",
+    "ext_singal",
+    "core_noquaia"
+   ],
+   "K": 3.283109228543615,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": null,
+   "theta_cmb_deg": null,
+   "sigma": 0.00435,
+   "D_proj": 0.0139,
+   "ratio_to_kin": 3.432098765432099,
+   "ratio_err": 1.074074074074074,
+   "beta_single_over_cmb": 3.432098765432099
+  },
+  {
+   "id": "VLASS_Boehme25",
+   "tracer": "VLASS S>10 mJy, N=275,516, direction fixed to CMB",
+   "band": "radio 3 GHz",
+   "D": 0.0055,
+   "err": [
+    0.003,
+    0.0036
+   ],
+   "dir": [
+    "cmb"
+   ],
+   "x": 0.99,
+   "alpha": 0.71,
+   "D_kin": 0.00456,
+   "z": "not quoted",
+   "ref": "Boehme et al. 2025; arXiv:2509.16732",
+   "where": "Table III (CMB, NB), Table II",
+   "notes": "free direction lies 60-80 deg from the CMB (declination systematics, Quick Look images)",
+   "fits": [
+    "ext",
+    "ext_singal"
+   ],
+   "K": 3.6965377980639227,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": null,
+   "theta_cmb_deg": null,
+   "sigma": 0.0033,
+   "D_proj": 0.0055,
+   "ratio_to_kin": 1.206140350877193,
+   "ratio_err": 0.7236842105263158,
+   "beta_single_over_cmb": 1.206140350877193
+  },
+  {
+   "id": "TGSS_Siewert21",
+   "tracer": "TGSS-ADR1 S>50 mJy, mask d, N=393,447",
+   "band": "radio 147 MHz",
+   "D": 0.066,
+   "err": [
+    0.005,
+    0.005
+   ],
+   "dir": [
+    "eq",
+    124.53,
+    25.66
+   ],
+   "x": 0.86,
+   "alpha": 0.75,
+   "D_kin": 0.00434,
+   "z": "not quoted",
+   "ref": "Siewert et al. 2021; arXiv:2010.08366",
+   "where": "Table 9, Eq. 45, Table 8",
+   "notes": "flux-calibration systematics; Secrest 2022 App. A.1 obtains 0.022 after recalibration and 0.014 after a noise correction",
+   "fits": [],
+   "K": 3.5181960621924175,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    197.34877735482263,
+    29.583287474190474
+   ],
+   "theta_cmb_deg": 53.299475926346275,
+   "sigma": 0.005,
+   "D_proj": 0.03944374372228141,
+   "ratio_to_kin": 15.207373271889402,
+   "ratio_err": 1.152073732718894,
+   "beta_single_over_cmb": 15.207373271889402
+  },
+  {
+   "id": "TGSS_Boehme25",
+   "tracer": "TGSS S>100 mJy, N=234,619 (negative binomial)",
+   "band": "radio 147 MHz",
+   "D": 0.0533,
+   "err": [
+    0.0042,
+    0.004
+   ],
+   "dir": [
+    "eq",
+    140.7,
+    1.6
+   ],
+   "x": 0.79,
+   "alpha": 0.76,
+   "D_kin": 0.00418,
+   "z": "not quoted",
+   "ref": "Boehme et al. 2025; arXiv:2509.16732",
+   "where": "Table III (free), Table II",
+   "fits": [
+    "ext",
+    "ext_singal"
+   ],
+   "notes": "",
+   "K": 3.3884929815585956,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    230.8186309131311,
+    33.95185771325674
+   ],
+   "theta_cmb_deg": 28.49727891894754,
+   "sigma": 0.0040999999999999995,
+   "D_proj": 0.046842159890801996,
+   "ratio_to_kin": 12.751196172248806,
+   "ratio_err": 0.9808612440191387,
+   "beta_single_over_cmb": 12.751196172248806
+  },
+  {
+   "id": "WENSS_Siewert21",
+   "tracer": "WENSS S>25 mJy, mask d, N=115,808",
+   "band": "radio 325 MHz",
+   "D": 0.032,
+   "err": [
+    0.01,
+    0.01
+   ],
+   "dir": [
+    "eq",
+    143.34,
+    -13.15
+   ],
+   "x": 0.75,
+   "alpha": 0.75,
+   "D_kin": 0.0041,
+   "z": "not quoted",
+   "ref": "Siewert et al. 2021; arXiv:2010.08366",
+   "where": "Table 9, Eq. 45, Table 8",
+   "fits": [
+    "ext",
+    "ext_singal"
+   ],
+   "notes": "",
+   "K": 3.3236414412416853,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    246.45797760583122,
+    27.31509414314034
+   ],
+   "theta_cmb_deg": 24.988682791876002,
+   "sigma": 0.01,
+   "D_proj": 0.029004519871692613,
+   "ratio_to_kin": 7.804878048780488,
+   "ratio_err": 2.4390243902439024,
+   "beta_single_over_cmb": 7.804878048780488
+  },
+  {
+   "id": "SUMSS_Siewert21",
+   "tracer": "SUMSS S>18 mJy, mask d, N=99,835",
+   "band": "radio 843 MHz",
+   "D": 0.038,
+   "err": [
+    0.009,
+    0.009
+   ],
+   "dir": [
+    "eq",
+    106.67,
+    -9.5
+   ],
+   "x": 1.0,
+   "alpha": 0.75,
+   "D_kin": 0.00463,
+   "z": "not quoted",
+   "ref": "Siewert et al. 2021; arXiv:2010.08366",
+   "where": "Table 9, Eq. 45, Table 8",
+   "fits": [
+    "ext",
+    "ext_singal"
+   ],
+   "notes": "",
+   "K": 3.7532828958412194,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    223.11554745828514,
+    -0.9697287605202424
+   ],
+   "theta_cmb_deg": 60.623992153161545,
+   "sigma": 0.009,
+   "D_proj": 0.018640478075159526,
+   "ratio_to_kin": 8.207343412526999,
+   "ratio_err": 1.9438444924406049,
+   "beta_single_over_cmb": 8.207343412526999
+  },
+  {
+   "id": "MALS_Wagenveld24",
+   "tracer": "MALS DR2 S>400 microJy, 391 pointings, N=311,419",
+   "band": "radio L band",
+   "D": 0.0067,
+   "err": [
+    0.0029,
+    0.0031
+   ],
+   "dir": [
+    "eq",
+    176.0,
+    20.0
+   ],
+   "x": 0.69,
+   "alpha": 0.75,
+   "D_kin": 0.004,
+   "z": "star-forming galaxies, a significant fraction at z<0.5 (Sect. 6, SKADS)",
+   "ref": "Wagenveld et al. 2024, arXiv:2408.16619 (A&A)",
+   "where": "Table 2 (Poisson-linear, Crms, 400 microJy), Sect. 4.2, 5",
+   "notes": "'consistent with the CMB dipole in terms of direction and amplitude'; cannot exclude zero at 3 sigma",
+   "fits": [
+    "ext",
+    "ext_singal"
+   ],
+   "K": 3.2425770158455465,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    234.12547562828993,
+    73.0039975133829
+   ],
+   "theta_cmb_deg": 28.086515258770593,
+   "sigma": 0.003,
+   "D_proj": 0.0059109925612415345,
+   "ratio_to_kin": 1.675,
+   "ratio_err": 0.75,
+   "beta_single_over_cmb": 1.675
+  },
+  {
+   "id": "VLASS+RACS_Darling22",
+   "tracer": "VLASS epoch 1 + RACS-low, number counts",
+   "band": "radio",
+   "D": 0.004394306677321416,
+   "v_kms": [
+    331.0,
+    107.0,
+    161.0
+   ],
+   "err": [
+    0.0014205160558108504,
+    0.0021374120092107186
+   ],
+   "dir": [
+    "gal",
+    271.0,
+    56.0
+   ],
+   "x": 1.0,
+   "alpha": 0.98,
+   "D_kin": null,
+   "z": "not quoted",
+   "ref": "Darling 2022, ApJL 931, L14; arXiv:2205.06880",
+   "where": "Abstract, Table 1, Sect. 5",
+   "notes": "velocity 331 +161/-107 km/s; D derived as K beta with K=2+x(1+alpha)",
+   "fits": [
+    "ext",
+    "ext_singal"
+   ],
+   "D_derived": true,
+   "K": 3.98,
+   "K_source": "2 + x(1+alpha) (derived)",
+   "D_kin_derived": 0.004909675212709988,
+   "l_b": [
+    271.0,
+    56.0
+   ],
+   "theta_cmb_deg": 8.842645897590739,
+   "sigma": 0.0017789640325107845,
+   "D_proj": 0.004342076996757468,
+   "ratio_to_kin": 0.8950300146016981,
+   "ratio_err": 0.3623384349142826,
+   "beta_single_over_cmb": 0.8950300146016981
+  },
+  {
+   "id": "NVSS+RACS_Wagenveld23",
+   "tracer": "NVSS + RACS-low S>15 mJy, N=796,806 (multi-Poisson)",
+   "band": "radio",
+   "D": 0.013,
+   "err": [
+    0.0018,
+    0.0018
+   ],
+   "dir": [
+    "eq",
+    173.0,
+    -1.0
+   ],
+   "x": 0.85,
+   "alpha": 0.75,
+   "D_kin": 0.0043,
+   "z": "not quoted",
+   "ref": "Wagenveld et al. 2023; arXiv:2305.15335",
+   "where": "Table 3; Sect. 5.3",
+   "notes": "4.8 sigma, three times the CMB expectation; combination of entries above (not used in fits)",
+   "fits": [],
+   "K": 3.4857702920339624,
+   "K_source": "D_kin quoted / beta_CMB",
+   "l_b": [
+    265.53642943386245,
+    55.99346192926438
+   ],
+   "theta_cmb_deg": 7.795674898582826,
+   "sigma": 0.0018,
+   "D_proj": 0.012879855071789716,
+   "ratio_to_kin": 3.0232558139534884,
+   "ratio_err": 0.41860465116279066,
+   "beta_single_over_cmb": 3.0232558139534884
+  },
+  {
+   "id": "LoTSS+NVSS+RACS_Boehme25",
+   "tracer": "LoTSS-DR2 + NVSS + RACS-low",
+   "band": "radio",
+   "D": null,
+   "ratio": [
+    3.67,
+    0.49
+   ],
+   "err": [
+    null,
+    null
+   ],
+   "dir": [
+    "eq",
+    164.9,
+    -10.8
+   ],
+   "D_kin": null,
+   "z": "not quoted",
+   "ref": "Boehme et al. 2025; arXiv:2509.16732",
+   "where": "Table III (survey combination, NB)",
+   "notes": "d/d_exp = 3.67 +- 0.49, 5.4 sigma; combination (not used in fits)",
+   "x": null,
+   "alpha": null,
+   "fits": [],
+   "K": null,
+   "l_b": [
+    263.61800519433604,
+    43.37269348969175
+   ],
+   "theta_cmb_deg": 4.888362804400417
+  }
+ ],
+ "fits": {
+  "core": {
+   "samples": [
+    "CatWISE_Secrest22",
+    "Quaia_low_Mittal24corr",
+    "NVSS_Wagenveld25",
+    "RACSlow_Wagenveld25",
+    "LoTSSDR2_Boehme25"
+   ],
+   "n": 5,
+   "amp": {
+    "K1_single_beta": {
+     "beta": 0.0028760214903966806,
+     "beta_err": 0.00022702012658848154,
+     "v_kms": 862.2095518668442,
+     "v_err_kms": 68.05892176543203,
+     "beta_over_beta_cmb": 2.331430295459532,
+     "chi2": 9.122281191500694,
+     "dof": 4,
+     "pulls": {
+      "CatWISE_Secrest22": -1.387150723034115,
+      "Quaia_low_Mittal24corr": -0.06801749448786838,
+      "NVSS_Wagenveld25": 1.496943375384799,
+      "RACSlow_Wagenveld25": 1.9754732452566326,
+      "LoTSSDR2_Boehme25": 1.0247602996296308
+     }
+    },
+    "K0_beta_cmb": {
+     "chi2": 61.46394565164154,
+     "dof": 5,
+     "pulls": {
+      "CatWISE_Secrest22": 4.6875,
+      "Quaia_low_Mittal24corr": 2.209454545454545,
+      "NVSS_Wagenveld25": 3.3793103448275863,
+      "RACSlow_Wagenveld25": 4.250000000000001,
+      "LoTSSDR2_Boehme25": 2.264367816091954
+     }
+    },
+    "C_constant": {
+     "c": 0.013961091865947961,
+     "c_err": 0.0010764615909193982,
+     "chi2": 1.4089914812027828,
+     "dof": 4
+    },
+    "KC_kin_plus_constant": {
+     "c": 0.00831268121145379,
+     "c_err": 0.0010764615909193982,
+     "chi2": 1.8311493616088224,
+     "dof": 4
+    },
+    "G_kin_plus_(2-2x)a_plus_b": {
+     "samples": [
+      "CatWISE_Secrest22",
+      "NVSS_Wagenveld25",
+      "RACSlow_Wagenveld25",
+      "LoTSSDR2_Boehme25"
+     ],
+     "a": 0.001082492274411965,
+     "a_err": 0.001006649962970471,
+     "b": 0.009425535620777536,
+     "b_err": 0.0013575594337862254,
+     "chi2": 0.010151008382963211,
+     "dof": 2
+    },
+    "R_ratio_vs_x": {
+     "intercept": 4.338609182125569,
+     "slope": -1.2229017460783762,
+     "slope_err": 0.40514754623637567,
+     "chi2": 0.006341914922084673,
+     "dof": 2
+    }
+   },
+   "proj": {
+    "K1_single_beta": {
+     "beta": 0.002645201590865605,
+     "beta_err": 0.00022702012658848154,
+     "v_kms": 793.01148683111,
+     "v_err_kms": 68.05892176543203,
+     "beta_over_beta_cmb": 2.1443174702047214,
+     "chi2": 9.266503759382001,
+     "dof": 4,
+     "pulls": {
+      "CatWISE_Secrest22": -1.4848059102261224,
+      "Quaia_low_Mittal24corr": 0.25204749823890626,
+      "NVSS_Wagenveld25": 1.55444825299139,
+      "RACSlow_Wagenveld25": 1.7732714657642215,
+      "LoTSSDR2_Boehme25": 1.1989687921082481
+     }
+    },
+    "K0_beta_cmb": {
+     "chi2": 47.93023081969594,
+     "dof": 5,
+     "pulls": {
+      "CatWISE_Secrest22": 3.7361425475829173,
+      "Quaia_low_Mittal24corr": 2.209454545454545,
+      "NVSS_Wagenveld25": 3.172276400522203,
+      "RACSlow_Wagenveld25": 3.72814714403062,
+      "LoTSSDR2_Boehme25": 2.264367816091954
+     }
+    },
+    "C_constant": {
+     "c": 0.01293740226301909,
+     "c_err": 0.0010764615909193982,
+     "chi2": 0.5886222243631621,
+     "dof": 4
+    },
+    "KC_kin_plus_constant": {
+     "c": 0.007288991608524915,
+     "c_err": 0.0010764615909193982,
+     "chi2": 2.080390909060377,
+     "dof": 4
+    },
+    "G_kin_plus_(2-2x)a_plus_b": {
+     "samples": [
+      "CatWISE_Secrest22",
+      "NVSS_Wagenveld25",
+      "RACSlow_Wagenveld25",
+      "LoTSSDR2_Boehme25"
+     ],
+     "a": 0.001375141283865935,
+     "a_err": 0.001006649962970471,
+     "b": 0.008427512223807063,
+     "b_err": 0.0013575594337862254,
+     "chi2": 0.0376885689714319,
+     "dof": 2
+    },
+    "R_ratio_vs_x": {
+     "intercept": 4.1346705168081614,
+     "slope": -1.22519513011441,
+     "slope_err": 0.40514754623637567,
+     "chi2": 0.05097977112779677,
+     "dof": 2
+    }
+   }
+  },
+  "ext": {
+   "samples": [
+    "CatWISE_Secrest22",
+    "Quaia_low_Mittal24corr",
+    "NVSS_Wagenveld25",
+    "RACSlow_Wagenveld25",
+    "RACSmid_Boehme25",
+    "LoTSSDR2_Boehme25",
+    "VLASS_Boehme25",
+    "TGSS_Boehme25",
+    "WENSS_Siewert21",
+    "SUMSS_Siewert21",
+    "MALS_Wagenveld24",
+    "VLASS+RACS_Darling22"
+   ],
+   "n": 12,
+   "amp": {
+    "K1_single_beta": {
+     "beta": 0.0028627586586588384,
+     "beta_err": 0.0001857494404679827,
+     "v_kms": 858.2334549401161,
+     "v_err_kms": 55.6862813300212,
+     "beta_over_beta_cmb": 2.3206788571199937,
+     "chi2": 155.16579547582052,
+     "dof": 11,
+     "pulls": {
+      "CatWISE_Secrest22": -1.3380972856099704,
+      "Quaia_low_Mittal24corr": -0.049626670506345276,
+      "NVSS_Wagenveld25": 1.5121436847613876,
+      "RACSlow_Wagenveld25": 1.993840285753344,
+      "RACSmid_Boehme25": 0.36951292816922043,
+      "LoTSSDR2_Boehme25": 1.0347702594629944,
+      "VLASS_Boehme25": -1.5400895722627792,
+      "TGSS_Boehme25": 10.634039604204496,
+      "WENSS_Siewert21": 2.2485216685808025,
+      "SUMSS_Siewert21": 3.0283618768371587,
+      "MALS_Wagenveld24": -0.8609051428266585,
+      "VLASS+RACS_Darling22": -3.9345780219411655
+     }
+    },
+    "K0_beta_cmb": {
+     "chi2": 232.09279699248182,
+     "dof": 12,
+     "pulls": {
+      "CatWISE_Secrest22": 4.6875,
+      "Quaia_low_Mittal24corr": 2.209454545454545,
+      "NVSS_Wagenveld25": 3.3793103448275863,
+      "RACSlow_Wagenveld25": 4.250000000000001,
+      "RACSmid_Boehme25": 2.1424242424242426,
+      "LoTSSDR2_Boehme25": 2.264367816091954,
+      "VLASS_Boehme25": 0.2848484848484848,
+      "TGSS_Boehme25": 11.980487804878049,
+      "WENSS_Siewert21": 2.79,
+      "SUMSS_Siewert21": 3.707777777777778,
+      "MALS_Wagenveld24": 0.9,
+      "VLASS+RACS_Darling22": -0.28970149253731364
+     }
+    },
+    "C_constant": {
+     "c": 0.012665537410022736,
+     "c_err": 0.0008017803403269728,
+     "chi2": 143.1557398881855,
+     "dof": 11
+    },
+    "KC_kin_plus_constant": {
+     "c": 0.007495296205562376,
+     "c_err": 0.0008017803403269728,
+     "chi2": 144.70177978919835,
+     "dof": 11
+    },
+    "G_kin_plus_(2-2x)a_plus_b": {
+     "samples": [
+      "CatWISE_Secrest22",
+      "NVSS_Wagenveld25",
+      "RACSlow_Wagenveld25",
+      "RACSmid_Boehme25",
+      "LoTSSDR2_Boehme25",
+      "VLASS_Boehme25",
+      "TGSS_Boehme25",
+      "WENSS_Siewert21",
+      "SUMSS_Siewert21",
+      "MALS_Wagenveld24",
+      "VLASS+RACS_Darling22"
+     ],
+     "a": 0.001004906063131712,
+     "a_err": 0.000878661131179034,
+     "b": 0.007881989296360498,
+     "b_err": 0.0008696969967320326,
+     "chi2": 143.16176614202683,
+     "dof": 9
+    },
+    "R_ratio_vs_x": {
+     "intercept": 3.5083773729958905,
+     "slope": -0.8550985643921528,
+     "slope_err": 0.30135298078092554,
+     "chi2": 147.11157287110206,
+     "dof": 9
+    }
+   },
+   "proj": {
+    "K1_single_beta": {
+     "beta": 0.002616858872458752,
+     "beta_err": 0.0001857494404679827,
+     "v_kms": 784.5145536135177,
+     "v_err_kms": 55.6862813300212,
+     "beta_over_beta_cmb": 2.1213416083865604,
+     "chi2": 114.5496021815482,
+     "dof": 11,
+     "pulls": {
+      "CatWISE_Secrest22": -1.379978540680764,
+      "Quaia_low_Mittal24corr": 0.2913487542362256,
+      "NVSS_Wagenveld25": 1.5869313679756865,
+      "RACSlow_Wagenveld25": 1.8125218963702465,
+      "RACSmid_Boehme25": 0.6371080832871328,
+      "LoTSSDR2_Boehme25": 1.220360111732053,
+      "VLASS_Boehme25": -1.2646417376493075,
+      "TGSS_Boehme25": 9.262183406767361,
+      "WENSS_Siewert21": 2.0307019277307714,
+      "SUMSS_Siewert21": 0.9798518253699726,
+      "MALS_Wagenveld24": -0.8581246241015691,
+      "VLASS+RACS_Darling22": -3.413796571849212
+     }
+    },
+    "K0_beta_cmb": {
+     "chi2": 170.00709465302697,
+     "dof": 12,
+     "pulls": {
+      "CatWISE_Secrest22": 3.7361425475829173,
+      "Quaia_low_Mittal24corr": 2.209454545454545,
+      "NVSS_Wagenveld25": 3.172276400522203,
+      "RACSlow_Wagenveld25": 3.72814714403062,
+      "RACSmid_Boehme25": 2.1424242424242426,
+      "LoTSSDR2_Boehme25": 2.264367816091954,
+      "VLASS_Boehme25": 0.2848484848484848,
+      "TGSS_Boehme25": 10.405404851415122,
+      "WENSS_Siewert21": 2.490451987169261,
+      "SUMSS_Siewert21": 1.5567197861288364,
+      "MALS_Wagenveld24": 0.6369975204138448,
+      "VLASS+RACS_Darling22": -0.3190610971214673
+     }
+    },
+    "C_constant": {
+     "c": 0.011610793123390794,
+     "c_err": 0.0008017803403269728,
+     "chi2": 103.31747500105153,
+     "dof": 11
+    },
+    "KC_kin_plus_constant": {
+     "c": 0.006440551918930432,
+     "c_err": 0.0008017803403269728,
+     "chi2": 105.48100238575478,
+     "dof": 11
+    },
+    "G_kin_plus_(2-2x)a_plus_b": {
+     "samples": [
+      "CatWISE_Secrest22",
+      "NVSS_Wagenveld25",
+      "RACSlow_Wagenveld25",
+      "RACSmid_Boehme25",
+      "LoTSSDR2_Boehme25",
+      "VLASS_Boehme25",
+      "TGSS_Boehme25",
+      "WENSS_Siewert21",
+      "SUMSS_Siewert21",
+      "MALS_Wagenveld24",
+      "VLASS+RACS_Darling22"
+     ],
+     "a": 0.0011789693373136425,
+     "a_err": 0.000878661131179034,
+     "b": 0.006780517465098792,
+     "b_err": 0.0008696969967320326,
+     "chi2": 103.67262877497143,
+     "dof": 9
+    },
+    "R_ratio_vs_x": {
+     "intercept": 3.2523560292746283,
+     "slope": -0.8244324421558659,
+     "slope_err": 0.30135298078092554,
+     "chi2": 106.9742491602986,
+     "dof": 9
+    }
+   }
+  },
+  "ext_singal": {
+   "samples": [
+    "CatWISE_Secrest22",
+    "Quaia_Singal24",
+    "NVSS_Wagenveld25",
+    "RACSlow_Wagenveld25",
+    "RACSmid_Boehme25",
+    "LoTSSDR2_Boehme25",
+    "VLASS_Boehme25",
+    "TGSS_Boehme25",
+    "WENSS_Siewert21",
+    "SUMSS_Siewert21",
+    "MALS_Wagenveld24",
+    "VLASS+RACS_Darling22"
+   ],
+   "n": 12,
+   "amp": {
+    "K1_single_beta": {
+     "beta": 0.0029886894202808384,
+     "beta_err": 0.00019008439459172703,
+     "v_kms": 895.9865475045875,
+     "v_err_kms": 56.98586788209575,
+     "beta_over_beta_cmb": 2.422763905425849,
+     "chi2": 173.6757093405892,
+     "dof": 11,
+     "pulls": {
+      "CatWISE_Secrest22": -1.8038603185054372,
+      "Quaia_Singal24": 4.254476542963598,
+      "NVSS_Wagenveld25": 1.3678165475013848,
+      "RACSlow_Wagenveld25": 1.819444994897507,
+      "RACSmid_Boehme25": 0.2324714845343906,
+      "LoTSSDR2_Boehme25": 0.9397255593161635,
+      "VLASS_Boehme25": -1.6811525481035976,
+      "TGSS_Boehme25": 10.529962652517062,
+      "WENSS_Siewert21": 2.2066667987754016,
+      "SUMSS_Siewert21": 2.975844790875369,
+      "MALS_Wagenveld24": -0.9970185405677991,
+      "VLASS+RACS_Darling22": -4.216317518690952
+     }
+    },
+    "K0_beta_cmb": {
+     "chi2": 258.9291926542343,
+     "dof": 12,
+     "pulls": {
+      "CatWISE_Secrest22": 4.6875,
+      "Quaia_Singal24": 5.631881128910855,
+      "NVSS_Wagenveld25": 3.3793103448275863,
+      "RACSlow_Wagenveld25": 4.250000000000001,
+      "RACSmid_Boehme25": 2.1424242424242426,
+      "LoTSSDR2_Boehme25": 2.264367816091954,
+      "VLASS_Boehme25": 0.2848484848484848,
+      "TGSS_Boehme25": 11.980487804878049,
+      "WENSS_Siewert21": 2.79,
+      "SUMSS_Siewert21": 3.707777777777778,
+      "MALS_Wagenveld24": 0.9,
+      "VLASS+RACS_Darling22": -0.28970149253731364
+     }
+    },
+    "C_constant": {
+     "c": 0.01336342103026314,
+     "c_err": 0.0008251865376340995,
+     "chi2": 158.6278121255911,
+     "dof": 11
+    },
+    "KC_kin_plus_constant": {
+     "c": 0.00817014187800405,
+     "c_err": 0.0008251865376340995,
+     "chi2": 160.90011230943574,
+     "dof": 11
+    },
+    "G_kin_plus_(2-2x)a_plus_b": {
+     "samples": [
+      "CatWISE_Secrest22",
+      "Quaia_Singal24",
+      "NVSS_Wagenveld25",
+      "RACSlow_Wagenveld25",
+      "RACSmid_Boehme25",
+      "LoTSSDR2_Boehme25",
+      "VLASS_Boehme25",
+      "TGSS_Boehme25",
+      "WENSS_Siewert21",
+      "SUMSS_Siewert21",
+      "MALS_Wagenveld24",
+      "VLASS+RACS_Darling22"
+     ],
+     "a": 0.000798721958527176,
+     "a_err": 0.0008772293170531825,
+     "b": 0.008393147070398685,
+     "b_err": 0.0008607676248058421,
+     "chi2": 160.07109237482143,
+     "dof": 10
+    },
+    "R_ratio_vs_x": {
+     "intercept": 3.650813910608584,
+     "slope": -0.8869194515876351,
+     "slope_err": 0.3012590922581458,
+     "chi2": 165.00832543502176,
+     "dof": 10
+    }
+   },
+   "proj": {
+    "K1_single_beta": {
+     "beta": 0.0027117734278979486,
+     "beta_err": 0.00019008439459172703,
+     "v_kms": 812.9692214886118,
+     "v_err_kms": 56.98586788209575,
+     "beta_over_beta_cmb": 2.1982835473706444,
+     "chi2": 129.13020948757398,
+     "dof": 11,
+     "pulls": {
+      "CatWISE_Secrest22": -1.7310261372956484,
+      "Quaia_Singal24": 3.7874821019093146,
+      "NVSS_Wagenveld25": 1.4781513852740502,
+      "RACSlow_Wagenveld25": 1.6810794172724361,
+      "RACSmid_Boehme25": 0.5338193591357714,
+      "LoTSSDR2_Boehme25": 1.1487245133675612,
+      "VLASS_Boehme25": -1.3709615078818602,
+      "TGSS_Boehme25": 9.18374016165676,
+      "WENSS_Siewert21": 1.9991557327472973,
+      "SUMSS_Siewert21": 0.9402694723148272,
+      "MALS_Wagenveld24": -0.9607138760803479,
+      "VLASS+RACS_Darling22": -3.6261448395737936
+     }
+    },
+    "K0_beta_cmb": {
+     "chi2": 189.60378507212454,
+     "dof": 12,
+     "pulls": {
+      "CatWISE_Secrest22": 3.7361425475829173,
+      "Quaia_Singal24": 4.947563017034478,
+      "NVSS_Wagenveld25": 3.172276400522203,
+      "RACSlow_Wagenveld25": 3.72814714403062,
+      "RACSmid_Boehme25": 2.1424242424242426,
+      "LoTSSDR2_Boehme25": 2.264367816091954,
+      "VLASS_Boehme25": 0.2848484848484848,
+      "TGSS_Boehme25": 10.405404851415122,
+      "WENSS_Siewert21": 2.490451987169261,
+      "SUMSS_Siewert21": 1.5567197861288364,
+      "MALS_Wagenveld24": 0.6369975204138448,
+      "VLASS+RACS_Darling22": -0.3190610971214673
+     }
+    },
+    "C_constant": {
+     "c": 0.012153001102102677,
+     "c_err": 0.0008251865376340995,
+     "chi2": 115.75176140773246,
+     "dof": 11
+    },
+    "KC_kin_plus_constant": {
+     "c": 0.0069597219498435834,
+     "c_err": 0.0008251865376340995,
+     "chi2": 118.46941166285191,
+     "dof": 11
+    },
+    "G_kin_plus_(2-2x)a_plus_b": {
+     "samples": [
+      "CatWISE_Secrest22",
+      "Quaia_Singal24",
+      "NVSS_Wagenveld25",
+      "RACSlow_Wagenveld25",
+      "RACSmid_Boehme25",
+      "LoTSSDR2_Boehme25",
+      "VLASS_Boehme25",
+      "TGSS_Boehme25",
+      "WENSS_Siewert21",
+      "SUMSS_Siewert21",
+      "MALS_Wagenveld24",
+      "VLASS+RACS_Darling22"
+     ],
+     "a": 0.0009946640774531324,
+     "a_err": 0.0008772293170531825,
+     "b": 0.007237434677773955,
+     "b_err": 0.0008607676248058421,
+     "chi2": 117.18375030053173,
+     "dof": 10
+    },
+    "R_ratio_vs_x": {
+     "intercept": 3.3789817270899056,
+     "slope": -0.8527211250581815,
+     "slope_err": 0.3012590922581458,
+     "chi2": 121.11834273027395,
+     "dof": 10
+    }
+   }
+  },
+  "core_noquaia": {
+   "samples": [
+    "CatWISE_Secrest22",
+    "NVSS_Wagenveld25",
+    "RACSlow_Wagenveld25",
+    "LoTSSDR2_Boehme25"
+   ],
+   "n": 4,
+   "amp": {
+    "K1_single_beta": {
+     "beta": 0.002881417044301792,
+     "beta_err": 0.0002391802078141073,
+     "v_kms": 863.8270982343291,
+     "v_err_kms": 71.70442240554203,
+     "beta_over_beta_cmb": 2.33580417022965,
+     "chi2": 9.117145924666316,
+     "dof": 3,
+     "pulls": {
+      "CatWISE_Secrest22": -1.407106526672777,
+      "NVSS_Wagenveld25": 1.4907596213994605,
+      "RACSlow_Wagenveld25": 1.968001209191015,
+      "LoTSSDR2_Boehme25": 1.0206880713953839
+     }
+    },
+    "K0_beta_cmb": {
+     "chi2": 56.58225626321179,
+     "dof": 4,
+     "pulls": {
+      "CatWISE_Secrest22": 4.6875,
+      "NVSS_Wagenveld25": 3.3793103448275863,
+      "RACSlow_Wagenveld25": 4.250000000000001,
+      "LoTSSDR2_Boehme25": 2.264367816091954
+     }
+    },
+    "C_constant": {
+     "c": 0.014472028609494429,
+     "c_err": 0.0011656394715362267,
+     "chi2": 0.10335601075972578,
+     "dof": 3
+    },
+    "KC_kin_plus_constant": {
+     "c": 0.008677224598555505,
+     "c_err": 0.0011656394715362267,
+     "chi2": 1.1665099083025139,
+     "dof": 3
+    },
+    "G_kin_plus_(2-2x)a_plus_b": {
+     "samples": [
+      "CatWISE_Secrest22",
+      "NVSS_Wagenveld25",
+      "RACSlow_Wagenveld25",
+      "LoTSSDR2_Boehme25"
+     ],
+     "a": 0.001082492274411965,
+     "a_err": 0.001006649962970471,
+     "b": 0.009425535620777536,
+     "b_err": 0.0013575594337862254,
+     "chi2": 0.010151008382963211,
+     "dof": 2
+    },
+    "R_ratio_vs_x": {
+     "intercept": 4.338609182125569,
+     "slope": -1.2229017460783762,
+     "slope_err": 0.40514754623637567,
+     "chi2": 0.006341914922084673,
+     "dof": 2
+    }
+   },
+   "proj": {
+    "K1_single_beta": {
+     "beta": 0.0026252076779225307,
+     "beta_err": 0.0002391802078141073,
+     "v_kms": 787.0174625248677,
+     "v_err_kms": 71.70442240554203,
+     "beta_over_beta_cmb": 2.128109519563214,
+     "chi2": 9.195987943204685,
+     "dof": 3,
+     "pulls": {
+      "CatWISE_Secrest22": -1.4108571354242456,
+      "NVSS_Wagenveld25": 1.5773629418293829,
+      "RACSlow_Wagenveld25": 1.8009600481101296,
+      "LoTSSDR2_Boehme25": 1.2140589530503414
+     }
+    },
+    "K0_beta_cmb": {
+     "chi2": 43.048541431266194,
+     "dof": 4,
+     "pulls": {
+      "CatWISE_Secrest22": 3.7361425475829173,
+      "NVSS_Wagenveld25": 3.172276400522203,
+      "RACSlow_Wagenveld25": 3.72814714403062,
+      "LoTSSDR2_Boehme25": 2.264367816091954
+     }
+    },
+    "C_constant": {
+     "c": 0.01327170124731947,
+     "c_err": 0.0011656394715362267,
+     "chi2": 0.02969175803369374,
+     "dof": 3
+    },
+    "KC_kin_plus_constant": {
+     "c": 0.007476897236380544,
+     "c_err": 0.0011656394715362267,
+     "chi2": 1.9038004465807037,
+     "dof": 3
+    },
+    "G_kin_plus_(2-2x)a_plus_b": {
+     "samples": [
+      "CatWISE_Secrest22",
+      "NVSS_Wagenveld25",
+      "RACSlow_Wagenveld25",
+      "LoTSSDR2_Boehme25"
+     ],
+     "a": 0.001375141283865935,
+     "a_err": 0.001006649962970471,
+     "b": 0.008427512223807063,
+     "b_err": 0.0013575594337862254,
+     "chi2": 0.0376885689714319,
+     "dof": 2
+    },
+    "R_ratio_vs_x": {
+     "intercept": 4.1346705168081614,
+     "slope": -1.22519513011441,
+     "slope_err": 0.40514754623637567,
+     "chi2": 0.05097977112779677,
+     "dof": 2
+    }
+   }
+  }
+ }
+}
