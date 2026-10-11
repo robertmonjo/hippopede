@@ -259,6 +259,7 @@ def main():
     ap.add_argument("--highlight-alpha", type=float, default=None)
     ap.add_argument("--hatch-unresolved", action="store_true", help="hatch where alpha_high is at an end of its feasible range")
     ap.add_argument("--no-title", action="store_true", help="no title inside the figure (it goes in the caption)")
+    ap.add_argument("--no-quaia", action="store_true", help="joint region of CC + SN + CatWISE only: no Quaia band, line or minimum")
     ap.add_argument("--plot-t0-max", type=float, default=None, help="right edge of the figure (the grid is not cut)")
     ap.add_argument("--markers-json", default=None,
                     help="json file of a finer map (this script, e.g. ball_zoom_unbinned_wide.json) whose CC + SN and "
@@ -404,7 +405,18 @@ def main():
                         else np.nan for c in range(len(TF))])
     DQf = np.where(np.isfinite(DQf), DQf, 1e9)
     crit = np.maximum(np.maximum(PPf / 2.30, CWf), DQf)
-    inside = crit <= 1.0
+    inside = (crit <= 1.0) & (not a.no_quaia)
+    if a.no_quaia:
+        # extent of the joint CC + SN + CatWISE regions (68% and 95%, two parameters) on the display grid
+        for name, lev in (("cc_sn_catwise_68", 2.30), ("cc_sn_catwise_95", 6.18)):
+            r_in = TZf <= lev
+            if r_in.any():
+                ii, cc = np.where(r_in)
+                res[name] = {"t0": [float(TF[cc].min()), float(TF[cc].max())], "theta_obs": [float(THF[ii].min()), float(THF[ii].max())],
+                             "dchi2_cc_sn_range": [float(np.nanmin(np.where(r_in, Df, np.nan))), float(np.nanmax(np.where(r_in, Df, np.nan)))],
+                             "grid": "interpolated (display grid)"}
+        path.write_text(json.dumps(res))
+        print("CC + SN + CatWISE regions:", {k: res[k] for k in ("cc_sn_catwise_68", "cc_sn_catwise_95") if k in res}, flush=True)
     if inside.any():
         ii, cc = np.where(inside)
         res["summary_all_within_1sigma"] = {
@@ -428,14 +440,16 @@ def main():
     cb.ax.set_yscale("linear")   # proportional bar: -1..0 takes a quarter of it
     cs = ax.contour(TF, THF, Df, levels=[-1.0, -0.5, 0.0, 0.5, 1.0], colors="k", linewidths=0.6, alpha=0.6)
     ax.clabel(cs, fmt="%+.1f", fontsize=7)
-    ax.contourf(TF, THF, DQf, levels=[-1, 1.0], colors=[QUAIA_BAND], alpha=0.35)
+    if not a.no_quaia:
+        ax.contourf(TF, THF, DQf, levels=[-1, 1.0], colors=[QUAIA_BAND], alpha=0.35)
     ax.contourf(TF, THF, CWf, levels=[-1, 1.0], colors=[GREEN], alpha=0.30)
     ax.contour(TF, THF, CWf, levels=[1.0], colors=GREEN, linewidths=1.4)
     ax.fill_between([], [], color=GREEN, alpha=0.30, label=r"CatWISE excess within $1\sigma$")
-    ok = np.isfinite(quaia_f) & (quaia_f <= THF[-1])
-    ax.plot(TF[ok], quaia_f[ok], color=QUAIA, lw=2, ls="--")
-    ax.plot([], [], color=QUAIA, lw=2, ls="--", label="Quaia slices: best fit")
-    ax.fill_between([], [], color=QUAIA_BAND, alpha=0.5, label=r"Quaia slices within $1\sigma$")
+    if not a.no_quaia:
+        ok = np.isfinite(quaia_f) & (quaia_f <= THF[-1])
+        ax.plot(TF[ok], quaia_f[ok], color=QUAIA, lw=2, ls="--")
+        ax.plot([], [], color=QUAIA, lw=2, ls="--", label="Quaia slices: best fit")
+        ax.fill_between([], [], color=QUAIA_BAND, alpha=0.5, label=r"Quaia slices within $1\sigma$")
     if a.hatch_unresolved and (unres & np.isfinite(Df)).any():
         # alpha_high at an end of its feasible range: the chi2 there is a constrained minimum
         plt.rcParams["hatch.color"] = "0.35"
@@ -472,7 +486,9 @@ def main():
     elif not edge(ij, jj):
         ax.plot(T_GRID[jj], TH_GRID[ij], marker="D", color=LIGHT, mec="k", ms=7, ls="none", zorder=8,
                 label="CC + SN + CatWISE minimum")
-    if a.best_all_json:
+    if a.no_quaia:
+        pass
+    elif a.best_all_json:
         cb4 = json.loads((JSON / a.best_all_json).read_text())["continuous_best"]
         if T_GRID[0] <= cb4["t0"] <= T_GRID[-1] and cb4["theta_obs"] <= TH_GRID[-1]:
             ax.plot(cb4["t0"], cb4["theta_obs"], marker="p", color=QUAIA, mec="k", ms=10, ls="none", zorder=9,

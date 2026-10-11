@@ -15,6 +15,9 @@ point (fit_ball_unbinned.Point, not interpolated) and for (b) with the dipoles a
 of the dipole runs and t0 in that of the map.  The theta_obs values run in parallel (--workers).  Writes
 json/dipole_chi2_vs_theta_continuous.json (rows as above plus the number of evaluations nfev) and draws the figure
 from it.
+
+With --no-quaia the Quaia slices are left out: the total is CC + SN + CatWISE, the dipoles-alone curve and the ad hoc
+references (which fit CatWISE exactly) are not drawn, and the outputs get the suffix _noquaia.
 """
 
 from __future__ import annotations
@@ -46,6 +49,12 @@ FIG = ROOT / "figures"
 DIPOLE_ALPHAS = [round(0.30 + 0.02 * k, 2) for k in range(21)]
 THETA_CONTINUOUS = [0, 0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12, 15, 18, 21, 25, 30, 35, 40, 45]
 T0_RANGE = (1.4, 20.0)
+USE_QUAIA = True
+
+
+def set_quaia(flag):
+    global USE_QUAIA
+    USE_QUAIA = bool(flag)
 
 
 def grid():
@@ -59,7 +68,7 @@ def grid():
         for i, th in enumerate(TH):
             for j, t0 in enumerate(T):
                 if np.isfinite(C[k, i, j]):
-                    CW[k, i, j], QW[k, i, j] = F.catwise_chi2(ah, t0, th), Z.quaia_chi2(ah, t0, th)
+                    CW[k, i, j], QW[k, i, j] = dipoles(ah, t0, th)
     return A, T, TH, C, CW, QW, d["lcdm_chi2"]
 
 
@@ -89,7 +98,7 @@ def clip(x):
 
 
 def dipoles(ah, t0, th):
-    return F.catwise_chi2(ah, t0, th), Z.quaia_chi2(ah, t0, th)
+    return F.catwise_chi2(ah, t0, th), (Z.quaia_chi2(ah, t0, th) if USE_QUAIA else 0.0)
 
 
 def cc_sn(ah, t0, th, c_l):
@@ -142,20 +151,26 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--continuous", action="store_true", help="Nelder-Mead in (alpha_high, ln t0) at every theta_obs")
     ap.add_argument("--workers", type=int, default=20)
+    ap.add_argument("--no-quaia", action="store_true", help="CC + SN + CatWISE only")
     args = ap.parse_args()
+    set_quaia(not args.no_quaia)
     A, T, TH, C, CW, QW, c_l = grid()
     rows = grid_rows(A, T, TH, C, CW, QW)
     name = "dipole_chi2_vs_theta"
     if args.continuous:
         by_theta = {r["theta_obs"]: r for r in rows}
         tasks = [(float(th), by_theta[min(by_theta, key=lambda g: abs(g - th))], c_l) for th in THETA_CONTINUOUS]
-        with ProcessPoolExecutor(max_workers=args.workers) as ex:
+        with ProcessPoolExecutor(max_workers=args.workers, initializer=set_quaia, initargs=(not args.no_quaia,)) as ex:
             rows = list(ex.map(refine, tasks))
         name += "_continuous"
+    sfx = "_noquaia" if args.no_quaia else ""
+    name += sfx
     ref = {r["model"]: r for r in json.loads((JSON / "compare_dipole_models.json").read_text())["rows"]}
     lcdm = ref["LCDM"]["total"]
     out = {"rows": rows, "references_total": {"LCDM": lcdm, "LCDM + common dipole": ref["LCDM + common dipole"]["total"],
                                               "LCDM + two dipoles": ref["LCDM + two dipoles"]["total"]}}
+    if args.no_quaia:   # LCDM pays the whole CatWISE excess; an ad hoc amplitude fits it exactly
+        out["references_total"] = {"LCDM": ref["LCDM"]["chi2_catwise"]}
     (JSON / f"{name}.json").write_text(json.dumps(out, indent=1))
     for r in rows:
         w = r["with_cc_sn"]
@@ -167,22 +182,30 @@ def main():
     plt.rcParams.update({"font.size": 11, "mathtext.fontset": "dejavuserif", "font.family": "DejaVu Serif"})
     fig, ax = plt.subplots(figsize=(7.2, 4.6), dpi=180)
     x = np.where(th > 0, th, 0.1)   # theta_obs = 0 drawn at the left edge of the log axis
-    ax.plot(x, g("with_cc_sn", "total"), color="k", lw=2.0, label=r"total: CC + SN + CatWISE + Quaia")
-    ax.plot(x, g("with_cc_sn", "quaia"), color="#E08A00", lw=1.6, label="Quaia slices")
-    ax.plot(x, g("with_cc_sn", "catwise"), color="#1a9641", lw=1.6, label="CatWISE")
-    ax.plot(x, g("dipoles_only", "chi2"), color="0.45", lw=1.2, ls="--", label="dipoles alone (lower bound of the geometry)")
-    for name, ls in (("LCDM", "-"), ("LCDM + common dipole", "-."), ("LCDM + two dipoles", (0, (1, 1)))):
+    if args.no_quaia:
+        ax.plot(x, g("with_cc_sn", "total"), color="k", lw=2.0, label=r"total: CC + SN + CatWISE")
+        ax.plot(x, g("with_cc_sn", "catwise"), color="#1a9641", lw=1.6, label="CatWISE")
+        ax.plot(x, g("with_cc_sn", "dchi2_cc_sn"), color="#08306b", lw=1.4, ls=":", label=r"CC + SN ($\chi^2-\chi^2_{\Lambda{\rm CDM}}$)")
+    else:
+        ax.plot(x, g("with_cc_sn", "total"), color="k", lw=2.0, label=r"total: CC + SN + CatWISE + Quaia")
+        ax.plot(x, g("with_cc_sn", "quaia"), color="#E08A00", lw=1.6, label="Quaia slices")
+        ax.plot(x, g("with_cc_sn", "catwise"), color="#1a9641", lw=1.6, label="CatWISE")
+        ax.plot(x, g("dipoles_only", "chi2"), color="0.45", lw=1.2, ls="--", label="dipoles alone (lower bound of the geometry)")
+    for name, ls in [(k, v) for k, v in (("LCDM", "-"), ("LCDM + common dipole", "-."), ("LCDM + two dipoles", (0, (1, 1))))
+                     if k in out["references_total"]]:
         ax.axhline(out["references_total"][name], color="#c00000", lw=0.9, ls=ls)
-        ax.text(45, out["references_total"][name] + 0.8, {"LCDM": r"$\Lambda$CDM", "LCDM + common dipole": r"$\Lambda$CDM + 1 ad hoc amplitude",
+        ax.text(45, out["references_total"][name] + (0.4 if args.no_quaia else 0.8), {"LCDM": r"$\Lambda$CDM", "LCDM + common dipole": r"$\Lambda$CDM + 1 ad hoc amplitude",
                 "LCDM + two dipoles": r"$\Lambda$CDM + 2 ad hoc amplitudes"}[name], color="#c00000", fontsize=8, ha="right", va="bottom")
     ax.set_xscale("log")
-    ax.set_xlim(0.1, 45); ax.set_ylim(0, 62)
+    ax.set_xlim(0.1, 45); ax.set_ylim(-1 if args.no_quaia else 0, 35 if args.no_quaia else 62)
     ax.set_xticks([0.1, 0.5, 1, 2, 5, 10, 20, 45]); ax.set_xticklabels(["0", "0.5", "1", "2", "5", "10", "20", "45"])
     ax.set_xlabel(r"Observer sector $\vartheta_{\rm obs}$ [deg] ($t_0$ and $\alpha_{\rm high}$ fitted at each value)")
     ax.set_ylabel(r"$\chi^2$")
     ax.legend(fontsize=8, loc="center right", bbox_to_anchor=(1.0, 0.62), framealpha=0.9)
+    if args.no_quaia:
+        ax.axhline(0, color="0.6", lw=0.6)
     for ext in ("png", "pdf"):
-        fig.savefig(FIG / f"hippopede_dipole_chi2_vs_theta.{ext}", dpi=220 if ext == "png" else None, bbox_inches="tight", facecolor="white")
+        fig.savefig(FIG / f"hippopede_dipole_chi2_vs_theta{sfx}.{ext}", dpi=220 if ext == "png" else None, bbox_inches="tight", facecolor="white")
 
 
 if __name__ == "__main__":

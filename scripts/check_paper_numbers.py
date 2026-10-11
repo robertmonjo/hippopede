@@ -33,8 +33,8 @@ def tol(printed):
 
 EXTENDED_OUTPUTS = ("cc_intrinsic_scatter", "cc_direction_test", "pantheon_catwise_axis", "fit_ball_unbinned",
                     "ball_zoom_unbinned_wide", "fit_observer_ball_landscape_joint_wide", "binning_resolution_test",
-                    "quasar_dipole_fit_ah0p34", "quaia_zslice_model_ah0p34", "refine_overview_minimum",
-                    "ball_zoom_unbinned_overview")
+                    "quasar_dipole_fit_ah0p34", "quaia_zslice_model_ah0p34", "ball_zoom_unbinned_overview",
+                    "dipole_chi2_vs_theta_continuous_noquaia", "predict_dipole_from_ccsn")
 
 
 def extended_checks():
@@ -47,8 +47,11 @@ def extended_checks():
     spread = dict(zip(cis["sector_spread"]["z"], cis["sector_spread"]["half_width_1sigma"]))
     fbu = load("fit_ball_unbinned")
     bz = load("ball_zoom_unbinned_wide")
-    rom = load("refine_overview_minimum")["continuous_best"]
-    ov = load("ball_zoom_unbinned_overview")["summary_all_within_1sigma"]   # Fig. ball
+    ov = load("ball_zoom_unbinned_overview")["cc_sn_catwise_68"]   # Fig. ball: joint 68% region of CC + SN + CatWISE
+    dth = {r["theta_obs"]: r["with_cc_sn"] for r in load("dipole_chi2_vs_theta_continuous_noquaia")["rows"]}   # Fig. dipole_theta
+    pdc = load("predict_dipole_from_ccsn")
+    lcdm_cat = dth[0.0]["catwise"]
+    mid = [lcdm_cat - dth[t]["total"] for t in dth if 3 <= t <= 30]
     owl = load("fit_observer_ball_landscape_joint_wide")
     brt = load("binning_resolution_test")
     qdf = load("quasar_dipole_fit_ah0p34")
@@ -100,18 +103,18 @@ def extended_checks():
         ("CC + SN + CatWISE minimum: alpha_high", "0.381", bz["best_cc_sn_catwise"]["alpha_high"]),
         ("CC + SN + CatWISE minimum: dchi2 of CC + SN", "-0.11", bz["best_cc_sn_catwise"]["dchi2_cc_sn"]),
         ("random orientations above the quasar axis (%)", "94", 100 * (1 - fbu["free_axis"]["frac_random_below_fixed"])),
-        ("with Quaia: t0", "4.5", rom["t0"]),
-        ("with Quaia: theta_obs", "21", rom["theta_obs"]),
-        ("with Quaia: alpha_high", "0.405", rom["alpha_high"]),
-        ("with Quaia: chi2 of the slices", "11.6", rom["chi2_quaia"]),
-        ("all within 1 sigma: smallest t0", "1.54", ov["t0"][0]),
-        ("all within 1 sigma: smallest theta_obs", "0.8", ov["theta_obs"][0]),
-        ("all within 1 sigma: largest theta_obs", "45", ov["theta_obs"][1]),
-        ("all within 1 sigma: t0 where theta_obs = 45 deg", "6.1", ov["t0"][1]),
-        ("all within 1 sigma: Quaia chi2, min", "11.3", ov["quaia_chi2_range"][0]),
-        ("all within 1 sigma: Quaia chi2, max", "17.1", ov["quaia_chi2_range"][1]),
-        ("Quaia amplitudes, constant", "1.8", q_const),
+        ("CC + SN + CatWISE 68%: smallest t0", "1.53", ov["t0"][0]),
+        ("CC + SN + CatWISE 68%: smallest theta_obs", "0.6", ov["theta_obs"][0]),
+        ("CC + SN + CatWISE 68%: largest t0", "6.4", ov["t0"][1]),
+        ("CC + SN + CatWISE 68%: largest theta_obs", "45", ov["theta_obs"][1]),
         ("Quaia amplitudes, none", "25.2", q_none),
+        ("CatWISE amplitude, observer on the axis (as LCDM)", "32.3", lcdm_cat),
+        ("CC + SN at theta_obs = 1 deg, CatWISE fitted", "0.6", dth[1.0]["dchi2_cc_sn"]),
+        ("CatWISE at theta_obs = 1 deg", "0.0", dth[1.0]["catwise"]),
+        ("joint chi2 below LCDM, 3-30 deg, min", "32.3", min(mid)),
+        ("joint chi2 below LCDM, 3-30 deg, max", "32.4", max(mid)),
+        ("predictive chi2 of CatWISE from CC + SN, min", "4.6", min(v["chi2_pred_catwise"] for v in pdc["priors"].values())),
+        ("predictive chi2 of CatWISE from CC + SN, max", "4.8", max(v["chi2_pred_catwise"] for v in pdc["priors"].values())),
         ("binned supernovae: t0 of the minimum", "1.74", owl["best"]["t0"]),
         ("binned supernovae: dchi2 of the minimum", "-0.80", owl["best"]["dchi2"]),
         ("lowest redshift of the last bin", "0.80", brt["last_bin"]["z_min"]),
