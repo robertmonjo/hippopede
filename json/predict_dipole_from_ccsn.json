@@ -1,84 +1,84 @@
 {
- "lcdm_chi2_dipoles": 57.499755383002196,
+ "lcdm_chi2_dipoles": 58.45083013951275,
  "catwise": {
-  "D_geo": 0.009902154194786622,
-  "sigma": 0.0017428571428571426
+  "D_geo": 0.009762574657495167,
+  "sigma": 0.001700691078214965
  },
  "best_cc_sn": {
-  "alpha_high": 0.35,
-  "t0": 2.2564,
-  "theta_obs": 14.0,
-  "dchi2_cc_sn": -0.6762018250799429,
-  "catwise_amplitude": 0.04044793933289848,
-  "chi2_catwise": 307.1701457637805,
-  "chi2_quaia": 205.50758447010872
+  "alpha_high": 0.34,
+  "t0": 2.1077,
+  "theta_obs": 12.0,
+  "dchi2_cc_sn": -1.184101825079324,
+  "catwise_amplitude": 0.03993091761097721,
+  "chi2_catwise": 314.66761332405144,
+  "chi2_quaia": 239.96721705669944
  },
  "priors": {
   "theta_uniform": {
-   "catwise_amplitude_median": 0.004461544697033984,
+   "catwise_amplitude_median": 0.00410904530322662,
    "catwise_amplitude_68": [
-    0.0006872536518867256,
-    0.024472697240597915
+    0.0006306339536324762,
+    0.0229166774945142
    ],
    "catwise_amplitude_95": [
-    0.00010528060472467648,
-    0.05291069564959607
+    0.00010178103488817675,
+    0.0497636982422828
    ],
-   "prob_amplitude_above_measured": 0.3439978306926168,
-   "chi2_pred_catwise": 4.783552145735602,
-   "chi2_pred_dipoles": 17.269056311238028,
-   "dchi2_pred_vs_lcdm": -40.230699071764164
+   "prob_amplitude_above_measured": 0.3312618919674199,
+   "chi2_pred_catwise": 4.815767051753344,
+   "chi2_pred_dipoles": 18.721139577214633,
+   "dchi2_pred_vs_lcdm": -39.72969056229812
   },
   "theta_volume": {
-   "catwise_amplitude_median": 0.006271440607121579,
+   "catwise_amplitude_median": 0.005765852142809666,
    "catwise_amplitude_68": [
-    0.0011040405201742062,
-    0.02871795046748594
+    0.0010070081184314701,
+    0.026982774467992552
    ],
    "catwise_amplitude_95": [
-    0.0005092807633138916,
-    0.05619215233368952
+    0.00046239527643974744,
+    0.053010803188721325
    ],
-   "prob_amplitude_above_measured": 0.4015623573906864,
-   "chi2_pred_catwise": 4.607502300613386,
-   "chi2_pred_dipoles": 17.034168447049844,
-   "dchi2_pred_vs_lcdm": -40.46558693595235
+   "prob_amplitude_above_measured": 0.3875999530421062,
+   "chi2_pred_catwise": 4.6391316853139974,
+   "chi2_pred_dipoles": 18.500809027020317,
+   "dchi2_pred_vs_lcdm": -39.950021112492436
   }
  },
  "lcdm_ad_hoc": {
   "0.02": {
-   "chi2_pred_dipoles": 7.917691930452647,
-   "dchi2_pred_vs_lcdm": -49.58206345254955,
-   "chi2_pred_catwise": 3.042535875330842
+   "chi2_pred_dipoles": 8.501605421310206,
+   "dchi2_pred_vs_lcdm": -49.949224718202544,
+   "chi2_pred_catwise": 3.091518110591191
   },
   "0.05": {
-   "chi2_pred_dipoles": 9.750273394200956,
-   "dchi2_pred_vs_lcdm": -47.749481988801236,
-   "chi2_pred_catwise": 4.875117339079153
+   "chi2_pred_dipoles": 10.334186885058516,
+   "dchi2_pred_vs_lcdm": -48.11664325445424,
+   "chi2_pred_catwise": 4.924099574339501
   },
   "0.1": {
-   "chi2_pred_dipoles": 11.136567755320847,
-   "dchi2_pred_vs_lcdm": -46.36318762768135,
-   "chi2_pred_catwise": 6.261411700199043
+   "chi2_pred_dipoles": 11.720481246178407,
+   "dchi2_pred_vs_lcdm": -46.730348893334344,
+   "chi2_pred_catwise": 6.310393935459392
   }
  },
  "quaia_given_cc_sn_catwise": {
-  "lcdm_or_hyperconical_no_dipole": 25.219587234862,
+  "lcdm_or_hyperconical_no_dipole": 25.499126779290414,
   "lcdm_ad_hoc_catwise_amplitude": {
-   "best": 5.3926352645281,
-   "predictive": 4.875156055022744
+   "best": 5.928244543845457,
+   "predictive": 5.410087311346458
   },
   "ball_best_cc_sn_catwise": {
-   "alpha_high": 0.38,
-   "theta_obs": 7.0,
-   "t0": 2.7686,
-   "dchi2_cc_sn": -0.11640182507994723,
-   "chi2_catwise": 0.005288064998629089,
-   "chi2_quaia": 13.181741907228034
+   "alpha_high": 0.37,
+   "theta_obs": 6.0,
+   "t0": 2.5861,
+   "dchi2_cc_sn": -0.6159018250793906,
+   "chi2_catwise": 0.00023349452500058898,
+   "chi2_quaia": 14.969864477562222
   },
   "ball_predictive": {
-   "theta_uniform": 12.485504165502425,
-   "theta_volume": 12.426666146436457
+   "theta_uniform": 13.905372525461287,
+   "theta_volume": 13.861677341706319
   }
  }
 }

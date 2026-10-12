@@ -26,7 +26,7 @@ and recomputes the slice amplitudes and chi2_Quaia = sum ((|D_i| - A_i)/sigma_i)
   d. the statistic: vector chi2 with the model dipole along the fixed axis (opposite to the CatWISE
      excess; the model dipole is negative, so it points to the excess), Rice (non-central chi, three
      components) likelihood of the amplitudes, and the best rescaling of the shape.
-CatWISE (gamma p(z), x = 1.63) is evaluated with the same changes where they apply.  Reference points
+CatWISE (gamma p(z), x = 1.7) is evaluated with the same changes where they apply.  Reference points
 (alpha_high, t0, theta_obs) = (0.38, 2.77, 7 deg) and (0.405, 4.50, 21.06 deg), alpha_low =
 projected_hyperconical.ALPHA_LOW.  Catalogue: dipole_zslices/data/quaia_G20.0.fits, G < 20, Galactic
 |b| > 30 deg (the selection-function cut S > 0.3 of measure_dipole.py is not applied here).
@@ -84,7 +84,7 @@ def load_slices():
                      "x_onesided": s["x_onesided_19.8_20.0"], "D_kin": s["D_kin"],
                      "alpha_colour": s["alpha_colour_median_edge"],
                      "e": np.array(d["excess_vec"]), "sig": d["sigma_mocks_per_component"], "amp": d["excess_amp"],
-                     "amp_alpha_colour": d["excess_amp_alpha_colour"]})
+                     "amp_alpha_colour": d["excess_amp"]})   # measure_dipole.py subtracts the colour-index kinematic dipole
     xz = np.array(sorted(xz))
     return rows, xz
 
@@ -352,7 +352,7 @@ def main():
             run("evol_t_emission_kin_edge", evol=ev, data=(amp_k, e_k))
             run("evol_t_emission_smear_0.1_kin_edge", "smear_0.1", evol=ev, data=(amp_k, e_k))
             run("all_catalogue_smear0.1_kinedge_noevol", "smear_0.1", data=(amp_k, e_k))
-            # CatWISE: gamma from its p(z) model and x = 1.63
+            # CatWISE: gamma from its p(z) model and x = 1.7
             x_cw = np.full_like(Z, Q.X_SLOPE)
             gam_cw = gamma_evol(comp, np.maximum(pz_cw, 1e-12), x_cw)
             P["catwise"] = {"baseline": cw(), "evol_t_emission": cw(evol_term(comp, gam_cw)),

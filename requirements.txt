@@ -4,3 +4,4 @@ matplotlib>=3.7
 astropy>=6
 astropy-healpix
 mpmath
+healpy

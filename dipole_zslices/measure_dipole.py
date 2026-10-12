@@ -9,6 +9,10 @@ frame of the Quaia selection-function map), model
 n_p = pixel-centre unit vector in Galactic coordinates. S_p is the Quaia selection function.
 Mask: Galactic latitude of pixel centre |b| > 30 deg and S_p > S_MIN.
 Errors: inverse Fisher matrix, and 100 isotropic Poisson mocks (lambda_p = S_p * N0_fit).
+Kinematic expectation of each slice: D_kin = [2 + x(1 + alpha)] beta along the CMB dipole, with the count slope x
+measured at the magnitude limit and the spectral index alpha from the Gaia BP-RP colour of the sources at the limit
+(Mittal, Oayda & Lewis 2024, Correction, MNRAS 530, 4763, find a mean alpha of 0.48 for this sample); the values
+with the CatWISE index alpha = 1.26 are kept as *_alpha_fixed.
 """
 import json
 import os
@@ -138,8 +142,8 @@ def main():
 
         row.update({"x": float(x), "x_err_poisson": float(x_err), "x_onesided_19.8_20.0": float(x_one),
                     "alpha_fixed": ALPHA_FIXED, "alpha_colour_median_edge": alpha_col,
-                    "D_kin": float((2 + x * (1 + ALPHA_FIXED)) * BETA),
-                    "D_kin_alpha_colour": float((2 + x * (1 + alpha_col)) * BETA)})
+                    "D_kin": float((2 + x * (1 + alpha_col)) * BETA),
+                    "D_kin_alpha_fixed": float((2 + x * (1 + ALPHA_FIXED)) * BETA)})
 
         for quad in (False, True):
             Y = design(n_pix, quad)
@@ -160,7 +164,7 @@ def main():
             exm = np.linalg.norm(ex[None, :] + mocks, axis=1)
             p_iso = float(np.mean(np.linalg.norm(mocks, axis=1) >= D))
             key = "dipquad" if quad else "dip"
-            ex_c = d - row["D_kin_alpha_colour"] * v_cmb
+            ex_c = d - row["D_kin_alpha_fixed"] * v_cmb
             exm_c = np.linalg.norm(ex_c[None, :] + mocks, axis=1)
             radec = SkyCoord(l=l * u.deg, b=b * u.deg, frame="galactic").icrs
             row[key] = {"D": float(D), "l": float(l), "b": float(b),
@@ -174,8 +178,8 @@ def main():
                         "excess_vec": ex.tolist(), "excess_amp": float(np.linalg.norm(ex)),
                         "excess_sigma_mocks": float(np.std(exm)),
                         "excess_sigma_fit": float(np.sqrt(ex @ cov @ ex) / np.linalg.norm(ex)),
-                        "excess_amp_alpha_colour": float(np.linalg.norm(ex_c)),
-                        "excess_sigma_mocks_alpha_colour": float(np.std(exm_c)),
+                        "excess_amp_alpha_fixed": float(np.linalg.norm(ex_c)),
+                        "excess_sigma_mocks_alpha_fixed": float(np.std(exm_c)),
                         "D_debiased": float(np.sqrt(max(D**2 - 3 * sig_comp_m**2, 0.0))),
                         "d_par_CMB": float(d @ v_cmb), "d_par_CMB_sigma_mocks": float(np.std(mocks @ v_cmb)),
                         "ra": float(radec.ra.deg), "dec": float(radec.dec.deg)}
@@ -190,7 +194,7 @@ def main():
         print(f"{name:8s} N={row['N']:7d} x={x:.3f} (1-sided {x_one:.3f}) a_col={alpha_col:.2f} "
               f"Dkin={row['D_kin']*1e2:.3f}e-2 | D={r['D']*1e2:.3f}+-{r['sigma_fit_D']*1e2:.3f}(fit)"
               f"+-{r['sigma_mocks_D']*1e2:.3f}(mock) (l,b)=({r['l']:.0f},{r['b']:.0f}) "
-              f"ang={r['angle_to_CMB_deg']:.0f} RADec=({r['ra']:.0f},{r['dec']:.0f}) dpar={r['d_par_CMB']*1e2:.3f}+-{r['d_par_CMB_sigma_mocks']*1e2:.3f} Ddeb={r['D_debiased']*1e2:.3f} excC={r['excess_amp_alpha_colour']*1e2:.3f} exc={r['excess_amp']*1e2:.3f}+-{r['excess_sigma_mocks']*1e2:.3f} "
+              f"ang={r['angle_to_CMB_deg']:.0f} RADec=({r['ra']:.0f},{r['dec']:.0f}) dpar={r['d_par_CMB']*1e2:.3f}+-{r['d_par_CMB_sigma_mocks']*1e2:.3f} Ddeb={r['D_debiased']*1e2:.3f} excFixed={r['excess_amp_alpha_fixed']*1e2:.3f} exc={r['excess_amp']*1e2:.3f}+-{r['excess_sigma_mocks']*1e2:.3f} "
               f"| quad: D={row['dipquad']['D']*1e2:.3f}+-{row['dipquad']['sigma_mocks_D']*1e2:.3f} "
               f"ang={row['dipquad']['angle_to_CMB_deg']:.0f} | noSF D={row['dip_noSF']['D']*1e2:.3f}")
 

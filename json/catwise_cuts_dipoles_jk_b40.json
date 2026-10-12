@@ -9619,7 +9619,7 @@
    "sigma_D_jk": 0.007351907155563338
   }
  ],
- "runtime_s": 61.914661169052124,
+ "runtime_s": 46.00412464141846,
  "bcut_subsamples_deg": 40.0,
  "options": {
   "exclude_gc_deg": 0.0,

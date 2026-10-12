@@ -20,30 +20,30 @@
  ],
  "lcdm": {
   "chi2": {
-   "Omega_m": 0.3340618577269011,
+   "Omega_m": 0.33406185772664104,
    "value": 1409.6939245977026
   },
   "Q": {
-   "Omega_m": 0.30612577669256835,
-   "value": 1334.8181441413026
+   "Omega_m": 0.306125776694268,
+   "value": 1334.8181441413083
   }
  },
  "lines": [
   {
    "line": "axis",
    "statistic": "chi2",
-   "alpha_high": 0.4111020355057699,
+   "alpha_high": 0.4111020355057658,
    "t0": null,
-   "value": 1409.9771824930026,
-   "delta_vs_lcdm": 0.2832578953000393
+   "value": 1409.977182493002,
+   "delta_vs_lcdm": 0.2832578952993572
   },
   {
    "line": "axis",
    "statistic": "Q",
-   "alpha_high": 0.46445400284035077,
+   "alpha_high": 0.46445400283877675,
    "t0": null,
-   "value": 1336.907836316787,
-   "delta_vs_lcdm": 2.0896921754845152
+   "value": 1336.9078363167862,
+   "delta_vs_lcdm": 2.0896921754779214
   },
   {
    "line": "mean",
@@ -52,12 +52,12 @@
    "t0": 2.2347644244879517,
    "value": 1409.7177987313617,
    "delta_vs_lcdm": 0.023874133659091967,
-   "catwise_theta_obs": 3.7,
-   "catwise_chi2": 6.134983234675099e-07,
-   "quaia_theta_obs": 3.0,
-   "quaia_chi2": 12.982358614390488,
-   "quaia_chi2_const": 1.83,
-   "quaia_chi2_none": 25.22
+   "catwise_theta_obs": 3.9000000000000004,
+   "catwise_chi2": 0.0001622204823437692,
+   "quaia_theta_obs": 2.9000000000000004,
+   "quaia_chi2": 13.842626356160553,
+   "quaia_chi2_const": 2.27145492017172,
+   "quaia_chi2_none": 25.499126779290414
   },
   {
    "line": "mean",
@@ -65,7 +65,7 @@
    "alpha_high": 0.4644533641471018,
    "t0": 2183.8586520812482,
    "value": 1336.9078271979454,
-   "delta_vs_lcdm": 2.089683056642798,
+   "delta_vs_lcdm": 2.0896830566371136,
    "catwise_theta_obs": null,
    "catwise_chi2": null
   },
@@ -74,14 +74,14 @@
    "statistic": "chi2",
    "alpha_high": 0.4110420998308597,
    "t0": 618.8373722015604,
-   "value": 1409.97718368129,
-   "delta_vs_lcdm": 0.2832590835873816,
+   "value": 1409.9771836812897,
+   "delta_vs_lcdm": 0.28325908358715424,
    "catwise_theta_obs": null,
    "catwise_chi2": null,
    "quaia_theta_obs": 35.0,
-   "quaia_chi2": 16.16108355572799,
-   "quaia_chi2_const": 1.83,
-   "quaia_chi2_none": 25.22
+   "quaia_chi2": 16.64105619677136,
+   "quaia_chi2_const": 2.27145492017172,
+   "quaia_chi2_none": 25.499126779290414
   },
   {
    "line": "median",
@@ -89,7 +89,7 @@
    "alpha_high": 0.4644459966423133,
    "t0": 1461.4150573808824,
    "value": 1336.9078380975438,
-   "delta_vs_lcdm": 2.0896939562412626,
+   "delta_vs_lcdm": 2.0896939562355783,
    "catwise_theta_obs": null,
    "catwise_chi2": null
   }

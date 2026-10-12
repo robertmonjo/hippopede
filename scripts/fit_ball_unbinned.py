@@ -99,17 +99,29 @@ class Point:
         self.avg_sky = T.Sky(zz, nn)
         self.cps = cps
         self.tab = los_table(ah, t0)
+        self._iso = None
 
-    def modulation(self, theta_obs, n_axis):
-        if theta_obs == 0:
-            return np.ones(len(self.sky.z))
-        d = self.sky.distance(self.tab, theta_obs, n_axis)
+    def _sky_mean(self, theta_obs):
         e = T.bilinear(self.tab, self.avg_sky.sector_path(theta_obs, self.cps), self.avg_sky.zp)
-        if d is None or not np.all(np.isfinite(e)) or np.any(e <= 0):
+        if not np.all(np.isfinite(e)) or np.any(e <= 0):
             return None
         da = np.trapezoid(1.0 / e, self.avg_sky.zp, axis=1).reshape(len(Z_AVG), len(U_PSI))
-        mean = (da * W_PSI[None, :]).sum(1) / W_PSI.sum()        # average over cos(psi) in [-1, 1]
-        return d / np.interp(self.sky.z, Z_AVG, mean)
+        return (da * W_PSI[None, :]).sum(1) / W_PSI.sum()        # average over cos(psi) in [-1, 1]
+
+    def modulation(self, theta_obs, n_axis):
+        """D_los of each supernova over the sky average at its redshift.  Both are divided by the isotropic
+        distance (theta_obs = 0) computed in the same way, so that only the smooth ratio of the sky averages is
+        interpolated in z and the modulation tends to 1 as theta_obs -> 0."""
+        if theta_obs == 0:
+            return np.ones(len(self.sky.z))
+        if self._iso is None:
+            self._iso = (self.sky.distance(self.tab, 0.0, n_axis), self._sky_mean(0.0))
+        d0, mean0 = self._iso
+        d = self.sky.distance(self.tab, theta_obs, n_axis)
+        mean = self._sky_mean(theta_obs)
+        if d is None or d0 is None or mean is None or mean0 is None:
+            return None
+        return (d / d0) / np.interp(self.sky.z, Z_AVG, mean / mean0)
 
     def chi2(self, theta_obs, n_axis):
         m = OB.model(self.ah, self.t0, theta_obs)

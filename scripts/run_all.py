@@ -2,8 +2,9 @@
 
 Downloads the public data (Pantheon+, the stellar-population covariance of Moresco et al. 2020,
 the Quaia catalogue), builds the derived data sets, runs every fit, writes every figure and JSON
-in figures/, and finally compares the numbers quoted in the manuscript with the outputs
-(check_paper_numbers.py).  Stops at the first script that fails.  Run from any directory:
+in figures/ and json/, and finally compares the numbers quoted in the manuscript with the outputs
+(check_paper_numbers.py).  Stops at the first script that fails; with --keep-going it runs every step and
+lists the failures at the end.  Run from any directory:
     python scripts/run_all.py
 The Quaia download is about 270 MB; the full run takes of the order of an hour on a laptop.
 With --extended the analyses of the light-cone average, the dipoles and the unbinned supernovae
@@ -123,14 +124,22 @@ EXTENDED = [
 
 def main():
     steps = STEPS + (EXTENDED if "--extended" in sys.argv[1:] else [])
+    keep_going = "--keep-going" in sys.argv[1:]
+    failed = []
     for step in steps:
         step, extra = step if isinstance(step, tuple) else (step, {})
         t = time.time()
         print(f"=== {' '.join(f'{k}={v}' for k, v in extra.items())} {' '.join(step)}", flush=True)
         r = subprocess.run([sys.executable, *step], cwd=ROOT, env=dict(os.environ, **extra))
         if r.returncode != 0:
-            sys.exit(f"failed: {' '.join(step)} (exit {r.returncode})")
+            if not keep_going:
+                sys.exit(f"failed: {' '.join(step)} (exit {r.returncode})")
+            failed.append(f"{' '.join(step)} (exit {r.returncode})")
+            print(f"failed: {failed[-1]}", flush=True)
+            continue
         print(f"    done in {time.time() - t:.0f} s", flush=True)
+    if failed:
+        sys.exit("failed steps:\n  " + "\n  ".join(failed))
 
 
 if __name__ == "__main__":

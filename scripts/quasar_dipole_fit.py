@@ -1,8 +1,10 @@
 """Count dipole of an off-axis observer compared with the CatWISE quasar dipole excess.
 
 Data (Secrest et al. 2021, ApJL 908, L51): measured number-count dipole D_obs = 0.01554 towards
-(l, b) = (238.2, 28.8) deg; kinematic expectation D_kin ~ 0.007 along the CMB dipole
-(l, b) = (264.0, 48.3) deg; mean quasar redshift 1.2; the kinematic interpretation is rejected at
+(l, b) = (238.2, 28.8) deg; kinematic expectation D_kin = [2 + x(1 + alpha)] beta = 0.0072 along the CMB
+dipole (l, b) = (264.0, 48.3) deg, with the mean spectral index alpha = 1.26 and count slope x = 1.7 of the
+sample (Dam, Lewis & Brewer 2023, MNRAS 525, 231) and beta = 369.82/299792.458; mean quasar redshift 1.2;
+the kinematic interpretation is rejected at
 4.9 sigma (joint test of amplitude and direction).  The quantity compared with the model is the
 vector excess D_geo = D_obs - D_kin (computed here).  Its uncertainty is taken as
 (D_obs - D_kin)/4.9, the amplitude difference divided by the quoted significance; this is a
@@ -15,8 +17,7 @@ changes by
 (volume 2 ln D_C - ln E minus the flux dimming 2x ln D_L; delta: departure from the sky average
 at fixed z).  The dipole is D(z) = (3/2) int delta ln N cos psi sin psi dpsi, averaged over a
 redshift distribution p(z) (z^2 exp(-z/0.4), mean 1.2 before truncation, or flat) on
-0.1 <= z <= 2.1.  The slope follows from D_kin = [2 + x(1 + alpha)] beta with alpha = 1.26 and
-beta = 369.82/299792.458, which gives x = 1.63; results are also given for x = 1.5 and 1.8.
+0.1 <= z <= 2.1, with the count slope x = 1.7 of the sample; results are also given for x = 1.5 and 1.8.
 Sector rates in common units (pantheon_offaxis_test.e_table).  Neglects source evolution,
 magnification and the null geodesics of the model.  Writes json/quasar_dipole_fit.json.
 """
@@ -39,9 +40,10 @@ sys.path.insert(0, str(SCRIPT_DIR))
 import pantheon_offaxis_test as T  # noqa: E402
 
 D_OBS, LB_OBS = 0.01554, (238.2, 28.8)
-D_KIN, LB_CMB = 0.007, (264.0, 48.3)
+LB_CMB = (264.0, 48.3)
 BETA, ALPHA_SPEC = 369.82 / 299792.458, 1.26
-X_SLOPE = (D_KIN / BETA - 2.0) / (1.0 + ALPHA_SPEC)
+X_SLOPE = 1.7                                     # Dam, Lewis & Brewer 2023
+D_KIN = (2.0 + X_SLOPE * (1.0 + ALPHA_SPEC)) * BETA
 SIG_GEO = (D_OBS - D_KIN) / 4.9
 Z_Q = np.linspace(0.1, 2.1, 41)
 PSI = np.linspace(0.0, np.pi, 37)

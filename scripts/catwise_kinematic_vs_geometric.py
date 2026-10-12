@@ -127,9 +127,9 @@ def geo_coefficients(point):
     p = Q.pz("gamma")
     g0, c0 = Q.dipole(tab, point["theta_obs"], 0.0, p)
     g1, _ = Q.dipole(tab, point["theta_obs"], 1.0, p)
-    g163, _ = Q.dipole(tab, point["theta_obs"], Q.X_SLOPE, p)
-    return {**point, "A": g0, "B": g1 - g0, "g_x1.63": g163, "coverage": c0,
-            "linearity_check": g163 - (g0 + (g1 - g0) * Q.X_SLOPE)}
+    g_xc, _ = Q.dipole(tab, point["theta_obs"], Q.X_SLOPE, p)
+    return {**point, "A": g0, "B": g1 - g0, "g_x_catwise": g_xc, "coverage": c0,
+            "linearity_check": g_xc - (g0 + (g1 - g0) * Q.X_SLOPE)}
 
 
 class DataFull:
@@ -294,7 +294,7 @@ def main_default(sfx):
     geo_ref, geo_band = geo[0], geo[1:]
     for gc in geo:
         print(f"theta_obs={gc['theta_obs']:5.2f} t0={gc['t0']:.3f} ah={gc['alpha_high']:.3f}: g = {gc['A']:+.5f} "
-              f"{gc['B']:+.5f} x  (g(1.63) = {gc['g_x1.63']:+.5f}, coverage {gc['coverage']:.2f})", flush=True)
+              f"{gc['B']:+.5f} x  (g(x_CatWISE) = {gc['g_x_catwise']:+.5f}, coverage {gc['coverage']:.2f})", flush=True)
 
     v_cmb = unitvec(*LB_CMB)
     u_full = np.asarray(full["d"]) / np.linalg.norm(full["d"])
