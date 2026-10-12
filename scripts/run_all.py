@@ -118,6 +118,9 @@ EXTENDED = [
       "--in-suffix", "_b40"], WHOLE_LOBE),
     ["dipole_zslices/catwise_direction_tests.py"],
     ["dipole_zslices/catwise_redshifts.py", "--plot"],
+    # equal weights against the light weights of the sectors (Table light_weight)
+    *[(["scripts/light_weight_comparison.py", "--weight", w], WHOLE_LOBE) for w in ("equal", "cos", "atan", "cos2", "atan2", "quad")],
+    ["scripts/light_weight_comparison.py", "--table"],
     ["scripts/check_paper_numbers.py"],
 ]
 

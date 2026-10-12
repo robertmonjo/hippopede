@@ -134,6 +134,22 @@ def _model(ah, t0, theta_obs):
     w = weights(ah, theta_obs)
     if not np.all(np.isfinite(w)):
         return None
+    if G.LIGHT_WEIGHT:
+        # light weight of every sector (sector_geometry.light_weight); theta_max(z) is the largest sector that
+        # reaches z, and the sectors that do not reach z drop out of the average at that z
+        reach = np.isfinite(E) & (E > 0)
+        tmax = np.array([THETA[reach[:, j]].max() if reach[:, j].any() else np.nan for j in range(len(ZW))])
+        w = w * G.light_weight(THETA[:, None], theta_obs, tmax[None, :]) * reach
+        s = w.sum(axis=0)
+        if np.any(s <= 0):
+            return None
+        w = w / s
+        used = w.sum(axis=1) > 0
+        E, Q, DC, w = E[used], Q[used], DC[used], w[used]
+        on = w > 0
+        E, Q, DC = np.where(on, E, 1.0), np.where(on, Q, 0.0), np.where(on, DC, 0.0)   # unused entries
+        fac = HM.h0_sector(0.0, t0) / HM.h0_sector(np.radians(theta_obs), t0)
+        return E * fac, Q, w, fac * (w * E).sum(0), (w * DC).sum(0) / fac
     used = w.sum(axis=1) > 0
     E, Q, DC, w = E[used], Q[used], DC[used], w[used]
     if not np.all(np.isfinite(E)) or np.any(E <= 0):

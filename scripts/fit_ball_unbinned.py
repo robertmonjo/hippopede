@@ -137,6 +137,8 @@ class Point:
 
 
 def axis_opposite_catwise():
+    """Projected axis: opposite to the CatWISE excess, since with equal weights the model count dipole is negative
+    (it points away from the axis)."""
     n_c, _ = PCA.catwise_axis_icrs()
     return -n_c
 

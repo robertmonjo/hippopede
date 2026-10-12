@@ -122,6 +122,55 @@ def extended_checks():
     ]
 
 
+def light_weight_checks():
+    """Numbers of the paragraph on Table light (light_weight_comparison.py), and the table itself: the tabular of the
+    paper must be the one written to tables/light_weight_comparison.tex."""
+    if not (JSON / "light_weight_comparison.json").exists():
+        return None
+    s = load("light_weight_comparison")
+    ref = s["reference"]
+    w = ("cos", "atan", "cos2", "atan2", "quad")
+    axis = [s[k]["axis"] for k in w]
+    neg = [s[k]["joint_neg"] for k in w]
+    pos = [s[k]["joint_pos"] for k in w]
+    rep = [s["equal"]["joint_neg"]] + neg + pos   # every minimum that reproduces the CatWISE excess
+    growth = [r["D_of_z"]["1.8"] / r["D_of_z"]["0.3"] for r in rep]
+    tex = (ROOT / "main-hippopede-epjc.tex").read_text(encoding="utf-8")
+    table = (ROOT / "tables" / "light_weight_comparison.tex").read_text(encoding="utf-8").strip()
+    return [
+        ("light weights: CC+SN minimum on the axis (all weights)", "0", max(r["theta_obs"] for r in (s[k]["cc_sn"] for k in w))),
+        ("light weights, axis: dchi2 CC+SN, largest", "-0.95", max(r["dchi2_cc_sn"] for r in axis)),
+        ("light weights, axis: dchi2 CC+SN, smallest", "-1.71", min(r["dchi2_cc_sn"] for r in axis)),
+        ("light weights, axis: t0, smallest", "1.14", min(r["t0"] for r in axis)),
+        ("light weights, axis: t0, largest", "1.27", max(r["t0"] for r in axis)),
+        ("negative branch: theta_obs, smallest", "35", min(r["theta_obs"] for r in neg)),
+        ("negative branch: theta_obs, largest", "45", max(r["theta_obs"] for r in neg)),
+        ("negative branch: dchi2 CC+SN, largest", "-0.54", max(r["dchi2_cc_sn"] for r in neg)),
+        ("negative branch: dchi2 CC+SN, smallest", "-0.92", min(r["dchi2_cc_sn"] for r in neg)),
+        ("equal weights, CatWISE: dchi2 CC+SN", "-0.63", s["equal"]["joint_neg"]["dchi2_cc_sn"]),
+        ("equal weights, CatWISE: theta_obs", "8.0", s["equal"]["joint_neg"]["theta_obs"]),
+        ("equal weights reproduce no positive dipole (chi2 CatWISE > 1)", "1", float(s["equal"]["joint_pos"]["chi2_catwise"] > 1)),
+        ("positive branch: theta_obs, largest", "0.32", max(r["theta_obs"] for r in pos)),
+        ("positive branch: dchi2 CC+SN, largest", "0.02", max(r["dchi2_cc_sn"] for r in pos)),
+        ("positive branch: dchi2 CC+SN, smallest", "-0.49", min(r["dchi2_cc_sn"] for r in pos)),
+        ("positive branch: radio/CatWISE, smallest", "0.73", min(r["radio_over_catwise"] for r in pos)),
+        ("positive branch: radio/CatWISE, largest", "0.83", max(r["radio_over_catwise"] for r in pos)),
+        ("negative branch with equal: radio/CatWISE, smallest", "1.8", min(r["radio_over_catwise"] for r in [s["equal"]["joint_neg"]] + neg)),
+        ("negative branch with equal: radio/CatWISE, largest", "4.2", max(r["radio_over_catwise"] for r in [s["equal"]["joint_neg"]] + neg)),
+        ("measured radio/CatWISE, NVSS", "1.3", ref["radio_over_catwise_NVSS"][0]),
+        ("measured radio/CatWISE, NVSS error", "0.5", ref["radio_over_catwise_NVSS"][1]),
+        ("measured radio/CatWISE, RACS-low", "1.3", ref["radio_over_catwise_RACS-low"][0]),
+        ("measured radio/CatWISE, RACS-low error", "0.4", ref["radio_over_catwise_RACS-low"][1]),
+        ("CatWISE reproduced in every branch row (max chi2)", "0.0", max(r["chi2_catwise"] for r in rep)),
+        ("D(1.8)/D(0.3), smallest", "10", min(growth)),
+        ("D(1.8)/D(0.3), largest", "88", max(growth)),
+        ("dchi2 Quaia, smallest", "-12.5", min(r["dchi2_quaia"] for r in rep)),
+        ("dchi2 Quaia, largest", "35.9", max(r["dchi2_quaia"] for r in rep)),
+        ("dchi2 Quaia, constant amplitude", "-23.2", ref["dchi2_quaia_constant"]),
+        ("Table light in the paper equals tables/light_weight_comparison.tex", "1", float(table in tex)),
+    ]
+
+
 def main():
     fit = load("fit_cc_pantheon")
     ah = load("fit_alpha_high")
@@ -280,6 +329,11 @@ def main():
         print("numbers of Sects. 3.3, 3.5 and 3.6 not checked: run scripts/run_all.py --extended first")
     else:
         checks += ext
+    lw = light_weight_checks()
+    if lw is None:
+        print("Table light not checked: run scripts/light_weight_comparison.py first")
+    else:
+        checks += lw
     failed = 0
     for name, printed, value in checks:
         ok = abs(float(printed) - float(value)) <= (tol(printed.split("e")[0]) * (10 ** int(printed.split("e")[1]) if "e" in printed else 1)) + 1e-12

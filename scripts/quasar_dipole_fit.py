@@ -38,6 +38,7 @@ ROOT = SCRIPT_DIR.parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
 import pantheon_offaxis_test as T  # noqa: E402
+import sector_geometry as G  # noqa: E402
 
 D_OBS, LB_OBS = 0.01554, (238.2, 28.8)
 LB_CMB = (264.0, 48.3)
@@ -76,6 +77,27 @@ def dipole(tab, theta_obs_deg, x, p):
     dc = np.trapezoid(1.0 / e_path, sky.zp, axis=1).reshape(len(Z_Q), len(PSI))
     lnD, lnE = np.log(dc), np.log(e_path[:, -1].reshape(len(Z_Q), len(PSI)))
     w = np.sin(PSI) / np.trapezoid(np.sin(PSI), PSI)
+    if G.LIGHT_WEIGHT:
+        # counts weighted by the light weight of the source sector (sector_geometry.light_weight), theta_max(z) the
+        # largest tabulated sector that reaches z; directions whose source sector does not reach z have no sources
+        reach = np.isfinite(tab) & (tab > 0)
+        jz = np.clip(np.searchsorted(T.Z_TAB, Z_Q), 0, len(T.Z_TAB) - 1)
+        tmax = np.array([T.TH_TAB[reach[:, j]].max() if reach[:, j].any() else np.nan for j in jz])
+        th_src = sky.sector_path(theta_obs_deg, cps)[:, -1].reshape(len(Z_Q), len(PSI))
+        L = G.light_weight(th_src, theta_obs_deg, tmax[:, None])
+        good = np.isfinite(lnD) & np.isfinite(lnE)
+        L = np.where(good, L, 0.0)
+        mD = np.trapezoid(np.where(good, lnD, 0.0) * L * w, PSI, axis=1) / np.trapezoid(L * w, PSI, axis=1)
+        mE = np.trapezoid(np.where(good, lnE, 0.0) * L * w, PSI, axis=1) / np.trapezoid(L * w, PSI, axis=1)
+        n_rel = L * np.exp(np.where(good, (2 - 2 * x) * (lnD - mD[:, None]) - (lnE - mE[:, None]), 0.0))
+        n_rel = n_rel / np.trapezoid(n_rel * w, PSI, axis=1)[:, None]
+        d_z = 1.5 * np.trapezoid((n_rel - 1.0) * np.cos(PSI) * np.sin(PSI), PSI, axis=1)
+        d_z = np.where(np.trapezoid(L * w, PSI, axis=1) > 0, d_z, np.nan)
+        ok = np.isfinite(d_z)
+        cover = float(np.trapezoid(p * ok, Z_Q))
+        if cover < 0.5:
+            return np.nan, cover
+        return float(np.trapezoid(np.where(ok, d_z, 0.0) * p, Z_Q) / cover), cover
     dlnD = lnD - np.trapezoid(lnD * w, PSI, axis=1)[:, None]
     dlnE = lnE - np.trapezoid(lnE * w, PSI, axis=1)[:, None]
     d_z = 1.5 * np.trapezoid(((2 - 2 * x) * dlnD - dlnE) * np.cos(PSI) * np.sin(PSI), PSI, axis=1)
