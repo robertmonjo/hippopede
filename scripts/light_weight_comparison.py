@@ -1,21 +1,25 @@
-"""Average over the light cone with equal weights and with a light weight of the sectors (Table light_weight).
+"""Average over the light cone with equal weights and with the light weights of the sectors (Table light).
 
-For each weight of the sectors (sector_geometry.light_weight: equal, cos, atan, cos2, atan2, quad) the model of reading (iv)
-(fit_observer_ball.py, fit_ball_unbinned.py) is fitted on a grid of (alpha_high, t0, theta_obs) and refined with
-Nelder-Mead.  The projected axis points along the CatWISE excess where the count dipole of the model is positive and
-opposite to it where it is negative (quasar_dipole_fit.dipole, x = 1.7, p(z) of CatWISE).  The rows are
+For each weight of the sectors, equal or sector_geometry.light_weight with W = 1 - zeta (linear) or W = 1 - sqrt(zeta)
+(sqrt), the model of reading (iv) (fit_observer_ball.py, fit_ball_unbinned.py) is evaluated on a grid of
+(alpha_high, t0, theta_obs) and its minima are refined with Nelder-Mead.  The projected axis points along the CatWISE
+excess where the count dipole of the model is positive and opposite to it where it is negative
+(quasar_dipole_fit.dipole, x = 1.7, p(z) of CatWISE).  The rows are
   axis:          observer on the axis (theta_obs = 0), alpha_high and t0 fitted to the chronometers and supernovae
   cc_sn:         minimum of the chronometers and supernovae over (alpha_high, t0, theta_obs)
   joint_pos/neg: minimum of chronometers, supernovae and CatWISE amplitude with a positive / negative model dipole
-Each row gives Delta chi2 of CC + SN relative to flat LCDM, Delta chi2 of CC + SN + CatWISE relative to flat LCDM
-with the kinematic dipole only, the dipole D(z) at fixed redshift (x = 1.7, Gaussian p(z) of width 0.08), the dipole
-of a radio sample with the count slope of NVSS above 15 mJy, x = 0.74 (Wagenveld et al. 2025, A&A 697, A112, Sect. 3.1),
-and dN/dz ~ z^0.74 exp[-(z/0.71)^1.06] (Tiwari & Nusser 2016, JCAP 03, 062, Eq. 3.11), and the amplitudes predicted
-for the three Quaia slices (quaia_zslice_model.py) with chi2 = sum (|D_i| - e_i)^2 / sigma_i^2, relative to no dipole.
+  joint_quaia:   the same with the amplitudes of the three Quaia slices added (either sign of the dipole)
+Each row gives Delta chi2 of CC + SN relative to flat LCDM; Delta chi2 of CC + SN + CatWISE relative to flat LCDM, which
+has the kinematic dipole only; the dipole D(z) at fixed redshift (x = 1.7, Gaussian p(z) of width 0.08); the dipole of a
+radio sample with the count slope of NVSS above 15 mJy, x = 0.74 (Wagenveld et al. 2025, A&A 697, A112, Sect. 3.1), and
+dN/dz ~ z^0.74 exp[-(z/0.71)^1.06] (Tiwari & Nusser 2016, JCAP 03, 062, Eq. 3.11); and for the three Quaia slices
+(dipole_zslices/results.json, each slice with its count slope and a flat p(z)) the amplitude chi2,
+sum (|D_i| - |e_i|)^2 / sigma_i^2, and the vector chi2, sum |e_i - D_i u|^2 / sigma_i^2 with u the direction of the
+CatWISE excess, both relative to no dipole.
 
 Usage:
-  HIPPOPEDE_THETA_MAX_DEG=90 python scripts/light_weight_comparison.py --weight equal|cos|atan|cos2|atan2|quad
-  python scripts/light_weight_comparison.py --table      (after the four runs; writes the LaTeX table)
+  HIPPOPEDE_THETA_MAX_DEG=90 python scripts/light_weight_comparison.py --weight equal|linear|sqrt
+  python scripts/light_weight_comparison.py --table      (after the three runs; writes the LaTeX table)
 Writes json/light_weight_comparison_<weight>.json, json/light_weight_comparison.json, tables/light_weight_comparison.tex.
 """
 
@@ -33,7 +37,7 @@ import numpy as np
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT = SCRIPT_DIR.parent
 JSON = ROOT / "json"
-WEIGHTS = ("equal", "cos", "atan", "cos2", "atan2", "quad")
+WEIGHTS = ("equal", "linear", "sqrt")
 
 
 def options():
@@ -69,13 +73,21 @@ X_RADIO = 0.74
 RADIO_OBS = {"NVSS": (0.0139, 0.0029, 0.0041), "RACS-low": (0.0143, 0.0024, 0.0041), "CatWISE": (0.0151, 0.0016, 0.0073)}
 PZ_RADIO = Q.Z_Q**0.74 * np.exp(-(Q.Z_Q / 0.71) ** 1.06)
 PZ_RADIO = PZ_RADIO / np.trapezoid(PZ_RADIO, Q.Z_Q)
-_, D_GEO, _ = Q.excess_vector()
+_, D_GEO, LB_GEO = Q.excess_vector()
 SIG = Q.SIG_GEO
 CHI2_CW_LCDM = (D_GEO / SIG) ** 2
 N_C, _ = F.PCA.catwise_axis_icrs()
-QS = json.loads((JSON / "quaia_zslice_model.json").read_text())["slices"]
-Q_AMP = np.array([s["excess_amp"] for s in QS])
-Q_SIG = np.array([s["sigma"] for s in QS])
+_lo, _la = np.radians(LB_GEO)
+U_CW = np.array([np.cos(_la) * np.cos(_lo), np.cos(_la) * np.sin(_lo), np.sin(_la)])   # Galactic, towards the excess
+QS = [s for s in json.loads((ROOT / "dipole_zslices" / "results.json").read_text())["slices"]
+      if isinstance(s["z_range"], list) and s["z_range"][1] <= 1.8]
+Q_E = np.array([s["dip"]["excess_vec"] for s in QS])
+Q_AMP = np.array([s["dip"]["excess_amp"] for s in QS])
+Q_SIG = np.array([s["dip"]["sigma_mocks_per_component"] for s in QS])
+Q_PZ = []
+for _s in QS:
+    _p = ((Q.Z_Q >= _s["z_range"][0]) & (Q.Z_Q <= _s["z_range"][1])).astype(float)
+    Q_PZ.append(_p / np.trapezoid(_p, Q.Z_Q))
 CHI2_Q_NONE = float(np.sum((Q_AMP / Q_SIG) ** 2))
 C_LCDM = None
 
@@ -92,6 +104,21 @@ def table_of(ah, t0):
 
 def d_catwise(tab, th):
     return Q.dipole(tab, th, Q.X_SLOPE, Q.pz("gamma"))[0]
+
+
+def quaia(tab, th, d):
+    """Dipoles of the Quaia slices along the orientation of the axis (positive: towards the CatWISE excess)."""
+    if th == 0:
+        return np.zeros(len(QS))
+    sign = 1.0 if d >= 0 else -1.0
+    return np.array([sign * Q.dipole(tab, th, s["x"], p)[0] for s, p in zip(QS, Q_PZ)])
+
+
+def chi2_quaia(dq):
+    """Amplitude and vector chi2 of the Quaia slices, the model dipole pointing to the CatWISE excess."""
+    amp = float(np.sum(((np.abs(dq) - Q_AMP) / Q_SIG) ** 2))
+    vec = float(np.sum(np.sum((Q_E - np.asarray(dq)[:, None] * U_CW[None, :]) ** 2, axis=1) / Q_SIG**2))
+    return amp, vec
 
 
 def dchi2_cc_sn(ah, t0, th, d):
@@ -116,14 +143,15 @@ def grid_task(args):
             continue
         c = sum(pt.chi2(th, N_C if d > 0 else -N_C)) - C_LCDM
         OB._W_CACHE.clear(); OB._M_CACHE.clear()
-        if np.isfinite(c):
-            out.append((ah, t0, th, c, d))
+        dq = quaia(tab, th, d)
+        if np.isfinite(c) and np.all(np.isfinite(dq)):
+            out.append((ah, t0, th, c, d, chi2_quaia(dq)[0]))
     OB._T_CACHE.clear()
     return out
 
 
 def objective(p, mode):
-    """mode: axis (p = alpha, ln t0), cc_sn, joint_pos, joint_neg (p = alpha, ln t0, theta)."""
+    """mode: axis (p = alpha, ln t0); cc_sn, joint_pos, joint_neg, joint_quaia (p = alpha, ln t0, theta)."""
     ah, t0 = p[0], float(np.exp(p[1]))
     th = 0.0 if mode == "axis" else abs(p[2])
     if not (A_GRID[0] - 0.05 <= ah <= A_GRID[-1] + 0.05 and 0.5 <= t0 <= 8.0 and th <= THETA_OBS_MAX):
@@ -134,11 +162,12 @@ def objective(p, mode):
         if not np.isfinite(d) or (mode == "joint_pos" and d <= 0) or (mode == "joint_neg" and d >= 0):
             return 1e6
         c = dchi2_cc_sn(ah, t0, th, d)
+        q = chi2_quaia(quaia(tab, th, d))[0] if mode == "joint_quaia" else 0.0
     except Exception:
         return 1e6
-    if not np.isfinite(c):
+    if not (np.isfinite(c) and np.isfinite(q)):
         return 1e6
-    return c + (((abs(d) - D_GEO) / SIG) ** 2 if mode.startswith("joint") else 0.0)
+    return c + (((abs(d) - D_GEO) / SIG) ** 2 if mode.startswith("joint") else 0.0) + q
 
 
 def refine(start, mode):
@@ -157,7 +186,7 @@ def refine(start, mode):
 def describe(ah, t0, th):
     tab = table_of(ah, t0)
     d = d_catwise(tab, th) if th > 0 else 0.0
-    sign = 1.0 if d >= 0 else -1.0   # amplitudes along the axis orientation of the row
+    sign = 1.0 if d >= 0 else -1.0   # amplitudes along the orientation of the axis of the row
     c = dchi2_cc_sn(ah, t0, th, d)
     chi2_cw = ((abs(d) - D_GEO) / SIG) ** 2
     if th > 0:
@@ -166,18 +195,17 @@ def describe(ah, t0, th):
             p = np.exp(-0.5 * ((Q.Z_Q - zc) / 0.08) ** 2)
             dz.append(sign * Q.dipole(tab, th, Q.X_SLOPE, p / np.trapezoid(p, Q.Z_Q))[0])
         radio = sign * Q.dipole(tab, th, X_RADIO, PZ_RADIO)[0]
-        dq = []
-        for s in QS:
-            p = ((Q.Z_Q >= s["z"][0]) & (Q.Z_Q <= s["z"][1])).astype(float)
-            dq.append(sign * Q.dipole(tab, th, s["x"], p / np.trapezoid(p, Q.Z_Q))[0])
     else:
-        dz, radio, dq = [0.0] * len(Z_SLICE), 0.0, [0.0] * len(QS)
-    chi2_q = float(np.sum(((np.abs(dq) - Q_AMP) / Q_SIG) ** 2))
+        dz, radio = [0.0] * len(Z_SLICE), 0.0
+    dq = quaia(tab, th, d)
+    q_amp, q_vec = chi2_quaia(dq)
     return {"alpha_high": ah, "t0": t0, "theta_obs": th, "dipole_sign": int(np.sign(d)),
             "dchi2_cc_sn": c, "D_catwise": abs(d), "chi2_catwise": chi2_cw, "dchi2_cc_sn_catwise": c + chi2_cw - CHI2_CW_LCDM,
             "D_radio": radio, "radio_over_catwise": radio / abs(d) if d else None,
-            "D_of_z": dict(zip([str(z) for z in Z_SLICE], dz)), "D_quaia": dq, "chi2_quaia": chi2_q,
-            "dchi2_quaia": chi2_q - CHI2_Q_NONE, "on_theta_edge": bool(th > THETA_OBS_MAX - 0.5),
+            "D_of_z": dict(zip([str(z) for z in Z_SLICE], dz)), "D_quaia": dq.tolist(),
+            "chi2_quaia": q_amp, "dchi2_quaia": q_amp - CHI2_Q_NONE,
+            "chi2_quaia_vector": q_vec, "dchi2_quaia_vector": q_vec - CHI2_Q_NONE,
+            "on_theta_edge": bool(th > THETA_OBS_MAX - 0.5),
             "on_alpha_t0_edge": bool(ah < A_GRID[0] + 0.005 or ah > A_GRID[-1] - 0.005
                                      or t0 < T_GRID[0] * 1.02 or t0 > T_GRID[-1] * 0.98)}
 
@@ -202,6 +230,8 @@ def run(weight, workers):
         for mode, m in (("joint_pos", rows[:, 4] > 0), ("joint_neg", rows[:, 4] < 0)):
             starts[mode] = [tuple(rows[np.argmin(np.where(m, tot, np.inf)), :3])]
         starts["joint_neg"].append((f_j["alpha_high"], f_j["t0"], f_j["theta_obs"]))
+        tq = np.where(rows[:, 2] > 0, tot + rows[:, 5], np.inf)
+        starts["joint_quaia"] = [tuple(rows[np.argmin(np.where(rows[:, 4] * s > 0, tq, np.inf)), :3]) for s in (1, -1)]
         res = dict(ex.map(refine_task, [(s, m) for m, s in starts.items()]))
     if res["axis"]["dchi2_cc_sn"] < res["cc_sn"]["dchi2_cc_sn"]:
         res["cc_sn"] = dict(res["axis"])   # the minimum of CC + SN lies on the axis
@@ -211,18 +241,16 @@ def run(weight, workers):
            "rows": res, "grid_points": rows.tolist()}
     (JSON / f"light_weight_comparison_{weight}.json").write_text(json.dumps(out, indent=1))
     for k, r in res.items():
-        print(f"{weight:5s} {k:9s} a={r['alpha_high']:.3f} t0={r['t0']:.3f} theta={r['theta_obs']:.2f} "
+        print(f"{weight:6s} {k:11s} a={r['alpha_high']:.3f} t0={r['t0']:.3f} theta={r['theta_obs']:.2f} "
               f"dCC+SN={r['dchi2_cc_sn']:+.2f} dCC+SN+CW={r['dchi2_cc_sn_catwise']:+.2f} D_CW={r['D_catwise']:.4f} "
-              f"radio/CW={r['radio_over_catwise']} dQuaia={r['dchi2_quaia']:+.1f} edges={r['on_theta_edge']},{r['on_alpha_t0_edge']}",
-              flush=True)
+              f"radio/CW={r['radio_over_catwise']} dQ={r['dchi2_quaia']:+.1f} dQvec={r['dchi2_quaia_vector']:+.1f} "
+              f"edges={r['on_theta_edge']},{r['on_alpha_t0_edge']}", flush=True)
 
 
-HEADS = {"equal": r"Equal weights", "atan": r"$\mathcal{W}=(2/\pi)\arctan[(1-\zeta)/\zeta]$",
-         "atan2": r"$\mathcal{W}=\{(2/\pi)\arctan[(1-\zeta)/\zeta]\}^2$", "cos": r"$\mathcal{W}=\cos(\pi\zeta/2)$",
-         "cos2": r"$\mathcal{W}=\cos^2(\pi\zeta/2)$", "quad": r"$\mathcal{W}=(1-\zeta)^2$"}
+HEADS = {"equal": r"Equal weights", "linear": r"$\mathcal{W}=1-\zeta$", "sqrt": r"$\mathcal{W}=1-\sqrt{\zeta}$"}
 ROWS = (("axis", "Axis"), ("cc_sn", "CC+SN"), ("joint_neg", r"+CatWISE, $\mathcal{D}<0$"),
-        ("joint_pos", r"+CatWISE, $\mathcal{D}>0$"))
-NCOL = 11
+        ("joint_pos", r"+CatWISE, $\mathcal{D}>0$"), ("joint_quaia", r"+CatWISE+Quaia"))
+NCOL = 12
 
 
 def fmt(v, nd, sign=False):
@@ -239,6 +267,9 @@ def table():
     a_const = float(np.sum(Q_AMP / Q_SIG**2) / np.sum(1.0 / Q_SIG**2))   # constant amplitude fitted to the slices
     summary["reference"]["quaia_constant_amplitude"] = a_const
     summary["reference"]["dchi2_quaia_constant"] = float(np.sum(((a_const - Q_AMP) / Q_SIG) ** 2)) - CHI2_Q_NONE
+    a_vec = float(np.sum((Q_E @ U_CW) / Q_SIG**2) / np.sum(1.0 / Q_SIG**2))   # constant vector along the CatWISE excess
+    summary["reference"]["quaia_constant_along_catwise"] = a_vec
+    summary["reference"]["dchi2_quaia_vector_constant"] = chi2_quaia(np.full(len(QS), a_vec))[1] - CHI2_Q_NONE
     # measured radio excess over the kinematic dipole relative to that of CatWISE, amplitudes of Wagenveld et al. 2025,
     # Table 1 (D, sigma, D_kin): (D_radio - D_kin) / (D_CatWISE - D_kin), with first-order error propagation
     cw, cw_s, cw_k = RADIO_OBS["CatWISE"]
@@ -256,7 +287,7 @@ def table():
             if k == "cc_sn" and on_axis:
                 continue
             r = rows[k]
-            if k.startswith("joint") and r["chi2_catwise"] > 1.0:
+            if k.startswith("joint_") and k != "joint_quaia" and r["chi2_catwise"] > 1.0:
                 continue   # no observer with this sign of the dipole reproduces the CatWISE excess
             lab = "Axis = CC+SN" if (k == "axis" and on_axis) else label
             th = r["theta_obs"]
@@ -267,10 +298,10 @@ def table():
                                      fmt(r["dchi2_cc_sn"], 2, True), fmt(r["dchi2_cc_sn_catwise"], 1, True),
                                      "--" if ratio is None else f"{ratio:.2f}",
                                      *(("--",) * 3 if th == 0 else tuple(f"${v:.4f}$" if v < 0 else f"{v:.4f}" for v in dz)),
-                                     fmt(r["dchi2_quaia"], 1, True)]) + r" \\")
+                                     fmt(r["dchi2_quaia"], 1, True), fmt(r["dchi2_quaia_vector"], 1, True)]) + r" \\")
     head = (r"Observer & $\alpha_{\mathrm{high}}$ & $t_0$ & $\vartheta_{\mathrm{obs}}$ & \multicolumn{2}{c}{$\Delta\chi^2$} & "
-            r"$\mathcal{D}_{\mathrm{radio}}/$ & \multicolumn{3}{c}{$\mathcal{D}(z)$} & $\Delta\chi^2$ \\" "\n"
-            r" & & & [deg] & CC+SN & +CatWISE & $\mathcal{D}_{\mathrm{CatWISE}}$ & $z=0.3$ & $1.0$ & $1.8$ & Quaia \\")
+            r"$\mathcal{D}_{\mathrm{radio}}/$ & \multicolumn{3}{c}{$\mathcal{D}(z)$} & \multicolumn{2}{c}{$\Delta\chi^2_{\mathrm{Quaia}}$} \\" "\n"
+            r" & & & [deg] & CC+SN & +CatWISE & $\mathcal{D}_{\mathrm{CatWISE}}$ & $z=0.3$ & $1.0$ & $1.8$ & amp. & vec. \\")
     tex = "\n".join([r"\begin{tabular}{l" + "c" * (NCOL - 1) + "}", r"\hline", head, r"\hline", *lines, r"\hline",
                      r"\end{tabular}"]) + "\n"
     (ROOT / "tables").mkdir(exist_ok=True)

@@ -123,50 +123,75 @@ def extended_checks():
 
 
 def light_weight_checks():
-    """Numbers of the paragraph on Table light (light_weight_comparison.py), and the table itself: the tabular of the
+    """Numbers of the paragraphs on Table light (light_weight_comparison.py), and the table itself: the tabular of the
     paper must be the one written to tables/light_weight_comparison.tex."""
     if not (JSON / "light_weight_comparison.json").exists():
         return None
     s = load("light_weight_comparison")
     ref = s["reference"]
-    w = ("cos", "atan", "cos2", "atan2", "quad")
-    axis = [s[k]["axis"] for k in w]
-    neg = [s[k]["joint_neg"] for k in w]
-    pos = [s[k]["joint_pos"] for k in w]
-    rep = [s["equal"]["joint_neg"]] + neg + pos   # every minimum that reproduces the CatWISE excess
-    growth = [r["D_of_z"]["1.8"] / r["D_of_z"]["0.3"] for r in rep]
+    eq, li, sq = s["equal"], s["linear"], s["sqrt"]
+    neg = [li["joint_neg"], sq["joint_neg"]]
+    qe, ql, qs = eq["joint_quaia"], li["joint_quaia"], sq["joint_quaia"]
+    quaia = json.loads((ROOT / "dipole_zslices" / "results.json").read_text())
+    lo, la = np.radians(load("quasar_dipole_fit")["excess_lb"])
+    u = np.array([np.cos(la) * np.cos(lo), np.cos(la) * np.sin(lo), np.sin(la)])
+    ang = [float(np.degrees(np.arccos(np.dot(e, u) / np.linalg.norm(e))))
+           for e in (np.array(x["dip"]["excess_vec"]) for x in quaia["slices"]
+                     if isinstance(x["z_range"], list) and x["z_range"][1] <= 1.8)]
     tex = (ROOT / "main-hippopede-epjc.tex").read_text(encoding="utf-8")
     table = (ROOT / "tables" / "light_weight_comparison.tex").read_text(encoding="utf-8").strip()
+    sig = ref["sigma_geo"]
     return [
-        ("light weights: CC+SN minimum on the axis (all weights)", "0", max(r["theta_obs"] for r in (s[k]["cc_sn"] for k in w))),
-        ("light weights, axis: dchi2 CC+SN, largest", "-0.95", max(r["dchi2_cc_sn"] for r in axis)),
-        ("light weights, axis: dchi2 CC+SN, smallest", "-1.71", min(r["dchi2_cc_sn"] for r in axis)),
-        ("light weights, axis: t0, smallest", "1.14", min(r["t0"] for r in axis)),
-        ("light weights, axis: t0, largest", "1.27", max(r["t0"] for r in axis)),
-        ("negative branch: theta_obs, smallest", "35", min(r["theta_obs"] for r in neg)),
-        ("negative branch: theta_obs, largest", "45", max(r["theta_obs"] for r in neg)),
-        ("negative branch: dchi2 CC+SN, largest", "-0.54", max(r["dchi2_cc_sn"] for r in neg)),
-        ("negative branch: dchi2 CC+SN, smallest", "-0.92", min(r["dchi2_cc_sn"] for r in neg)),
-        ("equal weights, CatWISE: dchi2 CC+SN", "-0.63", s["equal"]["joint_neg"]["dchi2_cc_sn"]),
-        ("equal weights, CatWISE: theta_obs", "8.0", s["equal"]["joint_neg"]["theta_obs"]),
-        ("equal weights reproduce no positive dipole (chi2 CatWISE > 1)", "1", float(s["equal"]["joint_pos"]["chi2_catwise"] > 1)),
-        ("positive branch: theta_obs, largest", "0.32", max(r["theta_obs"] for r in pos)),
-        ("positive branch: dchi2 CC+SN, largest", "0.02", max(r["dchi2_cc_sn"] for r in pos)),
-        ("positive branch: dchi2 CC+SN, smallest", "-0.49", min(r["dchi2_cc_sn"] for r in pos)),
-        ("positive branch: radio/CatWISE, smallest", "0.73", min(r["radio_over_catwise"] for r in pos)),
-        ("positive branch: radio/CatWISE, largest", "0.83", max(r["radio_over_catwise"] for r in pos)),
-        ("negative branch with equal: radio/CatWISE, smallest", "1.8", min(r["radio_over_catwise"] for r in [s["equal"]["joint_neg"]] + neg)),
-        ("negative branch with equal: radio/CatWISE, largest", "4.2", max(r["radio_over_catwise"] for r in [s["equal"]["joint_neg"]] + neg)),
+        ("light weights: CC+SN minimum on the axis", "0", max(li["cc_sn"]["theta_obs"], sq["cc_sn"]["theta_obs"])),
+        ("1 - zeta, axis: dchi2 CC+SN", "-1.70", li["axis"]["dchi2_cc_sn"]),
+        ("1 - sqrt(zeta), axis: dchi2 CC+SN", "-1.67", sq["axis"]["dchi2_cc_sn"]),
+        ("1 - zeta, axis: t0", "1.14", li["axis"]["t0"]),
+        ("1 - sqrt(zeta), axis: t0", "1.14", sq["axis"]["t0"]),
+        ("negative branch: theta_obs, smallest", "40", min(r["theta_obs"] for r in neg)),
+        ("negative branch: theta_obs, largest", "44", max(r["theta_obs"] for r in neg)),
+        ("negative branch: radio/CatWISE, smallest", "2.9", min(r["radio_over_catwise"] for r in neg)),
+        ("negative branch: radio/CatWISE, largest", "4.0", max(r["radio_over_catwise"] for r in neg)),
+        ("negative branch reproduces CatWISE (max chi2)", "0.0", max(r["chi2_catwise"] for r in neg)),
+        ("equal weights reproduce no positive dipole (chi2 CatWISE > 1)", "1", float(eq["joint_pos"]["chi2_catwise"] > 1)),
+        ("positive branch within 0.5 deg (max theta_obs)", "0.50", max(li["joint_pos"]["theta_obs"], sq["joint_pos"]["theta_obs"])),
+        ("1 - zeta, positive branch: dchi2 CC+SN", "0.04", li["joint_pos"]["dchi2_cc_sn"]),
+        ("1 - sqrt(zeta), positive branch: dchi2 CC+SN", "-0.09", sq["joint_pos"]["dchi2_cc_sn"]),
+        ("equal weights, CatWISE: dchi2 CC+SN", "-0.63", eq["joint_neg"]["dchi2_cc_sn"]),
+        ("1 - zeta, positive branch: radio/CatWISE", "0.79", li["joint_pos"]["radio_over_catwise"]),
+        ("1 - sqrt(zeta), positive branch: radio/CatWISE", "0.85", sq["joint_pos"]["radio_over_catwise"]),
+        ("equal weights, CatWISE: radio/CatWISE", "1.80", eq["joint_neg"]["radio_over_catwise"]),
+        ("negative branch disfavoured by radio: >= 4 sigma above RACS-low", "1",
+         float(min((r["radio_over_catwise"] - ref["radio_over_catwise_RACS-low"][0]) / ref["radio_over_catwise_RACS-low"][1]
+                   for r in neg) >= 3.95)),
+        ("positive branch and equal weights within 1.5 sigma of RACS-low", "1",
+         float(max(abs(r["radio_over_catwise"] - ref["radio_over_catwise_RACS-low"][0]) / ref["radio_over_catwise_RACS-low"][1]
+                   for r in (li["joint_pos"], sq["joint_pos"], eq["joint_neg"])) < 1.5)),
         ("measured radio/CatWISE, NVSS", "1.3", ref["radio_over_catwise_NVSS"][0]),
         ("measured radio/CatWISE, NVSS error", "0.5", ref["radio_over_catwise_NVSS"][1]),
         ("measured radio/CatWISE, RACS-low", "1.3", ref["radio_over_catwise_RACS-low"][0]),
         ("measured radio/CatWISE, RACS-low error", "0.4", ref["radio_over_catwise_RACS-low"][1]),
-        ("CatWISE reproduced in every branch row (max chi2)", "0.0", max(r["chi2_catwise"] for r in rep)),
-        ("D(1.8)/D(0.3), smallest", "10", min(growth)),
-        ("D(1.8)/D(0.3), largest", "88", max(growth)),
-        ("dchi2 Quaia, smallest", "-12.5", min(r["dchi2_quaia"] for r in rep)),
-        ("dchi2 Quaia, largest", "35.9", max(r["dchi2_quaia"] for r in rep)),
-        ("dchi2 Quaia, constant amplitude", "-23.2", ref["dchi2_quaia_constant"]),
+        ("equal weights + Quaia: theta_obs", "21", qe["theta_obs"]),
+        ("equal weights + Quaia: D(1.8)/D(0.3)", "22", qe["D_of_z"]["1.8"] / qe["D_of_z"]["0.3"]),
+        ("equal weights + Quaia: dchi2 Quaia amplitudes", "-12.7", qe["dchi2_quaia"]),
+        ("1 - zeta + Quaia: D(0.3)", "0.0098", ql["D_of_z"]["0.3"]),
+        ("1 - zeta + Quaia: D(1.8)", "0.0115", ql["D_of_z"]["1.8"]),
+        ("1 - sqrt(zeta) + Quaia: D(0.3)", "0.0138", qs["D_of_z"]["0.3"]),
+        ("1 - sqrt(zeta) + Quaia: D(1.8)", "0.0101", qs["D_of_z"]["1.8"]),
+        ("1 - sqrt(zeta) + Quaia: D decreases at every step", "1", float(all(np.diff(list(qs["D_of_z"].values())) < 0))),
+        ("light weights + Quaia: largest theta_obs", "0.82", max(ql["theta_obs"], qs["theta_obs"])),
+        ("1 - zeta + Quaia: t0", "2.99", ql["t0"]),
+        ("1 - sqrt(zeta) + Quaia: t0", "2.99", qs["t0"]),
+        ("light weights + Quaia: CatWISE within 1 sigma", "1", float(max(abs(r["D_catwise"] - ref["D_geo"]) / sig for r in (ql, qs)) < 1)),
+        ("1 - zeta + Quaia: radio/CatWISE", "0.90", ql["radio_over_catwise"]),
+        ("1 - sqrt(zeta) + Quaia: radio/CatWISE", "1.00", qs["radio_over_catwise"]),
+        ("1 - zeta + Quaia: dchi2 Quaia amplitudes", "-20.3", ql["dchi2_quaia"]),
+        ("1 - sqrt(zeta) + Quaia: dchi2 Quaia amplitudes", "-21.4", qs["dchi2_quaia"]),
+        ("constant amplitude: dchi2 Quaia", "-23.2", ref["dchi2_quaia_constant"]),
+        ("Quaia slices vs CatWISE excess: smallest angle (deg)", "101", min(ang)),
+        ("Quaia slices vs CatWISE excess: largest angle (deg)", "158", max(ang)),
+        ("every row of Table light: vector Quaia chi2 above no dipole", "1",
+         float(all(r["dchi2_quaia_vector"] >= 0 for w in (eq, li, sq) for r in w.values()))),
+        ("Discussion: 1 - sqrt(zeta) + Quaia within a degree of the axis", "1", float(qs["theta_obs"] < 1)),
         ("Table light in the paper equals tables/light_weight_comparison.tex", "1", float(table in tex)),
     ]
 
@@ -319,8 +344,6 @@ def main():
         ("Quaia no-dipole chi2", "25.5", qz["chi2_null"]),
         ("Quaia dchi2 max (2.5<=t0<=6)", "8.9", max(v["chi2"] - qz["chi2_const"] for k, v in qz["model"].items() if 2.5 <= float(k) <= 6)),
         ("Quaia dchi2 min (2.5<=t0<=6)", "8.1", min(v["chi2"] - qz["chi2_const"] for k, v in qz["model"].items() if 2.5 <= float(k) <= 6)),
-        ("axis crossing, theta_obs = 1 deg", "0.035", loc["observers"]["1.0"]["z_crossing"]),
-        ("theta_obs for a crossing at z_S = 0.026", "0.74", loc["theta_obs_crossing_zS"]),
         ("q_d,eff per degree", "1.3e-3", loc["observers"]["1.0"]["q_d_eff"][0]),
         ("high-z agreement with 50 digits at z = 4e9", "3e-7", max(abs(hz_4e9["alpha_half"] - 1), abs(hz_4e9["running"] - 1))),
     ]

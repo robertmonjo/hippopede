@@ -44,17 +44,15 @@ THETA_MAX_DEG = float(os.environ.get("HIPPOPEDE_THETA_MAX_DEG", "70"))
 THETA_OBS_MAX_DEG = 35.0
 
 
-# Light weight of a source sector, switched on with the environment variable HIPPOPEDE_LIGHT_WEIGHT = atan, atan2, cos,
-# cos2 or quad (unset or 0: every sector has the same weight).  The light received from sector theta by an observer in sector
-# theta_obs is weighted by a function of u = |theta - theta_obs| / (theta_max - theta_obs), with theta_max(z) the
-# largest sector whose history reaches the redshift z of the source:
-#     atan:  w = (2/pi) atan[(1 - u) / u]        atan2: w = {(2/pi) atan[(1 - u) / u]}^2
-#     cos:   w = cos(pi u / 2)                   cos2:  w = cos^2(pi u / 2)
-#     quad:  w = (1 - u)^2
-# w = 1 in the sector of the observer and w = 0 for u >= 1 and for the sectors that do not reach z.
+# Light weight of a source sector, switched on with the environment variable HIPPOPEDE_LIGHT_WEIGHT = linear or sqrt
+# (unset or 0: every sector has the same weight).  The light received from sector theta by an observer in sector theta_obs
+# is weighted by a function of zeta = |theta - theta_obs| / (theta_max - theta_obs), with theta_max(z) the largest sector
+# whose history reaches the redshift z of the source:
+#     linear: w = 1 - zeta          sqrt: w = 1 - sqrt(zeta)
+# w = 1 in the sector of the observer and w = 0 for zeta >= 1 and for the sectors that do not reach z.
 _LW = os.environ.get("HIPPOPEDE_LIGHT_WEIGHT", "0").strip().lower()
 LIGHT_WEIGHT = "" if _LW in ("", "0") else _LW
-LIGHT_WEIGHT_FORMS = ("atan", "atan2", "cos", "cos2", "quad")
+LIGHT_WEIGHT_FORMS = ("linear", "sqrt")
 assert LIGHT_WEIGHT in ("",) + LIGHT_WEIGHT_FORMS, f"unknown HIPPOPEDE_LIGHT_WEIGHT={_LW}"
 
 
@@ -65,12 +63,8 @@ def light_weight(theta_deg, theta_obs_deg, theta_max_deg, form=None):
     tp = np.abs(np.asarray(theta_deg, dtype=float) - theta_obs_deg)
     tpm = np.asarray(theta_max_deg, dtype=float) - theta_obs_deg
     with np.errstate(divide="ignore", invalid="ignore"):
-        if form in ("atan", "atan2"):
-            w = np.clip(np.arctan2(tpm - tp, tp) / (np.pi / 2), 0.0, 1.0)   # arctan2: 1 at u = 0, <= 0 for u >= 1
-            w = w**2 if form == "atan2" else w
-        else:
-            u = np.clip(tp / tpm, 0.0, 1.0)
-            w = {"cos": np.cos(0.5 * np.pi * u), "cos2": np.cos(0.5 * np.pi * u) ** 2, "quad": (1.0 - u) ** 2}[form]
+        zeta = np.clip(tp / tpm, 0.0, 1.0)
+        w = 1.0 - zeta if form == "linear" else 1.0 - np.sqrt(zeta)
     return np.where(np.isfinite(tpm) & (tpm > 0), np.clip(w, 0.0, 1.0), 0.0)
 
 
