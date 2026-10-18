@@ -121,6 +121,7 @@ EXTENDED = [
     # equal weights against the light weights of the sectors (Table light_weight)
     *[(["scripts/light_weight_comparison.py", "--weight", w], WHOLE_LOBE) for w in ("equal", "linear", "sqrt")],
     ["scripts/light_weight_comparison.py", "--table"],
+    ["scripts/kinematic_observer_dipole.py"],
     ["scripts/check_paper_numbers.py"],
 ]
 

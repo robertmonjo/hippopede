@@ -130,6 +130,7 @@ def light_weight_checks():
     s = load("light_weight_comparison")
     ref = s["reference"]
     eq, li, sq = s["equal"], s["linear"], s["sqrt"]
+    kd = load("kinematic_observer_dipole")
     neg = [li["joint_neg"], sq["joint_neg"]]
     qe, ql, qs = eq["joint_quaia"], li["joint_quaia"], sq["joint_quaia"]
     quaia = json.loads((ROOT / "dipole_zslices" / "results.json").read_text())
@@ -193,6 +194,20 @@ def light_weight_checks():
          float(all(r["dchi2_quaia_vector"] >= 0 for w in (eq, li, sq) for r in w.values()))),
         ("Discussion: 1 - sqrt(zeta) + Quaia within a degree of the axis", "1", float(qs["theta_obs"] < 1)),
         ("Table light in the paper equals tables/light_weight_comparison.tex", "1", float(table in tex)),
+        # kinematic alternative (kinematic_observer_dipole.py)
+        ("kinematic: extra velocity (km/s)", "501", kd["delta_v_kms"]),
+        ("kinematic: total velocity (km/s)", "797", kd["v_total_kms"]),
+        ("kinematic: angle to the CMB dipole (deg)", "27.8", kd["angle_total_velocity_to_cmb_deg"]),
+        ("kinematic: radio/CatWISE, NVSS", "0.56", kd["radio"]["NVSS"]["predicted_ratio"]),
+        ("kinematic: radio/CatWISE, RACS-low", "0.57", kd["radio"]["RACS-low"]["predicted_ratio"]),
+        ("kinematic: NVSS pull (sigma below)", "1.5", -kd["radio"]["NVSS"]["pull"]),
+        ("kinematic: RACS-low pull (sigma below)", "1.8", -kd["radio"]["RACS-low"]["pull"]),
+        ("kinematic: Quaia excess, smallest", "0.007", min(kd["quaia"]["predicted_excess"])),
+        ("kinematic: Quaia excess, largest", "0.007", max(kd["quaia"]["predicted_excess"])),
+        ("kinematic: dchi2 Quaia amplitudes", "-15.3", kd["quaia"]["dchi2_amp"]),
+        ("kinematic Quaia between equal and light weights", "1",
+         float(eq["joint_quaia"]["dchi2_quaia"] > kd["quaia"]["dchi2_amp"] > max(ql["dchi2_quaia"], qs["dchi2_quaia"]))),
+        ("kinematic: every Quaia vector chi2 above no dipole", "1", float(kd["quaia"]["dchi2_vec"] > 0)),
     ]
 
 
