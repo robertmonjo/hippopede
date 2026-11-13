@@ -4,7 +4,7 @@ Scripts and data to reproduce the figures and numerical results in:
 
 > R. Monjo, M. Romero, A. E. Sasi,
 > *Hippopede universe to model sector-dependent acceleration*,
-> submitted to The European Physical Journal C (2026).
+> in preparation for The European Physical Journal C.
 
 ## Running
 

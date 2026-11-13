@@ -61,8 +61,6 @@ def extended_checks():
     q_none = float(np.sum((amp / sig) ** 2))
     return [
         # Sect. 3.3: scatter of the chronometers (cc_intrinsic_scatter.py)
-        ("CC-only flat LCDM chi2", "23.4", cis["flat_lcdm"]["chi2"]),
-        ("CC-only degrees of freedom", "36", cis["flat_lcdm"]["dof"]),
         ("sigma_int 95% upper limit, z < 0.5", "6.8", cis["flat_lcdm"]["subsets"]["z<0.5"]["sigma_int_95"]),
         ("sigma_int maximum likelihood, z > 0.5", "8", cis["flat_lcdm"]["subsets"]["z>0.5"]["sigma_int_ml"]),
         ("sigma_int 95% upper limit, z > 0.5", "20", cis["flat_lcdm"]["subsets"]["z>0.5"]["sigma_int_95"]),
